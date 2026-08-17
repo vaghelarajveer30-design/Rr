@@ -17,7 +17,8 @@
     .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     
     .status-counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-    .counter-box { padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .counter-box { padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
+    .counter-box:active { transform: scale(0.96); }
     .counter-active { background: #27ae60; }
     .counter-inactive { background: #e74c3c; }
     .counter-num { font-size: 20px; margin-top: 2px; }
@@ -101,11 +102,11 @@
         </div>
 
         <div class="status-counter-grid">
-          <div class="counter-box counter-active">
+          <div class="counter-box counter-active" onclick="switchTab('Active')">
             🟢 એક્ટિવ વિદ્યાર્થી
             <div class="counter-num" id="totalActiveCount">0</div>
           </div>
-          <div class="counter-box counter-inactive">
+          <div class="counter-box counter-inactive" onclick="switchTab('Inactive')">
             🔴 ઇન-એક્ટિવ વિદ્યાર્થી
             <div class="counter-num" id="totalInactiveCount">0</div>
           </div>
@@ -119,7 +120,7 @@
         </div>
 
         <div class="tabs">
-          <button class="tab-btn active" id="tabActiveBtn" onclick="switchTab('Active')">Active (ચાલુ)</button>
+          <button class="tab-btn" id="tabActiveBtn" onclick="switchTab('Active')">Active (ચાલુ)</button>
           <button class="tab-btn" id="tabInactiveBtn" onclick="switchTab('Inactive')">Inactive (બંધ)</button>
         </div>
 
@@ -241,7 +242,7 @@
             <b>📚 કોર્સનું નામ:</b> <span id="infoCourseName" style="color:#1a73e8; font-weight:bold;"></span><br>
             <b>📌 ફી નો પ્રકાર:</b> <span id="infoFeeType"></span><br>
             <b>🗓️ દાખલ તારીખ:</b> <span id="infoAdmDate"></span><br>
-            <b>⌛ દાખલ તારીખથી ચાલુ મહિના:</b> <span id="infoMonths" style="color:#d32f2f; font-weight:bold;"></span>
+            <b>⌛ ચાલુ સમયગાળો:</b> <span id="infoMonths" style="color:#d32f2f; font-weight:bold;"></span>
           </div>
 
           <!-- ✨ વિદ્યાર્થીની ઓટોમેટિક કેલ્ક્યુલેટ ફી બોક્ષ ✨ -->
@@ -325,7 +326,7 @@
                 </div>
               </div>
               <div style="text-align:center; font-size:12px; color:#27ae60; font-weight:bold; margin-top:3px;">
-                💡 પસંદ કરેલ સમયગાળો: <span id="lblCalculatedMonths">0</span> મહિનો/મહિના
+                💡 પસંદ કરેલ સમયગાળો: <span id="lblCalculatedMonths">0</span>
               </div>
             </div>
 
@@ -447,8 +448,8 @@
   <canvas id="hiddenCanvas" style="display:none;"></canvas>
 
   <script>
-    let currentTab = 'Active';
-    let currentFeeFilter = 'ALL'; // ALL, PAID, DUE
+    let currentTab = null;
+    let currentFeeFilter = null;
     let currentStudentId = null;
     let selectedPaymentId = null;
 
@@ -583,30 +584,41 @@
       document.getElementById('totalInactiveCount').innerText = inactiveCount;
     }
 
-    /* 💡 ઓટોમેટિક મહિના ગણવાનું મુખ્ય ફંકશન */
-    function calculateExactMonthsBetween(startDateStr, endDateStr) {
-      if (!startDateStr || !endDateStr) return 1;
+    /* 💡 દિવસો અને મહિનાઓ પ્રમાણે ચોક્કસ ફી ગણવાની સિસ્ટમ (Pro-rata Calculation) */
+    function calculateExactFeeAndDuration(startDateStr, endDateStr, monthlyFee) {
+      if (!startDateStr || !endDateStr) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ" };
       let d1 = new Date(startDateStr);
       let d2 = new Date(endDateStr);
 
-      if (d2 < d1) return 1;
+      if (d2 < d1) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ" };
 
-      let yearDiff = d2.getFullYear() - d1.getFullYear();
-      let monthDiff = d2.getMonth() - d1.getMonth();
+      // કૂલ દિવસોની ગણતરી (દાખલ તારીખથી આજ સુધી)
+      let diffTime = Math.abs(d2 - d1);
+      let totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // દાખલ નો પ્રથમ દિવસ ગણીને
 
-      let totalMonths = (yearDiff * 12) + monthDiff;
+      let months = Math.floor(totalDays / 30);
+      let remainingDays = totalDays % 30;
 
-      if (d2.getDate() >= d1.getDate() - 2) {
-        totalMonths += 1;
+      // ૧ દિવસની ફી (૩૦ દિવસના હિસાબે)
+      let dailyFee = monthlyFee / 30;
+      let calculatedFee = Math.round((months * monthlyFee) + (remainingDays * dailyFee));
+
+      let durationText = "";
+      if (months > 0 && remainingDays > 0) {
+        durationText = `${months} મહિનો અને ${remainingDays} દિવસ`;
+      } else if (months > 0) {
+        durationText = `${months} મહિનો`;
+      } else {
+        durationText = `${remainingDays} દિવસ`;
       }
 
-      return totalMonths <= 0 ? 1 : totalMonths;
-    }
-
-    function getPassedMonths(admDateStr) {
-      if (!admDateStr) return 1;
-      let todayStr = new Date().toISOString().split('T')[0];
-      return calculateExactMonthsBetween(admDateStr, todayStr);
+      return {
+        months,
+        days: remainingDays,
+        totalDays,
+        totalFee: calculatedFee,
+        durationText
+      };
     }
 
     function autoCalculateReceiptFeeByDates() {
@@ -616,12 +628,13 @@
       let fromD = document.getElementById('fFromDate').value;
       let toD = document.getElementById('fToDate').value;
 
-      let diffMonths = calculateExactMonthsBetween(fromD, toD);
-      document.getElementById('lblCalculatedMonths').innerText = diffMonths;
+      let calc = calculateExactFeeAndDuration(fromD, toD, s.courseFee || 0);
+      
+      document.getElementById('lblCalculatedMonths').innerText = calc.durationText;
 
       let calculatedFee = 0;
       if (s.feeType === 'Monthly') {
-        calculatedFee = diffMonths * (s.courseFee || 0);
+        calculatedFee = calc.totalFee;
       } else {
         calculatedFee = s.courseFee || 0;
       }
@@ -702,6 +715,11 @@
 
     function switchTab(tab) {
       currentTab = tab;
+      currentFeeFilter = null;
+      document.getElementById('btnFilterAll').classList.remove('selected-filter');
+      document.getElementById('btnFilterPaid').classList.remove('selected-filter');
+      document.getElementById('btnFilterDue').classList.remove('selected-filter');
+
       document.getElementById('tabActiveBtn').classList.toggle('active', tab === 'Active');
       document.getElementById('tabInactiveBtn').classList.toggle('active', tab === 'Inactive');
       renderStudentList();
@@ -709,6 +727,9 @@
 
     function setFeeFilter(filterType) {
       currentFeeFilter = filterType;
+      currentTab = null;
+      document.getElementById('tabActiveBtn').classList.remove('active');
+      document.getElementById('tabInactiveBtn').classList.remove('active');
       
       document.getElementById('btnFilterAll').classList.toggle('selected-filter', filterType === 'ALL');
       document.getElementById('btnFilterPaid').classList.toggle('selected-filter', filterType === 'PAID');
@@ -717,10 +738,12 @@
       renderStudentList();
     }
 
-    // 🌟 ઓટોમેટિક દરેક વિદ્યાર્થીના ગણેલા સરવૈયાની ગણતરી
+    // 🌟 દિવસ અને મહિના પ્રમાણે ગણેલા ઓટો સરવૈયાની ગણતરી
     function getStudentTotalStats(s) {
-      let passedMonths = getPassedMonths(s.admissionDate);
-      let tuitionTotal = s.feeType === 'Monthly' ? (passedMonths * s.courseFee) : s.courseFee;
+      let todayStr = new Date().toISOString().split('T')[0];
+      let calc = calculateExactFeeAndDuration(s.admissionDate, todayStr, s.courseFee);
+
+      let tuitionTotal = s.feeType === 'Monthly' ? calc.totalFee : s.courseFee;
       
       let stationeryTotal = 0;
       if (s.stationery && s.stationery.length > 0) {
@@ -742,7 +765,7 @@
       if (dueAmount < 0) dueAmount = 0;
 
       return {
-        passedMonths,
+        durationText: calc.durationText,
         tuitionTotal,
         stationeryTotal,
         grandTotalCost,
@@ -757,14 +780,26 @@
       const container = document.getElementById('studentListContainer');
       container.innerHTML = '';
 
+      if (currentTab === null && currentFeeFilter === null) {
+        container.innerHTML = `<p style="text-align:center; color:#666; padding:30px; font-weight:bold; background:#fff; border-radius:8px; border:1px dashed #ccc;">👆 જોવા માટે ઉપરના કોઈ પણ બટન પર ક્લિક કરો.</p>`;
+        
+        document.getElementById('grandTotal').innerText = `₹0`;
+        document.getElementById('grandPaid').innerText = `₹0`;
+        document.getElementById('grandDue').innerText = `₹0`;
+        return;
+      }
+
       const selectedCourseFilter = document.getElementById('courseFilter').value;
-      let filtered = students.filter(s => s.status === currentTab);
+      let filtered = students;
+
+      if (currentTab !== null) {
+        filtered = filtered.filter(s => s.status === currentTab);
+      }
 
       if (selectedCourseFilter !== "ALL") {
         filtered = filtered.filter(s => s.course === selectedCourseFilter);
       }
 
-      // બટન ફિલ્ટર મુજબ વિદ્યાર્થીઓ અલગ કરવા
       let displayStudents = filtered.filter(s => {
         let stats = getStudentTotalStats(s);
         if (currentFeeFilter === 'PAID') {
@@ -772,7 +807,7 @@
         } else if (currentFeeFilter === 'DUE') {
           return stats.dueAmount > 0;
         }
-        return true; // ALL
+        return true;
       });
 
       if (displayStudents.length === 0) {
@@ -800,7 +835,6 @@
         });
       }
 
-      // ગ્રાન્ડ ટોટલ સમરી ફક્ત ફિલ્ટર થયેલા જ લિસ્ટની ગણાશે
       let grandTotalSum = 0, grandPaidSum = 0, grandDueSum = 0;
       filtered.forEach(s => {
         let stats = getStudentTotalStats(s);
@@ -922,11 +956,12 @@
       badge.innerText = s.status === 'Active' ? 'ચાલુ છે' : 'બંધ છે';
       badge.style.color = s.status === 'Active' ? 'green' : 'red';
 
-      let mPassed = getPassedMonths(s.admissionDate);
+      let stats = getStudentTotalStats(s);
+
       document.getElementById('infoCourseName').innerText = s.course;
       document.getElementById('infoFeeType').innerText = s.feeType === 'Monthly' ? `માસિક (₹${s.courseFee}/મહિનો)` : `વાર્ષિક (₹${s.courseFee})`;
       document.getElementById('infoAdmDate').innerText = formatDateGuj(s.admissionDate);
-      document.getElementById('infoMonths').innerText = s.feeType === 'Monthly' ? `${mPassed} મહિના (ઓટો ગણેલ)` : 'વાર્ષિક પ્લાન';
+      document.getElementById('infoMonths').innerText = s.feeType === 'Monthly' ? `${stats.durationText} (ઓટો ગણેલ)` : 'વાર્ષિક પ્લાન';
 
       document.getElementById('fDate').valueAsDate = new Date();
       updateDayName();
