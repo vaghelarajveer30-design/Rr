@@ -30,14 +30,16 @@
     .filter-box { background: #e8f0fe; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #1a73e8; }
     .filter-box label { font-size: 13px; font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; }
 
-    /* ફી સરવૈયા બોક્ષ */
+    /* ફી સરવૈયા બોક્ષ (બટન સ્ટાઇલ) */
     .fee-3boxes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; margin-bottom: 12px; }
-    .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
+    .fee-box:active { transform: scale(0.96); }
     .fee-box-total { background: #1a73e8; }
     .fee-box-paid { background: #27ae60; }
     .fee-box-due { background: #d32f2f; }
     .fee-box-title { font-size: 12px; font-weight: bold; opacity: 0.9; }
     .fee-box-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
+    .fee-box.selected-filter { outline: 3px solid #ffeb3b; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 
     .grand-summary { background: #34a853; color: white; border-radius: 10px; padding: 15px; margin-top: 15px; }
 
@@ -124,19 +126,20 @@
         <!-- વિદ્યાર્થીઓનું લિસ્ટ -->
         <div id="studentListContainer"></div>
 
-        <!-- બધા વિદ્યાર્થીઓનું કુલ સરવૈયું -->
+        <!-- બધા વિદ્યાર્થીઓનું કુલ સરવૈયું અને ક્લિકેબલ ફિલ્ટર્સ -->
         <div class="grand-summary">
           <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
+          <p style="text-align: center; font-size: 11px; margin-top: 2px; opacity: 0.9;">(નીચેના બટન પર ક્લિક કરીને ફિલ્ટર કરો)</p>
           <div class="fee-3boxes-grid" style="margin-bottom:0;">
-            <div class="fee-box fee-box-total">
+            <div class="fee-box fee-box-total" id="btnFilterAll" onclick="setFeeFilter('ALL')">
               <div class="fee-box-title">કુલ ગણેલ ફી</div>
               <div class="fee-box-value" id="grandTotal">₹0</div>
             </div>
-            <div class="fee-box fee-box-paid">
+            <div class="fee-box fee-box-paid" id="btnFilterPaid" onclick="setFeeFilter('PAID')">
               <div class="fee-box-title">કુલ જમા ફી</div>
               <div class="fee-box-value" id="grandPaid">₹0</div>
             </div>
-            <div class="fee-box fee-box-due">
+            <div class="fee-box fee-box-due" id="btnFilterDue" onclick="setFeeFilter('DUE')">
               <div class="fee-box-title">કુલ બાકી ફી</div>
               <div class="fee-box-value" id="grandDue">₹0</div>
             </div>
@@ -164,7 +167,7 @@
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
                 <label>મોબાઈલ ૧ (મુખ્ય)</label>
-                <input type="tel" id="sMobile1" class="form-control" required placeholder="903319715">
+                <input type="tel" id="sMobile1" class="form-control" required placeholder="9033197515">
               </div>
               <div class="form-group" style="flex: 1;">
                 <label>રોલ નંબર (Roll No.)</label>
@@ -260,7 +263,7 @@
             🎁 કુલ આપેલ ડિસ્કાઉન્ટ: ₹<span id="infoTotalDiscount">0</span>
           </div>
 
-          <!-- 📖 ખરીદેલ સ્ટેશનરીનું નવું ટેબલ -->
+          <!-- 📖 ખરીદેલ સ્ટેશનરીનું ટેબલ -->
           <div class="stationery-box">
             <h4 style="color: #b78103; margin-bottom:8px;">📖 વર્ષ દરમિયાન ખરીદેલ સ્ટેશનરી / ચોપડીઓ</h4>
             
@@ -445,6 +448,7 @@
 
   <script>
     let currentTab = 'Active';
+    let currentFeeFilter = 'ALL'; // ALL, PAID, DUE
     let currentStudentId = null;
     let selectedPaymentId = null;
 
@@ -465,7 +469,7 @@
         name: "Riyal",
         father: "Ved",
         rollNo: "0",
-        mobile1: "903319715",
+        mobile1: "9033197515",
         std: "ધોરણ ૫",
         course: "નવોદય ક્લાસિસ",
         feeType: "Monthly",
@@ -592,7 +596,6 @@
 
       let totalMonths = (yearDiff * 12) + monthDiff;
 
-      // દિવસોના તફાવત આધારે મહિનો ગણવો
       if (d2.getDate() >= d1.getDate() - 2) {
         totalMonths += 1;
       }
@@ -600,14 +603,12 @@
       return totalMonths <= 0 ? 1 : totalMonths;
     }
 
-    // આજ સુધી દાખલ તારીખથી ચાલતા મહિના ગણો
     function getPassedMonths(admDateStr) {
       if (!admDateStr) return 1;
       let todayStr = new Date().toISOString().split('T')[0];
       return calculateExactMonthsBetween(admDateStr, todayStr);
     }
 
-    // પહોંચ બનાવતી વખતે તારીખથી તારીખ વચ્ચે મહિના અને ફી ઓટોમેટિક ગણવી
     function autoCalculateReceiptFeeByDates() {
       const s = students.find(item => item.id === currentStudentId);
       if (!s) return;
@@ -706,6 +707,16 @@
       renderStudentList();
     }
 
+    function setFeeFilter(filterType) {
+      currentFeeFilter = filterType;
+      
+      document.getElementById('btnFilterAll').classList.toggle('selected-filter', filterType === 'ALL');
+      document.getElementById('btnFilterPaid').classList.toggle('selected-filter', filterType === 'PAID');
+      document.getElementById('btnFilterDue').classList.toggle('selected-filter', filterType === 'DUE');
+      
+      renderStudentList();
+    }
+
     // 🌟 ઓટોમેટિક દરેક વિદ્યાર્થીના ગણેલા સરવૈયાની ગણતરી
     function getStudentTotalStats(s) {
       let passedMonths = getPassedMonths(s.admissionDate);
@@ -753,10 +764,24 @@
         filtered = filtered.filter(s => s.course === selectedCourseFilter);
       }
 
-      if (filtered.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">કોઈ વિદ્યાર્થી મળ્યો નથી.</p>`;
+      // બટન ફિલ્ટર મુજબ વિદ્યાર્થીઓ અલગ કરવા
+      let displayStudents = filtered.filter(s => {
+        let stats = getStudentTotalStats(s);
+        if (currentFeeFilter === 'PAID') {
+          return stats.totalPaid > 0;
+        } else if (currentFeeFilter === 'DUE') {
+          return stats.dueAmount > 0;
+        }
+        return true; // ALL
+      });
+
+      if (displayStudents.length === 0) {
+        let emptyMsg = "કોઈ વિદ્યાર્થી મળ્યો નથી.";
+        if (currentFeeFilter === 'PAID') emptyMsg = "જમા ફી વાળા કોઈ વિદ્યાર્થી નથી.";
+        if (currentFeeFilter === 'DUE') emptyMsg = "બાકી ફી વાળા કોઈ વિદ્યાર્થી નથી.";
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">${emptyMsg}</p>`;
       } else {
-        filtered.forEach(s => {
+        displayStudents.forEach(s => {
           let stats = getStudentTotalStats(s);
 
           container.innerHTML += `
@@ -775,6 +800,7 @@
         });
       }
 
+      // ગ્રાન્ડ ટોટલ સમરી ફક્ત ફિલ્ટર થયેલા જ લિસ્ટની ગણાશે
       let grandTotalSum = 0, grandPaidSum = 0, grandDueSum = 0;
       filtered.forEach(s => {
         let stats = getStudentTotalStats(s);
@@ -792,6 +818,7 @@
       document.getElementById('studentForm').reset();
       document.getElementById('sEditId').value = '';
       document.getElementById('sRollNo').value = '0';
+      document.getElementById('sMobile1').value = '9033197515';
       document.getElementById('formTitle').innerText = 'વિદ્યાર્થીની માહિતી ઉમેરો';
       document.getElementById('sAdmissionDate').value = new Date().toISOString().split('T')[0];
       refreshCourseUI();
@@ -809,7 +836,7 @@
       document.getElementById('sName').value = s.name;
       document.getElementById('sFather').value = s.father;
       document.getElementById('sRollNo').value = s.rollNo || "0";
-      document.getElementById('sMobile1').value = s.mobile1;
+      document.getElementById('sMobile1').value = s.mobile1 || "9033197515";
       document.getElementById('sStd').value = s.std;
       document.getElementById('sCourseSelect').value = s.course;
       document.getElementById('sTotalFee').value = s.courseFee;
@@ -1166,8 +1193,8 @@
         <div style="width:100%; max-width:550px; margin:auto; padding:15px; border:2px dashed #1a73e8; background:#fff; font-family:Arial, sans-serif; color:#000;">
           <div style="text-align:center; margin-bottom:8px;">
             <h2 style="color:#1a73e8; font-size:22px; margin-bottom:2px;">નિર્મળા નવોદય ક્લાસિસ</h2>
-            <p style="font-size:12px; color:#555;">📍 વેલણ અને કોટડા | 📞 903319715</p>
-            <p style="font-size:11px; color:#666;">✉️ vaghelarajveer30@gmail.com</p>
+            <p style="font-size:12px; color:#555;">📍 વેલણ અને કોટડા | 📞 9033197515</p>
+            <p style="font-size:11px; color:#666;">✉️ vaghelarajveer1010@gmail.com</p>
           </div>
           <hr style="border:none; border-top:1px solid #ccc; margin-bottom:10px;">
           
@@ -1293,7 +1320,7 @@
 
       let discText = p.discountAmount > 0 ? `🎁 *ડિસ્કાઉન્ટ:* ₹${p.discountAmount}\n` : '';
 
-      return `🧾 *ફી પહોંચ - નિર્મળા નવોદય ક્લાસિસ*\n----------------------------------\n👤 *વિદ્યાર્થી:* ${s.name}\n👨‍👦 *પપ્પા:* ${s.father}\n🔢 *રોલ નંબર:* ${s.rollNo || 0}\n🗓️ *જમા તારીખ:* ${formatDateGuj(p.date)} (${p.day})\n----------------------------------\n${itemsMsg}----------------------------------\n💰 *કુલ કિંમત:* ₹${totalCost}\n${discText}✅ *આ પહોંચ મુજબ જમા રકમ:* ₹${p.paidAmount}\n💳 *મોડ:* ${p.mode} | *ભરનાર:* ${p.paidBy}\n----------------------------------\n🙏 ધન્યવાદ\n*રવિ વિનોદભાઈ વાઘેલા*\n📞 903319715`;
+      return `🧾 *ફી પહોંચ - નિર્મળા નવોદય ક્લાસિસ*\n----------------------------------\n👤 *વિદ્યાર્થી:* ${s.name}\n👨‍👦 *પપ્પા:* ${s.father}\n🔢 *રોલ નંબર:* ${s.rollNo || 0}\n🗓️ *જમા તારીખ:* ${formatDateGuj(p.date)} (${p.day})\n----------------------------------\n${itemsMsg}----------------------------------\n💰 *કુલ કિંમત:* ₹${totalCost}\n${discText}✅ *આ પહોંચ મુજબ જમા રકમ:* ₹${p.paidAmount}\n💳 *મોડ:* ${p.mode} | *ભરનાર:* ${p.paidBy}\n----------------------------------\n🙏 ધન્યવાદ\n*રવિ વિનોદભાઈ વાઘેલા*\n📞 9033197515`;
     }
 
     function copyReceiptText() {
@@ -1332,7 +1359,7 @@
 
       ctx.fillStyle = "#555555";
       ctx.font = "14px Arial";
-      ctx.fillText("વેલણ અને કોટડા | 📞 903319715", canvas.width / 2, 70);
+      ctx.fillText("વેલણ અને કોટડા | 📞 9033197515", canvas.width / 2, 70);
 
       ctx.strokeStyle = "#ccc";
       ctx.lineWidth = 1;
