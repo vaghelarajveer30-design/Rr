@@ -9,10 +9,6 @@
     body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
     .header { background: #1a73e8; color: white; padding: 15px; font-size: 18px; font-weight: bold; text-align: center; }
     .container { padding: 15px; max-width: 650px; margin: auto; }
-    
-    .tabs { display: flex; margin-bottom: 15px; border-bottom: 2px solid #ccc; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: #e0e0e0; cursor: pointer; font-weight: bold; font-size: 14px; }
-    .tab-btn.active { background: #1a73e8; color: white; }
 
     .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     
@@ -31,7 +27,6 @@
     .filter-box { background: #e8f0fe; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #1a73e8; }
     .filter-box label { font-size: 13px; font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; }
 
-    /* ફી સરવૈયા બોક્ષ (બટન સ્ટાઇલ) */
     .fee-3boxes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; margin-bottom: 12px; }
     .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
     .fee-box:active { transform: scale(0.96); }
@@ -64,12 +59,21 @@
     .page.active { display: block; }
     .back-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #1a73e8; font-weight: bold; margin-bottom: 10px; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     th { background-color: #f2f2f2; font-weight: bold; }
 
-    .info-box { background: #f8f9fa; border: 1px solid #e0e0e0; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; line-height: 1.7; }
-    .stationery-box { background: #fff8e1; border: 1px solid #ffe082; padding: 12px; border-radius: 6px; margin-top: 15px; }
+    .info-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
+    .info-table td { border: none; padding: 6px 0; font-size: 14px; }
+    .info-table td.label-col { width: 45%; color: #333; font-weight: bold; }
+    .info-table td.val-col { width: 55%; color: #444; }
+
+    .status-badge-green { background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .status-badge-red { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+
+    .due-banner { background: #fce8e6; color: #d32f2f; text-align: center; font-weight: bold; padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 18px; }
+
+    .stationery-box { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 15px; }
 
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
@@ -102,11 +106,11 @@
         </div>
 
         <div class="status-counter-grid">
-          <div class="counter-box counter-active" onclick="switchTab('Active')">
+          <div class="counter-box counter-active" onclick="switchStatusTab('Active')">
             🟢 એક્ટિવ વિદ્યાર્થી
             <div class="counter-num" id="totalActiveCount">0</div>
           </div>
-          <div class="counter-box counter-inactive" onclick="switchTab('Inactive')">
+          <div class="counter-box counter-inactive" onclick="switchStatusTab('Inactive')">
             🔴 ઇન-એક્ટિવ વિદ્યાર્થી
             <div class="counter-num" id="totalInactiveCount">0</div>
           </div>
@@ -119,15 +123,13 @@
           </select>
         </div>
 
-        <div class="tabs">
-          <button class="tab-btn" id="tabActiveBtn" onclick="switchTab('Active')">Active (ચાલુ)</button>
-          <button class="tab-btn" id="tabInactiveBtn" onclick="switchTab('Inactive')">Inactive (બંધ)</button>
-        </div>
-
         <!-- વિદ્યાર્થીઓનું લિસ્ટ -->
         <div id="studentListContainer"></div>
 
-        <!-- બધા વિદ્યાર્થીઓનું કુલ સરવૈયું અને ક્લિકેબલ ફિલ્ટર્સ -->
+        <!-- સ્ટેશનરી રિપોર્ટ બટન -->
+        <button class="btn" style="background:#ffb300; color:#333; font-size:15px; margin-bottom:15px;" onclick="showPage('stationeryReportPage')">📖 વિદ્યાર્થીઓ દ્વારા લેવાયેલ સ્ટેશનરી રિપોર્ટ</button>
+
+        <!-- બધા વિદ્યાર્થીઓનું કુલ સરવૈયું -->
         <div class="grand-summary">
           <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
           <p style="text-align: center; font-size: 11px; margin-top: 2px; opacity: 0.9;">(નીચેના બટન પર ક્લિક કરીને ફિલ્ટર કરો)</p>
@@ -150,6 +152,20 @@
         <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
       </div>
 
+      <!-- PAGE: STATIONERY REPORT PAGE -->
+      <div id="stationeryReportPage" class="page">
+        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
+        <div class="card" style="border-left: 4px solid #ffb300;">
+          <h3 style="color:#b78103; margin-bottom:10px;">📖 વિદ્યાર્થીઓ દ્વારા લેવાયેલ સ્ટેશનરી ની સંપૂર્ણ વિગત</h3>
+          
+          <div id="stationeryReportContainer"></div>
+          
+          <div style="background:#fff8e1; border:1px solid #ffe082; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
+            <h4 style="color:#b78103;">કુલ સ્ટેશનરી ના કુલ રકમ: ₹<span id="grandStationeryTotal">0</span></h4>
+          </div>
+        </div>
+      </div>
+
       <!-- PAGE 2: ADD / EDIT STUDENT -->
       <div id="addStudentPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
@@ -159,27 +175,17 @@
             <input type="hidden" id="sEditId">
             <div class="form-group">
               <label>વિદ્યાર્થીનું નામ</label>
-              <input type="text" id="sName" class="form-control" required placeholder="દા.ત. Riyal">
+              <input type="text" id="sName" class="form-control" required placeholder="દા.ત. Ravi vinodbhai Vaghela">
             </div>
             <div class="form-group">
-              <label>પપ્પાનું નામ</label>
-              <input type="text" id="sFather" class="form-control" required placeholder="દા.ત. Ved">
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>મોબાઈલ ૧ (મુખ્ય)</label>
-                <input type="tel" id="sMobile1" class="form-control" required placeholder="9033197515">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>રોલ નંબર (Roll No.)</label>
-                <input type="number" id="sRollNo" class="form-control" value="0">
-              </div>
+              <label>મોબાઈલ ૧ (મુખ્ય)</label>
+              <input type="tel" id="sMobile1" class="form-control" required placeholder="9033197515">
             </div>
 
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
                 <label>ધોરણ (Standard)</label>
-                <input type="text" id="sStd" class="form-control" required placeholder="દા.ત. ધોરણ ૫">
+                <input type="text" id="sStd" class="form-control" required placeholder="દા.ત. 6">
               </div>
               <div class="form-group" style="flex: 1;">
                 <label>કોર્સ પસંદ કરો</label>
@@ -201,7 +207,7 @@
 
             <div class="form-group">
               <label id="feeLabel">નક્કી કરેલ માસિક ફી (₹/મહિનો)</label>
-              <input type="number" id="sTotalFee" class="form-control" required placeholder="1000">
+              <input type="number" id="sTotalFee" class="form-control" required placeholder="350">
             </div>
 
             <div style="display: flex; gap: 10px;">
@@ -211,7 +217,7 @@
               </div>
               <div class="form-group" style="flex: 1;">
                 <label>જન્મ તારીખ</label>
-                <input type="date" id="sDob" class="form-control" required>
+                <input type="date" id="sDob" class="form-control">
               </div>
             </div>
             <div class="form-group">
@@ -233,17 +239,36 @@
 
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 id="viewName"></h3>
+            <h2 id="viewName" style="font-size: 20px; font-weight: bold; color: #222;"></h2>
             <span id="viewStatusBadge"></span>
           </div>
-          <p style="color: #666; font-size: 13px; margin-top:4px;" id="viewSubDetails"></p>
           
-          <div class="info-box">
-            <b>📚 કોર્સનું નામ:</b> <span id="infoCourseName" style="color:#1a73e8; font-weight:bold;"></span><br>
-            <b>📌 ફી નો પ્રકાર:</b> <span id="infoFeeType"></span><br>
-            <b>🗓️ દાખલ તારીખ:</b> <span id="infoAdmDate"></span><br>
-            <b>⌛ ચાલુ સમયગાળો:</b> <span id="infoMonths" style="color:#d32f2f; font-weight:bold;"></span>
-          </div>
+          <table class="info-table">
+            <tr>
+              <td class="label-col">મોબાઈલ નં:</td>
+              <td class="val-col" id="viewMobile"></td>
+            </tr>
+            <tr>
+              <td class="label-col">કોર્સનું નામ:</td>
+              <td class="val-col" id="infoCourseName"></td>
+            </tr>
+            <tr>
+              <td class="label-col">ફી નો પ્રકાર:</td>
+              <td class="val-col" id="infoFeeType"></td>
+            </tr>
+            <tr>
+              <td class="label-col">દાખલ તારીખ:</td>
+              <td class="val-col" id="infoAdmDate"></td>
+            </tr>
+            <tr>
+              <td class="label-col">ચાલુ સમયગાળો:</td>
+              <td class="val-col" id="infoDurationText"></td>
+            </tr>
+            <tr>
+              <td class="label-col">મહિનાઓ:</td>
+              <td class="val-col" id="infoMonthList"></td>
+            </tr>
+          </table>
 
           <!-- ✨ વિદ્યાર્થીની ઓટોમેટિક કેલ્ક્યુલેટ ફી બોક્ષ ✨ -->
           <div class="fee-3boxes-grid">
@@ -260,27 +285,27 @@
               <div class="fee-box-value" id="infoTotalDue">₹0</div>
             </div>
           </div>
-          <div style="text-align:right; font-size:12px; color:#e67e22; font-weight:bold; margin-top:-5px;">
+          <div style="text-align:right; font-size:12px; color:#e67e22; font-weight:bold; margin-top:-5px; margin-bottom: 10px;">
             🎁 કુલ આપેલ ડિસ્કાઉન્ટ: ₹<span id="infoTotalDiscount">0</span>
           </div>
 
           <!-- 📖 ખરીદેલ સ્ટેશનરીનું ટેબલ -->
           <div class="stationery-box">
-            <h4 style="color: #b78103; margin-bottom:8px;">📖 વર્ષ દરમિયાન ખરીદેલ સ્ટેશનરી / ચોપડીઓ</h4>
+            <h4 style="color: #333; margin-bottom:8px; font-size: 15px;">📖 વર્ષ દરમિયાન ખરીદેલ સ્ટેશનરી / ચોપડીઓ</h4>
             
             <table>
               <thead>
                 <tr>
-                  <th>તારીખ</th>
+                  <th style="text-align:center;">તારીખ</th>
                   <th>વસ્તુ / બુકનું નામ</th>
-                  <th>કિંમત</th>
-                  <th>એક્શન</th>
+                  <th style="text-align:center;">કિંમત</th>
+                  <th style="text-align:center;">એક્શન</th>
                 </tr>
               </thead>
               <tbody id="assignedStationeryTableBody"></tbody>
             </table>
 
-            <div style="border-top:1px dashed #ffe082; padding-top:10px; margin-top:10px;">
+            <div style="border-top:1px dashed #ccc; padding-top:10px; margin-top:10px;">
               <label style="font-weight:bold; font-size:12px; color:#555;">➕ વિદ્યાર્થીને નવી વસ્તુ/ચોપડી આપો:</label>
               <div style="display:flex; gap:8px; margin-top:5px;">
                 <select id="directBookSelect" class="form-control" style="flex:2;"></select>
@@ -289,7 +314,7 @@
             </div>
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:12px; justify-content: space-between; align-items: center;">
+          <div style="display:flex; gap:10px; margin-top:15px; justify-content: space-between; align-items: center;">
             <div style="display:flex; gap:8px;">
               <button class="btn btn-edit" style="font-size:12px; padding:6px 12px; margin:0;" onclick="editCurrentStudent()">✏️ પ્રોફાઇલ સુધારો</button>
               <button class="btn" style="background:#5f6368; font-size:12px; padding:6px 12px; margin:0;" onclick="toggleStudentStatus()">સ્ટેટસ બદલો</button>
@@ -306,10 +331,6 @@
               <div class="form-group" style="flex: 1;">
                 <label>જમા કર્યા તારીખ</label>
                 <input type="date" id="fDate" class="form-control" required onchange="updateDayName()">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>વાર</label>
-                <input type="text" id="fDay" class="form-control" readonly style="background: #eee;">
               </div>
             </div>
 
@@ -351,24 +372,36 @@
               </div>
             </div>
 
-            <div class="info-box" style="background:#fff3e0; border-color:#ffe0b2; margin-bottom:12px;">
+            <div class="info-box" style="background:#fff3e0; border-color:#ffe0b2; margin-bottom:12px; padding: 10px; border-radius: 6px; font-size: 13px;">
               <b>📊 આ પહોંચનો લાઈવ હિસાબ:</b><br>
               • પસંદ કરેલ ફી + બુકની રકમ: <b>₹<span id="lblCalcTotal">0</span></b><br>
               • આપેલ ડિસ્કાઉન્ટ: <b style="color:#e67e22;">₹<span id="lblCalcDiscount">0</span></b><br>
               • વિદ્યાર્થીએ જમા કરાવ્યા: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b>
             </div>
 
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>કોને ફી ભરી?</label>
-                <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. Ved" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>પેમેન્ટ મોડ</label>
-                <select id="fMode" class="form-control">
-                  <option value="Cash">Cash</option>
-                  <option value="Online (UPI)">Online (UPI)</option>
-                </select>
+            <div class="form-group">
+              <label>પેમેન્ટ મોડ</label>
+              <select id="fMode" class="form-control">
+                <option value="Cash">Cash (રોકડા)</option>
+                <option value="Online (UPI)">Online (ઓનલાઇન)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>ફી ભરનાર નું નામ</label>
+              <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. Raj" required>
+            </div>
+            
+            <!-- પહોંચ મોડ: બાકી પોચ / જમા પોચ -->
+            <div class="form-group" style="background:#fff; padding:10px; border-radius:6px; border:1px solid #2980b9;">
+              <label style="font-weight:bold; color:#1a73e8;">🧾 પહોંચ નો પ્રકાર પસંદ કરો:</label>
+              <div class="radio-group" style="margin-top:5px;">
+                <label class="radio-option">
+                  <input type="radio" name="receiptStatusType" value="DUE" checked> 🔴 બાકી પહોંચ (પહેલાં આપવા માટે)
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="receiptStatusType" value="PAID"> 🟢 જમા પહોંચ (રૂપિયા આવ્યા પછી)
+                </label>
               </div>
             </div>
             
@@ -454,47 +487,50 @@
     let selectedPaymentId = null;
 
     let defaultCourses = [
-      { id: 1, name: "નવોદય ક્લાસિસ", fee: 1000 },
-      { id: 2, name: "Gyan Sadhana", fee: 1200 },
+      { id: 1, name: "Gyan Sadhana", fee: 350 },
+      { id: 2, name: "નવોદય ક્લાસિસ", fee: 1000 },
       { id: 3, name: "સામાન્ય ટ્યુશન", fee: 800 }
     ];
 
     let defaultBooks = [
-      { id: 1, name: "નવોદય બુક", price: 300 },
-      { id: 2, name: "નવોદય ગાઇડ", price: 450 }
+      { id: 1, name: "નવોદય ગાઇડ", price: 450 },
+      { id: 2, name: "નવોદય બુક", price: 300 }
     ];
 
     let defaultStudents = [
       {
         id: 1,
-        name: "Riyal",
-        father: "Ved",
-        rollNo: "0",
+        name: "Ravi vinodbhai Vaghela",
         mobile1: "9033197515",
-        std: "ધોરણ ૫",
-        course: "નવોદય ક્લાસિસ",
+        std: "6",
+        course: "Gyan Sadhana",
         feeType: "Monthly",
-        courseFee: 1000,
-        admissionDate: "2026-01-01",
+        courseFee: 350,
+        admissionDate: "2026-04-01",
         dob: "2015-05-15",
         status: "Active",
         stationery: [
-          { id: 101, name: "નવોદય બુક", price: 300, date: "2026-01-05" }
+          { id: 101, name: "નવોદય ગાઇડ", price: 450, date: "2026-08-18" },
+          { id: 102, name: "નવોદય બુક", price: 300, date: "2026-08-18" }
         ],
         payments: [
           { 
             id: 201, 
             receiptNo: "1", 
-            date: "2026-02-01", 
-            day: "રવિવાર", 
-            paidBy: "Ved", 
+            date: "2026-08-18", 
+            day: "મંગળવાર", 
+            paidBy: "Raj", 
             mode: "Cash", 
-            fromDate: "2026-01-01", 
-            toDate: "2026-01-31",
-            feeAmount: 1000,
-            selectedStationery: [{ name: "નવોદય બુક", price: 300 }],
+            fromDate: "2026-04-01", 
+            toDate: "2026-07-31",
+            feeAmount: 1400,
+            selectedStationery: [
+              { name: "નવોદય ગાઇડ", price: 450 },
+              { name: "નવોદય બુક", price: 300 }
+            ],
             discountAmount: 0,
-            paidAmount: 1300
+            paidAmount: 1400,
+            receiptType: "DUE"
           }
         ]
       }
@@ -511,6 +547,7 @@
     }
 
     const daysGuj = ['રવિવાર', 'સોમવાર', 'મંગળવાર', 'બુધવાર', 'ગુરુવાર', 'શુક્રવાર', 'શનિવાર'];
+    const monthNamesGuj = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
 
     window.onload = function() {
       refreshCourseUI(); 
@@ -584,22 +621,26 @@
       document.getElementById('totalInactiveCount').innerText = inactiveCount;
     }
 
-    /* 💡 દિવસો અને મહિનાઓ પ્રમાણે ચોક્કસ ફી ગણવાની સિસ્ટમ (Pro-rata Calculation) */
+    function getDayNameGuj(dateStr) {
+      if(!dateStr) return '';
+      let d = new Date(dateStr);
+      if(isNaN(d)) return '';
+      return daysGuj[d.getDay()];
+    }
+
     function calculateExactFeeAndDuration(startDateStr, endDateStr, monthlyFee) {
-      if (!startDateStr || !endDateStr) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ" };
+      if (!startDateStr || !endDateStr) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ", monthNamesText: "", monthListDetails: [] };
       let d1 = new Date(startDateStr);
       let d2 = new Date(endDateStr);
 
-      if (d2 < d1) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ" };
+      if (d2 < d1) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ", monthNamesText: "", monthListDetails: [] };
 
-      // કૂલ દિવસોની ગણતરી (દાખલ તારીખથી આજ સુધી)
       let diffTime = Math.abs(d2 - d1);
-      let totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // દાખલ નો પ્રથમ દિવસ ગણીને
+      let totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
       let months = Math.floor(totalDays / 30);
       let remainingDays = totalDays % 30;
 
-      // ૧ દિવસની ફી (૩૦ દિવસના હિસાબે)
       let dailyFee = monthlyFee / 30;
       let calculatedFee = Math.round((months * monthlyFee) + (remainingDays * dailyFee));
 
@@ -612,12 +653,33 @@
         durationText = `${remainingDays} દિવસ`;
       }
 
+      let startM = d1.getMonth();
+      let startY = d1.getFullYear();
+      let endM = d2.getMonth();
+      let endY = d2.getFullYear();
+
+      let monthList = [];
+      let monthListDetails = [];
+      let cur = new Date(startY, startM, 1);
+      let limit = new Date(endY, endM, 1);
+
+      while (cur <= limit) {
+        let mName = monthNamesGuj[cur.getMonth()];
+        monthList.push(mName);
+        monthListDetails.push({ name: mName, fee: monthlyFee });
+        cur.setMonth(cur.getMonth() + 1);
+      }
+
+      let monthNamesText = monthList.join(", ");
+
       return {
         months,
         days: remainingDays,
         totalDays,
         totalFee: calculatedFee,
-        durationText
+        durationText,
+        monthNamesText,
+        monthListDetails
       };
     }
 
@@ -630,7 +692,12 @@
 
       let calc = calculateExactFeeAndDuration(fromD, toD, s.courseFee || 0);
       
-      document.getElementById('lblCalculatedMonths').innerText = calc.durationText;
+      let durationDisplay = calc.durationText;
+      if(calc.monthNamesText) {
+        durationDisplay += ` (${calc.monthNamesText})`;
+      }
+
+      document.getElementById('lblCalculatedMonths').innerText = durationDisplay;
 
       let calculatedFee = 0;
       if (s.feeType === 'Monthly') {
@@ -711,25 +778,22 @@
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
+      if(pageId === 'stationeryReportPage') {
+        renderStationeryReport();
+      }
     }
 
-    function switchTab(tab) {
+    function switchStatusTab(tab) {
       currentTab = tab;
       currentFeeFilter = null;
       document.getElementById('btnFilterAll').classList.remove('selected-filter');
       document.getElementById('btnFilterPaid').classList.remove('selected-filter');
       document.getElementById('btnFilterDue').classList.remove('selected-filter');
-
-      document.getElementById('tabActiveBtn').classList.toggle('active', tab === 'Active');
-      document.getElementById('tabInactiveBtn').classList.toggle('active', tab === 'Inactive');
       renderStudentList();
     }
 
     function setFeeFilter(filterType) {
       currentFeeFilter = filterType;
-      currentTab = null;
-      document.getElementById('tabActiveBtn').classList.remove('active');
-      document.getElementById('tabInactiveBtn').classList.remove('active');
       
       document.getElementById('btnFilterAll').classList.toggle('selected-filter', filterType === 'ALL');
       document.getElementById('btnFilterPaid').classList.toggle('selected-filter', filterType === 'PAID');
@@ -738,7 +802,6 @@
       renderStudentList();
     }
 
-    // 🌟 દિવસ અને મહિના પ્રમાણે ગણેલા ઓટો સરવૈયાની ગણતરી
     function getStudentTotalStats(s) {
       let todayStr = new Date().toISOString().split('T')[0];
       let calc = calculateExactFeeAndDuration(s.admissionDate, todayStr, s.courseFee);
@@ -766,6 +829,7 @@
 
       return {
         durationText: calc.durationText,
+        monthNamesText: calc.monthNamesText,
         tuitionTotal,
         stationeryTotal,
         grandTotalCost,
@@ -780,21 +844,13 @@
       const container = document.getElementById('studentListContainer');
       container.innerHTML = '';
 
-      if (currentTab === null && currentFeeFilter === null) {
-        container.innerHTML = `<p style="text-align:center; color:#666; padding:30px; font-weight:bold; background:#fff; border-radius:8px; border:1px dashed #ccc;">👆 જોવા માટે ઉપરના કોઈ પણ બટન પર ક્લિક કરો.</p>`;
-        
-        document.getElementById('grandTotal').innerText = `₹0`;
-        document.getElementById('grandPaid').innerText = `₹0`;
-        document.getElementById('grandDue').innerText = `₹0`;
+      if (currentTab === null) {
+        container.innerHTML = `<p style="text-align:center; color:#1a73e8; padding:20px; font-weight:bold;">કૃપા કરીને ઉપર દર્શાવેલ "🟢 એક્ટિવ વિદ્યાર્થી" અથવા "🔴 ઇન-એક્ટિવ વિદ્યાર્થી" બટન પર ક્લિક કરો.</p>`;
         return;
       }
 
       const selectedCourseFilter = document.getElementById('courseFilter').value;
-      let filtered = students;
-
-      if (currentTab !== null) {
-        filtered = filtered.filter(s => s.status === currentTab);
-      }
+      let filtered = students.filter(s => s.status === currentTab);
 
       if (selectedCourseFilter !== "ALL") {
         filtered = filtered.filter(s => s.course === selectedCourseFilter);
@@ -822,7 +878,7 @@
           container.innerHTML += `
             <div class="student-item" onclick="openStudentDetail(${s.id})">
               <div class="student-main-header">
-                <span class="student-name-text">👤 ${s.name} <small style="font-weight:normal; color:#666;">(${s.father})</small></span>
+                <span class="student-name-text">👤 ${s.name}</span>
                 <span style="font-size:12px; font-weight:bold; background:#e8f0fe; color:#1a73e8; padding:2px 8px; border-radius:4px;">${s.course}</span>
               </div>
               <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:6px; background:#f8f9fa; padding:6px; border-radius:4px;">
@@ -848,10 +904,66 @@
       document.getElementById('grandDue').innerText = `₹${grandDueSum}`;
     }
 
+    function renderStationeryReport() {
+      const container = document.getElementById('stationeryReportContainer');
+      container.innerHTML = '';
+
+      let grandStationeryTotal = 0;
+
+      students.forEach(s => {
+        if (s.stationery && s.stationery.length > 0) {
+          let studentStTotal = 0;
+          let rows = '';
+
+          s.stationery.forEach(st => {
+            studentStTotal += st.price;
+            grandStationeryTotal += st.price;
+            rows += `
+              <tr>
+                <td>${formatDateGuj(st.date)}</td>
+                <td>📖 <b>${st.name}</b></td>
+                <td style="color:#d32f2f; font-weight:bold;">₹${st.price}</td>
+              </tr>
+            `;
+          });
+
+          container.innerHTML += `
+            <div style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px; margin-bottom:15px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <h4 style="color:#1a73e8;">👤 ${s.name} - ${s.course}</h4>
+                <span style="font-weight:bold; color:#b78103;">કુલ: ₹${studentStTotal}</span>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>તારીખ</th>
+                    <th>વસ્તુ / બુકનું નામ</th>
+                    <th>કિંમત</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+              <div style="margin-top:8px; font-weight:bold; color:#555; text-align:right;">
+                આ વિધાર્થી દ્વારા લેવાયેલ કુલ સ્ટેશનરી: ₹${studentStTotal}
+              </div>
+            </div>
+            <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
+          `;
+        }
+      });
+
+      if (container.innerHTML === '') {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">કોઈ પણ વિદ્યાર્થી દ્વારા સ્ટેશનરી લેવામાં આવેલ નથી.</p>`;
+      }
+
+      document.getElementById('grandStationeryTotal').innerText = grandStationeryTotal;
+    }
+
     function showAddStudentForm() {
       document.getElementById('studentForm').reset();
       document.getElementById('sEditId').value = '';
-      document.getElementById('sRollNo').value = '0';
       document.getElementById('sMobile1').value = '9033197515';
       document.getElementById('formTitle').innerText = 'વિદ્યાર્થીની માહિતી ઉમેરો';
       document.getElementById('sAdmissionDate').value = new Date().toISOString().split('T')[0];
@@ -868,8 +980,6 @@
       document.getElementById('formTitle').innerText = 'વિદ્યાર્થીની માહિતી સુધારો';
       document.getElementById('sEditId').value = s.id;
       document.getElementById('sName').value = s.name;
-      document.getElementById('sFather').value = s.father;
-      document.getElementById('sRollNo').value = s.rollNo || "0";
       document.getElementById('sMobile1').value = s.mobile1 || "9033197515";
       document.getElementById('sStd').value = s.std;
       document.getElementById('sCourseSelect').value = s.course;
@@ -891,8 +1001,6 @@
         const s = students.find(item => item.id == editId);
         if(s) {
           s.name = document.getElementById('sName').value;
-          s.father = document.getElementById('sFather').value;
-          s.rollNo = document.getElementById('sRollNo').value;
           s.mobile1 = document.getElementById('sMobile1').value;
           s.std = document.getElementById('sStd').value;
           s.course = selectedCourse;
@@ -909,8 +1017,6 @@
         const newStudent = {
           id: Date.now(),
           name: document.getElementById('sName').value,
-          father: document.getElementById('sFather').value,
-          rollNo: document.getElementById('sRollNo').value || "0",
           mobile1: document.getElementById('sMobile1').value,
           std: document.getElementById('sStd').value,
           course: selectedCourse,
@@ -950,18 +1056,20 @@
       if (!s) return;
 
       document.getElementById('viewName').innerText = s.name;
-      document.getElementById('viewSubDetails').innerText = `પપ્પા: ${s.father} | Roll No: ${s.rollNo || '0'} | મોબા: ${s.mobile1}`;
+      document.getElementById('viewMobile').innerText = s.mobile1;
       
       const badge = document.getElementById('viewStatusBadge');
       badge.innerText = s.status === 'Active' ? 'ચાલુ છે' : 'બંધ છે';
-      badge.style.color = s.status === 'Active' ? 'green' : 'red';
+      badge.className = s.status === 'Active' ? 'status-badge-green' : 'status-badge-red';
 
       let stats = getStudentTotalStats(s);
 
       document.getElementById('infoCourseName').innerText = s.course;
       document.getElementById('infoFeeType').innerText = s.feeType === 'Monthly' ? `માસિક (₹${s.courseFee}/મહિનો)` : `વાર્ષિક (₹${s.courseFee})`;
       document.getElementById('infoAdmDate').innerText = formatDateGuj(s.admissionDate);
-      document.getElementById('infoMonths').innerText = s.feeType === 'Monthly' ? `${stats.durationText} (ઓટો ગણેલ)` : 'વાર્ષિક પ્લાન';
+      
+      document.getElementById('infoDurationText').innerText = s.feeType === 'Monthly' ? `${stats.durationText} (ઓટો ગણેલ)` : 'વાર્ષિક પ્લાન';
+      document.getElementById('infoMonthList').innerText = stats.monthNamesText || '-';
 
       document.getElementById('fDate').valueAsDate = new Date();
       updateDayName();
@@ -1030,9 +1138,9 @@
         s.stationery.forEach(st => {
           tbody.innerHTML += `
             <tr>
-              <td>${formatDateGuj(st.date)}</td>
-              <td><b>📖 ${st.name}</b></td>
-              <td style="color:#d32f2f; font-weight:bold;">₹${st.price}</td>
+              <td style="text-align:center;">${formatDateGuj(st.date)}</td>
+              <td><b>${st.name}</b></td>
+              <td style="color:#d32f2f; font-weight:bold; text-align:center;">₹${st.price}</td>
               <td style="text-align:center;"><button class="btn-danger" onclick="removeStationeryItem(${st.id})">❌</button></td>
             </tr>
           `;
@@ -1082,7 +1190,6 @@
       const dateVal = document.getElementById('fDate').value;
       if (dateVal) {
         const d = new Date(dateVal);
-        document.getElementById('fDay').value = daysGuj[d.getDay()];
       }
     }
 
@@ -1104,6 +1211,7 @@
       const feeAmt = parseFloat(document.getElementById('fFeeAmount').value) || 0;
       const paidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
       const discAmt = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
+      const receiptType = document.querySelector('input[name="receiptStatusType"]:checked').value;
 
       let chosenStationery = [];
       const checkedBoxes = document.querySelectorAll('.st-pay-check:checked');
@@ -1118,11 +1226,14 @@
       const rNo = (s.payments.length + 1).toString();
       let newPId = Date.now();
 
+      let payDate = document.getElementById('fDate').value;
+      let payDayName = getDayNameGuj(payDate);
+
       s.payments.push({
         id: newPId,
         receiptNo: rNo,
-        date: document.getElementById('fDate').value,
-        day: document.getElementById('fDay').value,
+        date: payDate,
+        day: payDayName,
         paidBy: document.getElementById('fPaidBy').value,
         mode: document.getElementById('fMode').value,
         fromDate: document.getElementById('fFromDate').value,
@@ -1130,7 +1241,8 @@
         feeAmount: feeAmt,
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
-        paidAmount: paidAmt
+        paidAmount: paidAmt,
+        receiptType: receiptType
       });
 
       selectedPaymentId = newPId;
@@ -1182,37 +1294,44 @@
 
       let rNo = p.receiptNo || (targetPaymentIndex + 1).toString();
       let dateFormatted = formatDateGuj(p.date);
-      let dateRangeText = (p.fromDate && p.toDate) 
-        ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}` 
-        : `ચાલુ સમયગાળાની`;
+      let dayName = p.day || getDayNameGuj(p.date);
 
-      let rowsHTML = "";
-      let totalItemsCost = 0;
+      let calc = calculateExactFeeAndDuration(p.fromDate, p.toDate, s.courseFee || 0);
 
-      if (p.feeAmount > 0) {
-        totalItemsCost += p.feeAmount;
-        rowsHTML += `
+      let monthTableRowsHTML = "";
+      if (s.feeType === 'Monthly' && calc.monthListDetails && calc.monthListDetails.length > 0) {
+        calc.monthListDetails.forEach(m => {
+          monthTableRowsHTML += `
+            <tr>
+              <td style="border:1px solid #000; padding:6px; width:65%;">મહિનાનું નામ: ${m.name}</td>
+              <td style="border:1px solid #000; padding:6px; text-align:right; width:35%;">₹${m.fee}</td>
+            </tr>
+          `;
+        });
+      } else {
+        monthTableRowsHTML += `
           <tr>
-            <td style="border:1px solid #000; padding:6px; font-size:13px;">
-              <b>${s.course} ફી</b><br>
-              <small style="color:#1a73e8; font-weight:bold;">🗓️ ફી મુદ્દત: ${dateRangeText}</small>
-            </td>
-            <td style="border:1px solid #000; padding:6px; text-align:right; font-size:13px; font-weight:bold;">₹${p.feeAmount}</td>
+            <td style="border:1px solid #000; padding:6px; width:65%;">ટ્યુશન ફી (ફી ની મુદ્દત): ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}</td>
+            <td style="border:1px solid #000; padding:6px; text-align:right; width:35%;">₹${p.feeAmount || 0}</td>
           </tr>
         `;
       }
 
+      let stationeryRowsHTML = "";
+      let stationeryTotal = 0;
       if (p.selectedStationery && p.selectedStationery.length > 0) {
         p.selectedStationery.forEach(st => {
-          totalItemsCost += st.price;
-          rowsHTML += `
+          stationeryTotal += st.price;
+          stationeryRowsHTML += `
             <tr>
-              <td style="border:1px solid #000; padding:6px; font-size:13px;">📖 <b>${st.name}</b></td>
-              <td style="border:1px solid #000; padding:6px; text-align:right; font-size:13px; font-weight:bold;">₹${st.price}</td>
+              <td style="border:1px solid #000; padding:6px;">સ્ટેશનરી વસ્તુ: ${st.name}</td>
+              <td style="border:1px solid #000; padding:6px; text-align:right;">₹${st.price}</td>
             </tr>
           `;
         });
       }
+
+      let grandTotalCost = (p.feeAmount || 0) + stationeryTotal;
 
       let discountRow = "";
       if (p.discountAmount > 0) {
@@ -1224,53 +1343,81 @@
         `;
       }
 
+      let netPayable = grandTotalCost - (p.discountAmount || 0);
+      let dueFee = netPayable - (p.paidAmount || 0);
+      if (dueFee < 0) dueFee = 0;
+
+      let modeGuj = p.mode === 'Cash' ? 'રોકડા (Cash) / ઓનલાઇન' : 'ઓનલાઇન (Online UPI)';
+
       return `
-        <div style="width:100%; max-width:550px; margin:auto; padding:15px; border:2px dashed #1a73e8; background:#fff; font-family:Arial, sans-serif; color:#000;">
-          <div style="text-align:center; margin-bottom:8px;">
-            <h2 style="color:#1a73e8; font-size:22px; margin-bottom:2px;">નિર્મળા નવોદય ક્લાસિસ</h2>
-            <p style="font-size:12px; color:#555;">📍 વેલણ અને કોટડા | 📞 9033197515</p>
-            <p style="font-size:11px; color:#666;">✉️ vaghelarajveer1010@gmail.com</p>
-          </div>
-          <hr style="border:none; border-top:1px solid #ccc; margin-bottom:10px;">
+        <div style="width:100%; max-width:550px; margin:auto; padding:15px; border:2px solid #000; background:#fff; font-family:Arial, sans-serif; color:#000;">
           
-          <table style="width:100%; margin-bottom:10px; font-size:13px; border:none;">
-            <tr style="border:none;"><td style="padding:2px; border:none;"><b>રસીદ નં:</b> ${rNo}</td><td style="text-align:right; padding:2px; border:none;"><b>તારીખ:</b> ${dateFormatted} (${p.day})</td></tr>
-            <tr style="border:none;"><td style="padding:2px; border:none;"><b>વિદ્યાર્થી:</b> ${s.name}</td><td style="text-align:right; padding:2px; border:none;"><b>રોલ નં:</b> ${s.rollNo || '0'}</td></tr>
-            <tr style="border:none;"><td colspan="2" style="padding:2px; border:none;"><b>પપ્પાનું નામ:</b> ${s.father}</td></tr>
+          <!-- ૧. હેડિંગ સેક્શન -->
+          <div style="text-align:center; margin-bottom:5px;">
+            <h1 style="color:#1a73e8; font-size:24px; font-weight:bold; margin-bottom:2px;">નિર્મળા નવોદય ક્લાસિસ</h1>
+            <h3 style="font-size:16px; color:#333; margin-bottom:4px; font-weight:bold;">ફી પહોંચ</h3>
+          </div>
+          
+          <hr style="border:none; border-top:2px solid #000; margin-bottom:12px;">
+          
+          <!-- ૨. વિધાર્થી નામ તથા તારીખ -->
+          <table style="width:100%; margin-bottom:10px; font-size:14px; border:none;">
+            <tr style="border:none;">
+              <td style="padding:3px 0; border:none;"><b>વિધાર્થીનું નામ:</b> ${s.name}</td>
+              <td style="text-align:right; padding:3px 0; border:none;"><b>તારીખ:</b> ${dateFormatted}</td>
+            </tr>
+            <tr style="border:none;">
+              <td style="padding:3px 0; border:none;" colspan="2"><b>ધોરણ / કોર્સ:</b> ${s.std} - ${s.course}</td>
+            </tr>
           </table>
 
-          <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+          <!-- લાલ રંગનું બેનર બાકી ફી દર્શાવવા -->
+          <div class="due-banner">
+            ફી બાકી: ₹${dueFee}
+          </div>
+
+          <!-- ૩. ફી તથા સ્ટેશનરી ની વિગતવાર ટેબલ -->
+          <table style="width:100%; border-collapse:collapse; margin-top:8px; border:1px solid #000;">
             <thead>
-              <tr style="background:#e8f0fe;">
-                <th style="border:1px solid #000; padding:6px; text-align:left; font-size:13px;">વિગત</th>
-                <th style="border:1px solid #000; padding:6px; text-align:right; font-size:13px; width:120px;">કિંમત</th>
+              <tr style="background-color:#f2f2f2;">
+                <th style="border:1px solid #000; padding:6px; text-align:center;">વિગત / વસ્તુ નું નામ</th>
+                <th style="border:1px solid #000; padding:6px; text-align:right; width:30%;">ફી / કિંમત</th>
               </tr>
             </thead>
             <tbody>
-              ${rowsHTML}
+              ${monthTableRowsHTML}
+              ${stationeryRowsHTML}
               <tr>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">કુલ નક્કી કરેલ રકમ:</td>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">₹${totalItemsCost}</td>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">કુલ ફી (સરવાળો):</td>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">₹${grandTotalCost}</td>
               </tr>
               ${discountRow}
-              <tr style="background:#e8f5e9;">
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">આ પહોંચ મુજબ જમા કરેલ રકમ:</td>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#1a73e8; font-size:14px;">₹${p.paidAmount}</td>
+              <tr>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#27ae60;">જમા ફી:</td>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#27ae60;">₹${p.paidAmount}</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#d32f2f;">બાકી ફી:</td>
+                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#d32f2f;">₹${dueFee}</td>
               </tr>
             </tbody>
           </table>
 
-          <div style="margin-top:10px; font-size:12px;">
-            <p><b>પેમેન્ટ મોડ:</b> ${p.mode} | <b>ભરનાર:</b> ${p.paidBy}</p>
+          <!-- ૪. કેવી રીતે ફી ભરી અને ફી ભરનાર નું નામ -->
+          <div style="margin-top:12px; font-size:13px; line-height:1.6;">
+            <p><b>ફી ભરવાનો પ્રકાર:</b> ${modeGuj}</p>
+            <p><b>ફી ભરનારનું નામ:</b> ${p.paidBy}</p>
           </div>
 
-          <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:flex-end;">
-            <div style="font-size:11px; color:#777;">* આ કોમ્પ્યુટર જનરેટેડ પહોંચ છે.</div>
-            <div style="text-align:center; min-width:140px;">
-              <p style="font-size:13px; font-weight:bold;">રવિ વિનોદભાઈ વાઘેલા</p>
-              <p style="font-size:11px; color:#555; margin-top:2px;">(Authorised Sign)</p>
+          <!-- ૫. સહી સેક્શન -->
+          <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-end;">
+            <div style="font-size:11px; color:#555;">* કમ્પ્યુટર જનરેટેડ પહોંચ</div>
+            <div style="text-align:center;">
+              <p style="font-size:13px; font-weight:bold; color:#000;">વાઘેલા રવિ વિનોદભાઈ (9033197515)</p>
+              <p style="font-size:11px; color:#555; margin-top:2px;">(સહી / નિર્મળા નવોદય ક્લાસિસ)</p>
             </div>
           </div>
+
         </div>
       `;
     }
@@ -1301,7 +1448,9 @@
       } else {
         s.payments.forEach((p, idx) => {
           let isSelected = p.id === selectedPaymentId;
-          let rangeStr = (p.fromDate && p.toDate) ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}` : '-';
+          let calc = calculateExactFeeAndDuration(p.fromDate, p.toDate, s.courseFee);
+          let mNameStr = calc.monthNamesText ? ` (${calc.monthNamesText})` : '';
+          let rangeStr = (p.fromDate && p.toDate) ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}${mNameStr}` : '-';
           
           let summaryLabel = p.feeAmount > 0 ? `ટ્યુશન ફી (${rangeStr})` : '';
           if (p.selectedStationery && p.selectedStationery.length > 0) {
@@ -1309,9 +1458,11 @@
             summaryLabel += summaryLabel ? ` + ${stNames}` : stNames;
           }
 
+          let badgeTxt = p.receiptType === 'DUE' ? '🔴 બાકી' : '🟢 જમા';
+
           tbody.innerHTML += `
             <tr style="${isSelected ? 'background:#e8f0fe;' : ''}">
-              <td><b>${formatDateGuj(p.date)}</b><br><small>(${p.day})</small></td>
+              <td><b>${formatDateGuj(p.date)}</b> (${p.day || getDayNameGuj(p.date)})<br><small style="color:#666;">${badgeTxt}</small></td>
               <td><small style="color:#1a73e8; font-weight:bold;">${summaryLabel}</small></td>
               <td style="color:green; font-weight:bold;">₹${p.paidAmount}</td>
               <td style="white-space:nowrap;">
@@ -1337,25 +1488,39 @@
       if(!s.payments || s.payments.length === 0) return "";
       
       let p = s.payments[idx];
-      let dateRangeText = (p.fromDate && p.toDate) ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}` : `ચાલુ સમયગાળાની`;
+      let totalFeeOnly = p.feeAmount || 0;
+      let totalStationeryOnly = 0;
 
-      let itemsMsg = "";
-      let totalCost = 0;
-
-      if (p.feeAmount > 0) {
-        totalCost += p.feeAmount;
-        itemsMsg += `• ${s.course} ફી : ₹${p.feeAmount}\n  (🗓️ ફી મુદ્દત: ${dateRangeText})\n`;
-      }
       if (p.selectedStationery && p.selectedStationery.length > 0) {
         p.selectedStationery.forEach(st => {
-          totalCost += st.price;
-          itemsMsg += `• 📖 ${st.name} : ₹${st.price}\n`;
+          totalStationeryOnly += st.price;
         });
       }
 
+      let totalCost = totalFeeOnly + totalStationeryOnly;
       let discText = p.discountAmount > 0 ? `🎁 *ડિસ્કાઉન્ટ:* ₹${p.discountAmount}\n` : '';
+      let netPayable = totalCost - p.discountAmount;
+      let dueFee = netPayable - p.paidAmount;
+      if (dueFee < 0) dueFee = 0;
 
-      return `🧾 *ફી પહોંચ - નિર્મળા નવોદય ક્લાસિસ*\n----------------------------------\n👤 *વિદ્યાર્થી:* ${s.name}\n👨‍👦 *પપ્પા:* ${s.father}\n🔢 *રોલ નંબર:* ${s.rollNo || 0}\n🗓️ *જમા તારીખ:* ${formatDateGuj(p.date)} (${p.day})\n----------------------------------\n${itemsMsg}----------------------------------\n💰 *કુલ કિંમત:* ₹${totalCost}\n${discText}✅ *આ પહોંચ મુજબ જમા રકમ:* ₹${p.paidAmount}\n💳 *મોડ:* ${p.mode} | *ભરનાર:* ${p.paidBy}\n----------------------------------\n🙏 ધન્યવાદ\n*રવિ વિનોદભાઈ વાઘેલા*\n📞 9033197515`;
+      let rTypeTitle = p.receiptType === 'DUE' ? '🔴 બાકી પહોંચ' : '🟢 જમા પહોંચ';
+      let dayName = p.day || getDayNameGuj(p.date);
+      let modeGuj = p.mode === 'Cash' ? 'રોકડા' : 'ઓનલાઇન';
+
+      return `🧾 *નિર્મળા નવોદય ક્લાસિસ*
+*ફી પહોંચ* (${rTypeTitle})
+----------------------------------
+👤 *વિધાર્થી નું નામ:* ${s.name}
+🗓️ *તારીખ અને વાર:* ${formatDateGuj(p.date)} (${dayName})
+----------------------------------
+💰 *કુલ ફી:* ₹${totalCost}
+${discText}✅ *જમા ફી:* ₹${p.paidAmount}
+🔴 *બાકી ફી:* ₹${dueFee}
+----------------------------------
+💳 *ફી ભરવાનો પ્રકાર:* ${modeGuj}
+👤 *ફી ભરનાર નું નામ:* ${p.paidBy}
+----------------------------------
+*વાઘેલા રવિ વિનોદભાઈ (9033197515)*`;
     }
 
     function copyReceiptText() {
@@ -1383,7 +1548,7 @@
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.strokeStyle = "#1a73e8";
+      ctx.strokeStyle = "#000000";
       ctx.lineWidth = 3;
       ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
 
@@ -1392,122 +1557,86 @@
       ctx.textAlign = "center";
       ctx.fillText("નિર્મળા નવોદય ક્લાસિસ", canvas.width / 2, 45);
 
-      ctx.fillStyle = "#555555";
-      ctx.font = "14px Arial";
-      ctx.fillText("વેલણ અને કોટડા | 📞 9033197515", canvas.width / 2, 70);
-
-      ctx.strokeStyle = "#ccc";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(20, 85); ctx.lineTo(canvas.width - 20, 85); ctx.stroke();
-
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#000";
-      ctx.font = "15px Arial";
-      ctx.fillText(`રસીદ નં: ${p.receiptNo || (idx + 1)}`, 30, 115);
-      
-      ctx.textAlign = "right";
-      ctx.fillText(`જમા તારીખ: ${formatDateGuj(p.date)} (${p.day})`, canvas.width - 30, 115);
-
-      ctx.textAlign = "left";
+      ctx.fillStyle = "#333333";
       ctx.font = "bold 16px Arial";
-      ctx.fillText(`વિદ્યાર્થી: ${s.name}`, 30, 145);
-      ctx.textAlign = "right";
-      ctx.font = "15px Arial";
-      ctx.fillText(`રોલ નં: ${s.rollNo || 0}`, canvas.width - 30, 145);
+      ctx.fillText("ફી પહોંચ", canvas.width / 2, 70);
+
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(20, 80); ctx.lineTo(canvas.width - 20, 80); ctx.stroke();
 
       ctx.textAlign = "left";
-      ctx.fillText(`પપ્પાનું નામ: ${s.father}`, 30, 175);
-
-      let startY = 205;
-      ctx.fillStyle = "#e8f0fe";
-      ctx.fillRect(30, startY, canvas.width - 60, 30);
-      ctx.strokeStyle = "#000";
-      ctx.strokeRect(30, startY, canvas.width - 60, 30);
-
       ctx.fillStyle = "#000";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("વિગત", 40, startY + 20);
-      ctx.textAlign = "right";
-      ctx.fillText("કિંમત", canvas.width - 40, startY + 20);
+      ctx.font = "14px Arial";
+      ctx.fillText(`વિધાર્થીનું નામ: ${s.name}`, 25, 105);
 
-      let dateRangeText = (p.fromDate && p.toDate) ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}` : `ચાલુ સમયગાળાની`;
-      let rowOffset = 0;
-      let totalItemsCost = 0;
+      ctx.fillText(`તારીખ: ${formatDateGuj(p.date)}`, canvas.width - 150, 105);
 
-      if (p.feeAmount > 0) {
-        totalItemsCost += p.feeAmount;
-        ctx.font = "14px Arial";
-        ctx.strokeRect(30, startY + 30, canvas.width - 60, 45);
-        ctx.textAlign = "left";
-        ctx.fillText(`${s.course} ફી`, 40, startY + 48);
-        ctx.font = "11px Arial";
-        ctx.fillStyle = "#1a73e8";
-        ctx.fillText(`🗓️ ફી મુદ્દત: ${dateRangeText}`, 40, startY + 65);
-
-        ctx.fillStyle = "#000";
-        ctx.font = "14px Arial";
-        ctx.textAlign = "right";
-        ctx.fillText(`₹${p.feeAmount}`, canvas.width - 40, startY + 52);
-        rowOffset += 45;
-      }
+      let startY = 150;
+      let totalFeeOnly = p.feeAmount || 0;
+      let totalStationeryOnly = 0;
 
       if (p.selectedStationery && p.selectedStationery.length > 0) {
         p.selectedStationery.forEach(st => {
-          totalItemsCost += st.price;
-          ctx.strokeRect(30, startY + 30 + rowOffset, canvas.width - 60, 35);
-          ctx.textAlign = "left";
-          ctx.fillStyle = "#000";
-          ctx.font = "14px Arial";
-          ctx.fillText(`📖 ${st.name}`, 40, startY + 52 + rowOffset);
-          ctx.textAlign = "right";
-          ctx.fillText(`₹${st.price}`, canvas.width - 40, startY + 52 + rowOffset);
-          rowOffset += 35;
+          totalStationeryOnly += st.price;
         });
       }
 
-      ctx.strokeRect(30, startY + 30 + rowOffset, canvas.width - 60, 35);
+      let totalItemsCost = totalFeeOnly + totalStationeryOnly;
+      let rowOffset = 0;
+
+      ctx.strokeRect(25, startY, canvas.width - 50, 32);
       ctx.textAlign = "left";
       ctx.font = "bold 14px Arial";
-      ctx.fillText("કુલ નક્કી કરેલ રકમ:", 40, startY + 52 + rowOffset);
+      ctx.fillText("કુલ ફી (સરવાળો):", 35, startY + 20);
       ctx.textAlign = "right";
-      ctx.fillText(`₹${totalItemsCost}`, canvas.width - 40, startY + 52 + rowOffset);
-      rowOffset += 35;
+      ctx.fillText(`₹${totalItemsCost}`, canvas.width - 35, startY + 20);
+      rowOffset += 32;
 
-      if (p.discountAmount > 0) {
-        ctx.strokeRect(30, startY + 30 + rowOffset, canvas.width - 60, 35);
-        ctx.textAlign = "left";
-        ctx.fillStyle = "#e67e22";
-        ctx.fillText("🎁 આપેલ ડિસ્કાઉન્ટ (-):", 40, startY + 52 + rowOffset);
-        ctx.textAlign = "right";
-        ctx.fillText(`₹${p.discountAmount}`, canvas.width - 40, startY + 52 + rowOffset);
-        rowOffset += 35;
-      }
+      let netPayable = totalItemsCost - p.discountAmount;
+      let dueFee = netPayable - p.paidAmount;
+      if (dueFee < 0) dueFee = 0;
 
       ctx.fillStyle = "#e8f5e9";
-      ctx.fillRect(30, startY + 30 + rowOffset, canvas.width - 60, 35);
+      ctx.fillRect(25, startY + rowOffset, canvas.width - 50, 32);
       ctx.strokeStyle = "#000";
-      ctx.strokeRect(30, startY + 30 + rowOffset, canvas.width - 60, 35);
+      ctx.strokeRect(25, startY + rowOffset, canvas.width - 50, 32);
       ctx.textAlign = "left";
       ctx.fillStyle = "#000";
-      ctx.font = "bold 15px Arial";
-      ctx.fillText("આ પહોંચ મુજબ જમા કરેલ રકમ:", 40, startY + 52 + rowOffset);
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("જમા ફી:", 35, startY + 20 + rowOffset);
       ctx.textAlign = "right";
-      ctx.fillStyle = "#1a73e8";
-      ctx.fillText(`₹${p.paidAmount}`, canvas.width - 40, startY + 52 + rowOffset);
-      rowOffset += 35;
+      ctx.fillStyle = "#27ae60";
+      ctx.fillText(`₹${p.paidAmount}`, canvas.width - 35, startY + 20 + rowOffset);
+      rowOffset += 32;
 
-      let footerY = startY + 60 + rowOffset;
+      ctx.fillStyle = "#ffebee";
+      ctx.fillRect(25, startY + rowOffset, canvas.width - 50, 32);
+      ctx.strokeStyle = "#000";
+      ctx.strokeRect(25, startY + rowOffset, canvas.width - 50, 32);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("બાકી ફી:", 35, startY + 20 + rowOffset);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#d32f2f";
+      ctx.fillText(`₹${dueFee}`, canvas.width - 35, startY + 20 + rowOffset);
+      rowOffset += 32;
+
+      let footerY = startY + 25 + rowOffset;
       ctx.fillStyle = "#000";
       ctx.font = "13px Arial";
       ctx.textAlign = "left";
-      ctx.fillText(`મોડ: ${p.mode} | ભરનાર: ${p.paidBy}`, 30, footerY);
+      let modeGuj = p.mode === 'Cash' ? 'રોકડા' : 'ઓનલાઇન';
+      ctx.fillText(`ફી ભરવાનો પ્રકાર: ${modeGuj}`, 25, footerY);
+      ctx.fillText(`ફી ભરનાર નું નામ: ${p.paidBy}`, 25, footerY + 22);
 
       ctx.textAlign = "right";
-      ctx.font = "bold 15px Arial";
-      ctx.fillText("રવિ વિનોદભાઈ વાઘેલા", canvas.width - 30, footerY + 25);
-      ctx.font = "12px Arial";
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("વાઘેલા રવિ વિનોદભાઈ (9033197515)", canvas.width - 25, footerY + 22);
+      ctx.font = "11px Arial";
       ctx.fillStyle = "#555";
-      ctx.fillText("(Authorised Sign)", canvas.width - 30, footerY + 42);
+      ctx.fillText("(સહી / નિર્મળા નવોદય ક્લાસિસ)", canvas.width - 25, footerY + 38);
 
       canvas.toBlob(function(blob) {
         const file = new File([blob], `Receipt_${s.name}.jpg`, { type: 'image/jpeg' });
