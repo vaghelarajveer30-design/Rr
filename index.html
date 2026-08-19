@@ -79,10 +79,10 @@
     /* 🎨 કલરફુલ અને આકર્ષક ફી ની પહોંચ ટેબલ ડિઝાઇન 🎨 */
     .receipt-excel-box { width: 100%; max-width: 520px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .receipt-excel-table { width: 100%; border-collapse: collapse; }
-    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 14px; }
+    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
     
     /* આકર્ષક હેડર */
-    .receipt-title { font-size: 22px; font-weight: bold; text-align: center; background: linear-gradient(135deg, #0d47a1, #1a73e8); color: #ffffff !important; padding: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
+    .receipt-title { font-size: 20px; font-weight: bold; text-align: center; background: linear-gradient(135deg, #0d47a1, #1a73e8); color: #ffffff !important; padding: 10px !important; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .sub-header-row { background-color: #f4f8ff; font-weight: bold; }
     .table-head-row { background-color: #e8f0fe; color: #1a73e8; }
@@ -531,8 +531,8 @@
               { name: "Exam ped", price: 120 }
             ],
             discountAmount: 0,
-            paidAmount: 0, // શરૂઆતમાં 0 જેથી બાકી રહે
-            isPaid: false  // બટન પર ક્લિક કર્યા વગર જમા થશે નહીં
+            paidAmount: 0,
+            isPaid: false
           }
         ]
       }
@@ -1168,7 +1168,6 @@
       }
     }
 
-    // 🌟 નવી પહોંચ બનાવવાનું ફંક્શન (હંમેશા બાકી રહેશે)
     function addNewPayment(event) {
       event.preventDefault();
       const s = students.find(item => item.id === currentStudentId);
@@ -1192,8 +1191,6 @@
       let newPId = Date.now();
       let payDate = document.getElementById('fDate').value;
 
-      // 💥 મહત્વનો ફેરફાર: પહોંચ બનતા જ હંમેશા isPaid = false રહેશે અને paidAmount = 0 રહેશે.
-      // જ્યાં સુધી નીચે હિસ્ટ્રીમાંથી "🟢 જમા કરો" બટન ન દબાવો ત્યાં સુધી રકમ જમા થશે નહીં.
       s.payments.push({
         id: newPId,
         receiptNo: rNo,
@@ -1205,7 +1202,7 @@
         feeAmount: feeAmt,
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
-        paidAmount: inputPaidAmt, // જો કોઈએ ફોર્મમાં લખ્યું હોય તોપણ બટન વગર માની લેવામાં આવશે નહીં
+        paidAmount: inputPaidAmt,
         isPaid: false
       });
 
@@ -1218,7 +1215,6 @@
       renderStudentList();
     }
 
-    // 🌟 "🟢 જમા કરો" બટન પર ક્લિક કર્યા પછી જ જમા કરવા માટેનું ફંક્શન
     function markPaymentAsPaid(pId) {
       const s = students.find(item => item.id === currentStudentId);
       if (!s) return;
@@ -1227,7 +1223,6 @@
       if (p) {
         let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
         
-        // જો યુઝરે ફોર્મમાં કઈ રકમ લખી હોય તો તે લેશે નહીંતર પૂરેપૂરી બિલ રકમ જમા ગણશે
         p.paidAmount = p.paidAmount > 0 ? p.paidAmount : totalBill;
         p.isPaid = true;
         
@@ -1265,7 +1260,7 @@
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
 
-    // 🌟 ઈમેજ ફોર્મેટ મુજબ સુધારેલ ફી પહોંચ જનરેટર 🌟
+    /* 🌟 સુધારેલ ફી પહોંચ જનરેટર 🌟 */
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) {
         return `<p style="text-align:center; color:#999; padding:15px;">અત્યાર સુધી કોઈ પહોંચ બનાવેલ નથી.</p>`;
@@ -1299,7 +1294,6 @@
 
       let totalCost = itemRows.reduce((acc, row) => acc + row.amount, 0);
       
-      // પહોંચનું ગણતરી લોજિક: isPaid = true હોય તો જ જમા રકમ ગણાય
       let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : 0;
       let dueAmt = totalCost - paidAmt;
       if(dueAmt < 0) dueAmt = 0;
@@ -1322,15 +1316,20 @@
             <tr>
               <td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td>
             </tr>
-            <!-- 2. STUDENT & DATE -->
+            <!-- 2. STUDENT & DATE (માગણી મુજબ સુધારેલ) -->
             <tr class="sub-header-row">
-              <td colspan="2" class="txt-bold text-blue" style="font-size:15px;">👤 ${s.name}</td>
-              <td class="txt-right txt-bold">તારીખ: ${dateFormatted}</td>
+              <td colspan="3" style="padding: 8px 10px;">
+                <div style="font-size:15px;" class="txt-bold text-blue">👤 વિદ્યાર્થીનું નામ: ${s.name}</div>
+                <div style="margin-top: 4px;" class="txt-bold">📅 જમા તારીખ: <span style="color:#222;">${dateFormatted}</span></div>
+              </td>
             </tr>
-            <!-- 3. STD & COURSE -->
+            <!-- 3. STD, COURSE & DATE RANGE (બીજી લીટી માં વિગત) -->
             <tr class="sub-header-row">
-              <td colspan="2" class="txt-bold">ધોરણ: ${s.std}</td>
-              <td class="txt-right txt-bold">કોર્સ: ${s.course}</td>
+              <td colspan="3" style="padding: 8px 10px;">
+                <span class="txt-bold">ધોરણ: ${s.std}</span> | 
+                <span class="txt-bold">કોર્સ: ${s.course}</span> | 
+                <span class="txt-bold text-blue">સમયગાળો: ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}</span>
+              </td>
             </tr>
             <!-- 4. TABLE HEAD -->
             <tr class="table-head-row">
@@ -1443,8 +1442,9 @@
 *ફી પહોંચ* (${statusTxt})
 ----------------------------------
 👤 *વિધાર્થી નું નામ:* ${s.name}
-🗓️ *તારીખ:* ${formatDateGuj(p.date)}
+🗓️ *જમા તારીખ:* ${formatDateGuj(p.date)}
 📚 *ધોરણ/કોર્સ:* ${s.std} - ${s.course}
+🗓️ *સમયગાળો:* ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}
 ----------------------------------
 💰 *ટોટલ:* ₹${totalCost}
 ✅ *જમા:* ₹${paidAmt}
