@@ -7,7 +7,7 @@
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
-    .header { background: #1a73e8; color: white; padding: 15px; font-size: 18px; font-weight: bold; text-align: center; }
+    .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 15px; font-size: 20px; font-weight: bold; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     .container { padding: 15px; max-width: 650px; margin: auto; }
 
     .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
@@ -19,7 +19,7 @@
     .counter-inactive { background: #e74c3c; }
     .counter-num { font-size: 20px; margin-top: 2px; }
 
-    .student-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; background: #fff; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid #1a73e8; }
+    .student-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; background: #fff; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid #1a73e8; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .student-item:hover { background: #eef5ff; }
     .student-main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .student-name-text { font-size: 16px; font-weight: bold; color: #1a73e8; }
@@ -76,16 +76,23 @@
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
 
-    /* IMAGE BASED RECEIPT TABLE STYLES */
-    .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #000; background: #fff; color: #000; font-family: Arial, sans-serif; }
+    /* 🎨 કલરફુલ અને આકર્ષક ફી ની પહોંચ ટેબલ ડિઝાઇન 🎨 */
+    .receipt-excel-box { width: 100%; max-width: 520px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .receipt-excel-table { width: 100%; border-collapse: collapse; }
-    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #000; padding: 6px 8px; font-size: 14px; }
-    .receipt-title { font-size: 22px; font-weight: bold; text-align: center; font-family: 'Segoe UI', Arial, sans-serif; }
+    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 14px; }
+    
+    /* આકર્ષક હેડર */
+    .receipt-title { font-size: 22px; font-weight: bold; text-align: center; background: linear-gradient(135deg, #0d47a1, #1a73e8); color: #ffffff !important; padding: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .sub-header-row { background-color: #f4f8ff; font-weight: bold; }
+    .table-head-row { background-color: #e8f0fe; color: #1a73e8; }
+    
     .txt-center { text-align: center; }
     .txt-right { text-align: right; }
     .txt-bold { font-weight: bold; }
     .text-red { color: #d32f2f; font-weight: bold; }
     .text-green { color: #27ae60; font-weight: bold; }
+    .text-blue { color: #1a73e8; font-weight: bold; }
 
     #receiptPrintArea { display: none; background: white; padding: 20px; border: 1px solid #ccc; max-width: 600px; margin: auto; }
 
@@ -372,7 +379,7 @@
 
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
-                <label><b>જમા કરાવેલ રકમ (₹)</b> <small style="color:#e74c3c;">(જો બાકી હોય તો 0 રાખો)</small></label>
+                <label><b>જમા કરાવેલ રકમ (₹)</b></label>
                 <input type="number" id="fPaidAmount" class="form-control" required placeholder="0" value="0" oninput="calculateReceiptTotal()">
               </div>
               <div class="form-group" style="flex: 1;">
@@ -402,7 +409,7 @@
               <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. રવિભાઈ" required>
             </div>
             
-            <button type="submit" class="btn" style="background:#2980b9;">🧾 પહોંચ બનાવો (બાકી રહેશે)</button>
+            <button type="submit" class="btn" style="background:#e67e22;">🧾 પહોંચ બનાવો (શરૂઆતમાં બાકી રહેશે)</button>
           </form>
         </div>
 
@@ -475,7 +482,6 @@
   </div>
 
   <div id="receiptPrintArea"></div>
-  <canvas id="hiddenCanvas" style="display:none;"></canvas>
 
   <script>
     let currentTab = null;
@@ -525,8 +531,8 @@
               { name: "Exam ped", price: 120 }
             ],
             discountAmount: 0,
-            paidAmount: 0, // શરૂઆતમાં 0 જેથી બાકી બતાવે
-            isPaid: false  // જ્યાં સુધી બટન ન દબાવો ત્યાં સુધી false
+            paidAmount: 0, // શરૂઆતમાં 0 જેથી બાકી રહે
+            isPaid: false  // બટન પર ક્લિક કર્યા વગર જમા થશે નહીં
           }
         ]
       }
@@ -541,8 +547,6 @@
       localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
     }
-
-    const monthNamesGuj = ["એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર", "જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ"];
 
     window.onload = function() {
       refreshCourseUI(); 
@@ -789,7 +793,8 @@
       if (s.payments && s.payments.length > 0) {
         s.payments.forEach(p => {
           if (p.isPaid) {
-            totalPaid += (p.paidAmount || (p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0):0) - p.discountAmount));
+            let pTotal = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
+            totalPaid += p.paidAmount > 0 ? p.paidAmount : pTotal;
           }
           totalDiscount += p.discountAmount || 0;
         });
@@ -1163,13 +1168,14 @@
       }
     }
 
+    // 🌟 નવી પહોંચ બનાવવાનું ફંક્શન (હંમેશા બાકી રહેશે)
     function addNewPayment(event) {
       event.preventDefault();
       const s = students.find(item => item.id === currentStudentId);
       if (!s) return;
 
       const feeAmt = parseFloat(document.getElementById('fFeeAmount').value) || 0;
-      const paidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
+      const inputPaidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
       const discAmt = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
 
       let chosenStationery = [];
@@ -1186,10 +1192,8 @@
       let newPId = Date.now();
       let payDate = document.getElementById('fDate').value;
 
-      // શરૂઆતમાં પહોંચ બાકી બતાવશે જો જમા રકમ પૂરી ન હોય અથવા નવું જ બન્યું હોય
-      let totalBill = feeAmt + chosenStationery.reduce((a,b)=>a+b.price,0) - discAmt;
-      let isFullyPaid = (paidAmt >= totalBill && totalBill > 0);
-
+      // 💥 મહત્વનો ફેરફાર: પહોંચ બનતા જ હંમેશા isPaid = false રહેશે અને paidAmount = 0 રહેશે.
+      // જ્યાં સુધી નીચે હિસ્ટ્રીમાંથી "🟢 જમા કરો" બટન ન દબાવો ત્યાં સુધી રકમ જમા થશે નહીં.
       s.payments.push({
         id: newPId,
         receiptNo: rNo,
@@ -1201,20 +1205,20 @@
         feeAmount: feeAmt,
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
-        paidAmount: paidAmt,
-        isPaid: isFullyPaid
+        paidAmount: inputPaidAmt, // જો કોઈએ ફોર્મમાં લખ્યું હોય તોપણ બટન વગર માની લેવામાં આવશે નહીં
+        isPaid: false
       });
 
       selectedPaymentId = newPId;
 
       saveDataLocally();
-      alert("પહોંચ સફળતાપૂર્વક બની ગઈ છે! (જો ફી જમા ન થઈ હોય તો નીચે બટન પર ક્લિક કરીને જમા કરો)");
+      alert("⚠️ પહોંચ સફળતાપૂર્વક બની ગઈ છે પણ હાલમાં 'બાકી' સ્ટેટસમાં છે.\n\nજ્યારે ફી જમા થાય ત્યારે નીચે કોષ્ટકમાંથી '🟢 જમા કરો' બટન પર ક્લિક કરશો એટલે જમા બતાવશે.");
       
       calculateAndRenderSystem(s);
       renderStudentList();
     }
 
-    // 🌟 ફી જમા કરવાનું બટન ક્લિક ફંક્શન
+    // 🌟 "🟢 જમા કરો" બટન પર ક્લિક કર્યા પછી જ જમા કરવા માટેનું ફંક્શન
     function markPaymentAsPaid(pId) {
       const s = students.find(item => item.id === currentStudentId);
       if (!s) return;
@@ -1222,10 +1226,13 @@
       let p = s.payments.find(item => item.id === pId);
       if (p) {
         let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-        p.paidAmount = totalBill;
+        
+        // જો યુઝરે ફોર્મમાં કઈ રકમ લખી હોય તો તે લેશે નહીંતર પૂરેપૂરી બિલ રકમ જમા ગણશે
+        p.paidAmount = p.paidAmount > 0 ? p.paidAmount : totalBill;
         p.isPaid = true;
+        
         saveDataLocally();
-        alert("✅ ફી સફળતાપૂર્વક જમા થઈ ગઈ છે!");
+        alert("🎉 ફી સફળતાપૂર્વક જમા થઈ ગઈ છે!");
         calculateAndRenderSystem(s);
         renderStudentList();
       }
@@ -1258,7 +1265,7 @@
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
 
-    // 🌟 EXACT IMAGE BASED RECEIPT GENERATOR
+    // 🌟 ઈમેજ ફોર્મેટ મુજબ સુધારેલ ફી પહોંચ જનરેટર 🌟
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) {
         return `<p style="text-align:center; color:#999; padding:15px;">અત્યાર સુધી કોઈ પહોંચ બનાવેલ નથી.</p>`;
@@ -1291,7 +1298,9 @@
       }
 
       let totalCost = itemRows.reduce((acc, row) => acc + row.amount, 0);
-      let paidAmt = p.isPaid ? totalCost : p.paidAmount;
+      
+      // પહોંચનું ગણતરી લોજિક: isPaid = true હોય તો જ જમા રકમ ગણાય
+      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : 0;
       let dueAmt = totalCost - paidAmt;
       if(dueAmt < 0) dueAmt = 0;
 
@@ -1300,8 +1309,8 @@
         tableBodyHTML += `
           <tr>
             <td class="txt-center">${row.sr}</td>
-            <td>${row.name}</td>
-            <td class="txt-center">${row.amount}</td>
+            <td class="txt-bold">${row.name}</td>
+            <td class="txt-center txt-bold">${row.amount}</td>
           </tr>
         `;
       });
@@ -1309,51 +1318,51 @@
       return `
         <div class="receipt-excel-box">
           <table class="receipt-excel-table">
-            <!-- 1. HEADER -->
+            <!-- 1. HEADER WITH COLORFUL TITLE -->
             <tr>
               <td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td>
             </tr>
             <!-- 2. STUDENT & DATE -->
-            <tr>
-              <td colspan="2" class="txt-bold">${s.name}</td>
-              <td class="txt-right txt-bold">તારીખ ${dateFormatted}</td>
+            <tr class="sub-header-row">
+              <td colspan="2" class="txt-bold text-blue" style="font-size:15px;">👤 ${s.name}</td>
+              <td class="txt-right txt-bold">તારીખ: ${dateFormatted}</td>
             </tr>
             <!-- 3. STD & COURSE -->
-            <tr>
-              <td colspan="2" class="txt-bold">ધોરણ ${s.std}</td>
-              <td class="txt-right txt-bold">કોર્સ. ${s.course}</td>
+            <tr class="sub-header-row">
+              <td colspan="2" class="txt-bold">ધોરણ: ${s.std}</td>
+              <td class="txt-right txt-bold">કોર્સ: ${s.course}</td>
             </tr>
             <!-- 4. TABLE HEAD -->
-            <tr style="background:#f2f2f2;">
+            <tr class="table-head-row">
               <th style="width:15%;" class="txt-center">ક્રમ</th>
-              <th style="width:55%;" class="txt-center">મહિનાના નામ</th>
-              <th style="width:30%;" class="txt-center">ફી</th>
+              <th style="width:55%;" class="txt-center">મહિનાના નામ / વિગત</th>
+              <th style="width:30%;" class="txt-center">ફી (₹)</th>
             </tr>
             <!-- 5. TABLE ROWS -->
             ${tableBodyHTML}
             <!-- 6. TOTAL -->
             <tr>
-              <td colspan="2" class="txt-right txt-bold text-red">ટોટલ</td>
-              <td class="txt-center txt-bold text-red">${totalCost}</td>
+              <td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">ટોટલ</td>
+              <td class="txt-center txt-bold text-red" style="font-size:15px;">${totalCost}</td>
             </tr>
             <!-- 7. PAID -->
             <tr>
-              <td colspan="2" class="txt-right txt-bold text-red">જમા</td>
-              <td class="txt-center txt-bold text-red">${paidAmt}</td>
+              <td colspan="2" class="txt-right txt-bold text-green" style="font-size:15px;">જમા</td>
+              <td class="txt-center txt-bold text-green" style="font-size:15px;">${paidAmt}</td>
             </tr>
             <!-- 8. DUE -->
             <tr>
-              <td colspan="2" class="txt-right txt-bold text-red">બાકી</td>
-              <td class="txt-center txt-bold text-red">${dueAmt}</td>
+              <td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">બાકી</td>
+              <td class="txt-center txt-bold text-red" style="font-size:15px;">${dueAmt}</td>
             </tr>
             <!-- 9. FOOTER INFO -->
             <tr>
-              <td colspan="3" style="padding:10px 8px; vertical-align:top;">
-                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold;">
-                  <span>પેમેન્ટ મોડ ${p.mode}</span>
-                  <span>ફી ભરનાર ${p.paidBy}</span>
+              <td colspan="3" style="padding:12px 10px; background-color:#fafafa;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold; color:#444;">
+                  <span>💳 પેમેન્ટ મોડ: ${p.mode}</span>
+                  <span>✍️ ફી ભરનાર: ${p.paidBy}</span>
                 </div>
-                <div style="text-align:center; margin-top:25px; font-weight:bold; font-size:13px;">
+                <div style="text-align:center; margin-top:20px; font-weight:bold; font-size:14px; color:#0d47a1; border-top:1px dashed #ccc; padding-top:8px;">
                   વાઘેલા રવિ વિનોદભાઈ (9033197515)
                 </div>
               </td>
@@ -1424,7 +1433,7 @@
       
       let p = s.payments[idx];
       let totalCost = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-      let paidAmt = p.isPaid ? totalCost : p.paidAmount;
+      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : 0;
       let dueFee = totalCost - paidAmt;
       if (dueFee < 0) dueFee = 0;
 
