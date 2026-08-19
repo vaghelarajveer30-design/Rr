@@ -54,6 +54,7 @@
     .btn-pdf { background: #e74c3c; color: white; margin-top: 5px; }
     .btn-danger { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
     .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
+    .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
 
     .page { display: none; }
     .page.active { display: block; }
@@ -71,12 +72,20 @@
     .status-badge-green { background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
     .status-badge-red { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
 
-    .due-banner { background: #fce8e6; color: #d32f2f; text-align: center; font-weight: bold; padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 18px; }
-
     .stationery-box { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 15px; }
-
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
+
+    /* IMAGE BASED RECEIPT TABLE STYLES */
+    .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #000; background: #fff; color: #000; font-family: Arial, sans-serif; }
+    .receipt-excel-table { width: 100%; border-collapse: collapse; }
+    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #000; padding: 6px 8px; font-size: 14px; }
+    .receipt-title { font-size: 22px; font-weight: bold; text-align: center; font-family: 'Segoe UI', Arial, sans-serif; }
+    .txt-center { text-align: center; }
+    .txt-right { text-align: right; }
+    .txt-bold { font-weight: bold; }
+    .text-red { color: #d32f2f; font-weight: bold; }
+    .text-green { color: #27ae60; font-weight: bold; }
 
     #receiptPrintArea { display: none; background: white; padding: 20px; border: 1px solid #ccc; max-width: 600px; margin: auto; }
 
@@ -175,7 +184,7 @@
             <input type="hidden" id="sEditId">
             <div class="form-group">
               <label>વિદ્યાર્થીનું નામ</label>
-              <input type="text" id="sName" class="form-control" required placeholder="દા.ત. Ravi vinodbhai Vaghela">
+              <input type="text" id="sName" class="form-control" required placeholder="દા.ત. રવિ વિનોદભાઈ વાઘેલા">
             </div>
             <div class="form-group">
               <label>મોબાઈલ ૧ (મુખ્ય)</label>
@@ -185,7 +194,7 @@
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
                 <label>ધોરણ (Standard)</label>
-                <input type="text" id="sStd" class="form-control" required placeholder="દા.ત. 6">
+                <input type="text" id="sStd" class="form-control" required placeholder="દા.ત. 5">
               </div>
               <div class="form-group" style="flex: 1;">
                 <label>કોર્સ પસંદ કરો</label>
@@ -329,8 +338,8 @@
           <form onsubmit="addNewPayment(event)">
             <div style="display: flex; gap: 10px; margin-top: 8px;">
               <div class="form-group" style="flex: 1;">
-                <label>જમા કર્યા તારીખ</label>
-                <input type="date" id="fDate" class="form-control" required onchange="updateDayName()">
+                <label>પહોંચ તારીખ</label>
+                <input type="date" id="fDate" class="form-control" required>
               </div>
             </div>
 
@@ -352,7 +361,7 @@
             </div>
 
             <div class="form-group">
-              <label><b>ઓટો ગણેલ ટ્યુશન ફી રકમ (₹)</b> <small style="color:#777;">(ઓટોમેટિક ગણાશે)</small></label>
+              <label><b>ઓટો ગણેલ ટ્યુશન ફી રકમ (₹)</b></label>
               <input type="number" id="fFeeAmount" class="form-control" placeholder="0" value="0" required oninput="calculateReceiptTotal()">
             </div>
 
@@ -363,8 +372,8 @@
 
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
-                <label><b>રોકડા / ઓનલાઇન જમા રકમ (₹)</b></label>
-                <input type="number" id="fPaidAmount" class="form-control" required placeholder="જમા રકમ" oninput="calculateReceiptTotal()">
+                <label><b>જમા કરાવેલ રકમ (₹)</b> <small style="color:#e74c3c;">(જો બાકી હોય તો 0 રાખો)</small></label>
+                <input type="number" id="fPaidAmount" class="form-control" required placeholder="0" value="0" oninput="calculateReceiptTotal()">
               </div>
               <div class="form-group" style="flex: 1;">
                 <label style="color:#e67e22; font-weight:bold;"><b>ડિસ્કાઉન્ટ રકમ (₹)</b></label>
@@ -374,49 +383,37 @@
 
             <div class="info-box" style="background:#fff3e0; border-color:#ffe0b2; margin-bottom:12px; padding: 10px; border-radius: 6px; font-size: 13px;">
               <b>📊 આ પહોંચનો લાઈવ હિસાબ:</b><br>
-              • પસંદ કરેલ ફી + બુકની રકમ: <b>₹<span id="lblCalcTotal">0</span></b><br>
-              • આપેલ ડિસ્કાઉન્ટ: <b style="color:#e67e22;">₹<span id="lblCalcDiscount">0</span></b><br>
-              • વિદ્યાર્થીએ જમા કરાવ્યા: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b>
+              • પસંદ કરેલ કુલ ફી: <b>₹<span id="lblCalcTotal">0</span></b><br>
+              • જમા રકમ: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b><br>
+              • બાકી રકમ: <b style="color:#d32f2f;">₹<span id="lblCalcDue">0</span></b>
             </div>
 
             <div class="form-group">
               <label>પેમેન્ટ મોડ</label>
               <select id="fMode" class="form-control">
-                <option value="Cash">Cash (રોકડા)</option>
-                <option value="Online (UPI)">Online (ઓનલાઇન)</option>
+                <option value="રોકડા/ઓન લાઈન">રોકડા/ઓન લાઈન</option>
+                <option value="રોકડા">રોકડા (Cash)</option>
+                <option value="ઓન લાઈન">ઓન લાઈન (UPI)</option>
               </select>
             </div>
 
             <div class="form-group">
               <label>ફી ભરનાર નું નામ</label>
-              <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. Raj" required>
+              <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. રવિભાઈ" required>
             </div>
             
-            <!-- પહોંચ મોડ: બાકી પોચ / જમા પોચ -->
-            <div class="form-group" style="background:#fff; padding:10px; border-radius:6px; border:1px solid #2980b9;">
-              <label style="font-weight:bold; color:#1a73e8;">🧾 પહોંચ નો પ્રકાર પસંદ કરો:</label>
-              <div class="radio-group" style="margin-top:5px;">
-                <label class="radio-option">
-                  <input type="radio" name="receiptStatusType" value="DUE" checked> 🔴 બાકી પહોંચ (પહેલાં આપવા માટે)
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="receiptStatusType" value="PAID"> 🟢 જમા પહોંચ (રૂપિયા આવ્યા પછી)
-                </label>
-              </div>
-            </div>
-            
-            <button type="submit" class="btn" style="background:#2980b9;">પહોંચ બનાવો & સેવ કરો</button>
+            <button type="submit" class="btn" style="background:#2980b9;">🧾 પહોંચ બનાવો (બાકી રહેશે)</button>
           </form>
         </div>
 
         <div class="card">
-          <h4>📊 ફી હિસ્ટ્રી</h4>
+          <h4>📊 ફી હિસ્ટ્રી & પહોંચ સ્ટેટસ</h4>
           <table>
             <thead>
               <tr>
-                <th>જમા તારીખ</th>
-                <th>ફી ની મુદ્દત / વિગત</th>
-                <th>જમા રકમ</th>
+                <th>તારીખ</th>
+                <th>કુલ રકમ</th>
+                <th>સ્ટેટસ</th>
                 <th>એક્શન</th>
               </tr>
             </thead>
@@ -487,50 +484,49 @@
     let selectedPaymentId = null;
 
     let defaultCourses = [
-      { id: 1, name: "Gyan Sadhana", fee: 350 },
-      { id: 2, name: "નવોદય ક્લાસિસ", fee: 1000 },
+      { id: 1, name: "નવોદય", fee: 350 },
+      { id: 2, name: "Gyan Sadhana", fee: 350 },
       { id: 3, name: "સામાન્ય ટ્યુશન", fee: 800 }
     ];
 
     let defaultBooks = [
-      { id: 1, name: "નવોદય ગાઇડ", price: 450 },
-      { id: 2, name: "નવોદય બુક", price: 300 }
+      { id: 1, name: "નવોદય બુક", price: 300 },
+      { id: 2, name: "Exam ped", price: 120 }
     ];
 
     let defaultStudents = [
       {
         id: 1,
-        name: "Ravi vinodbhai Vaghela",
+        name: "રવિ વિનોદભાઈ વાઘેલા",
         mobile1: "9033197515",
-        std: "6",
-        course: "Gyan Sadhana",
+        std: "5",
+        course: "નવોદય",
         feeType: "Monthly",
         courseFee: 350,
         admissionDate: "2026-04-01",
         dob: "2015-05-15",
         status: "Active",
         stationery: [
-          { id: 101, name: "નવોદય ગાઇડ", price: 450, date: "2026-08-18" },
-          { id: 102, name: "નવોદય બુક", price: 300, date: "2026-08-18" }
+          { id: 101, name: "નવોદય બુક", price: 300, date: "2026-08-12" },
+          { id: 102, name: "Exam ped", price: 120, date: "2026-08-12" }
         ],
         payments: [
           { 
             id: 201, 
             receiptNo: "1", 
-            date: "2026-08-18", 
-            day: "મંગળવાર", 
-            paidBy: "Raj", 
-            mode: "Cash", 
+            date: "2026-08-12", 
+            paidBy: "રવિભાઈ", 
+            mode: "રોકડા/ઓન લાઈન", 
             fromDate: "2026-04-01", 
-            toDate: "2026-07-31",
-            feeAmount: 1400,
+            toDate: "2026-06-01",
+            feeAmount: 700,
             selectedStationery: [
-              { name: "નવોદય ગાઇડ", price: 450 },
-              { name: "નવોદય બુક", price: 300 }
+              { name: "નવોદય બુક", price: 300 },
+              { name: "Exam ped", price: 120 }
             ],
             discountAmount: 0,
-            paidAmount: 1400,
-            receiptType: "DUE"
+            paidAmount: 0, // શરૂઆતમાં 0 જેથી બાકી બતાવે
+            isPaid: false  // જ્યાં સુધી બટન ન દબાવો ત્યાં સુધી false
           }
         ]
       }
@@ -546,8 +542,7 @@
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
     }
 
-    const daysGuj = ['રવિવાર', 'સોમવાર', 'મંગળવાર', 'બુધવાર', 'ગુરુવાર', 'શુક્રવાર', 'શનિવાર'];
-    const monthNamesGuj = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
+    const monthNamesGuj = ["એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર", "જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ"];
 
     window.onload = function() {
       refreshCourseUI(); 
@@ -560,7 +555,6 @@
       }
       
       document.getElementById('fDate').valueAsDate = new Date();
-      updateDayName();
     };
 
     function saveCloudUrl() {
@@ -621,13 +615,6 @@
       document.getElementById('totalInactiveCount').innerText = inactiveCount;
     }
 
-    function getDayNameGuj(dateStr) {
-      if(!dateStr) return '';
-      let d = new Date(dateStr);
-      if(isNaN(d)) return '';
-      return daysGuj[d.getDay()];
-    }
-
     function calculateExactFeeAndDuration(startDateStr, endDateStr, monthlyFee) {
       if (!startDateStr || !endDateStr) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ", monthNamesText: "", monthListDetails: [] };
       let d1 = new Date(startDateStr);
@@ -644,33 +631,26 @@
       let dailyFee = monthlyFee / 30;
       let calculatedFee = Math.round((months * monthlyFee) + (remainingDays * dailyFee));
 
-      let durationText = "";
-      if (months > 0 && remainingDays > 0) {
-        durationText = `${months} મહિનો અને ${remainingDays} દિવસ`;
-      } else if (months > 0) {
-        durationText = `${months} મહિનો`;
-      } else {
-        durationText = `${remainingDays} દિવસ`;
-      }
+      let durationText = `${months > 0 ? months + ' મહિનો ' : ''}${remainingDays > 0 ? remainingDays + ' દિવસ' : ''}`.trim();
 
       let startM = d1.getMonth();
       let startY = d1.getFullYear();
       let endM = d2.getMonth();
       let endY = d2.getFullYear();
 
-      let monthList = [];
       let monthListDetails = [];
       let cur = new Date(startY, startM, 1);
       let limit = new Date(endY, endM, 1);
 
+      let standardMonths = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
+
       while (cur <= limit) {
-        let mName = monthNamesGuj[cur.getMonth()];
-        monthList.push(mName);
+        let mName = standardMonths[cur.getMonth()];
         monthListDetails.push({ name: mName, fee: monthlyFee });
         cur.setMonth(cur.getMonth() + 1);
       }
 
-      let monthNamesText = monthList.join(", ");
+      let monthNamesText = monthListDetails.map(m => m.name).join(", ");
 
       return {
         months,
@@ -692,22 +672,11 @@
 
       let calc = calculateExactFeeAndDuration(fromD, toD, s.courseFee || 0);
       
-      let durationDisplay = calc.durationText;
-      if(calc.monthNamesText) {
-        durationDisplay += ` (${calc.monthNamesText})`;
-      }
+      document.getElementById('lblCalculatedMonths').innerText = calc.durationText || '0 દિવસ';
 
-      document.getElementById('lblCalculatedMonths').innerText = durationDisplay;
-
-      let calculatedFee = 0;
-      if (s.feeType === 'Monthly') {
-        calculatedFee = calc.totalFee;
-      } else {
-        calculatedFee = s.courseFee || 0;
-      }
+      let calculatedFee = s.feeType === 'Monthly' ? calc.totalFee : (s.courseFee || 0);
 
       document.getElementById('fFeeAmount').value = calculatedFee;
-      document.getElementById('fPaidAmount').value = calculatedFee;
       calculateReceiptTotal();
     }
 
@@ -819,7 +788,9 @@
 
       if (s.payments && s.payments.length > 0) {
         s.payments.forEach(p => {
-          totalPaid += p.paidAmount || 0;
+          if (p.isPaid) {
+            totalPaid += (p.paidAmount || (p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0):0) - p.discountAmount));
+          }
           totalDiscount += p.discountAmount || 0;
         });
       }
@@ -945,11 +916,7 @@
                   ${rows}
                 </tbody>
               </table>
-              <div style="margin-top:8px; font-weight:bold; color:#555; text-align:right;">
-                આ વિધાર્થી દ્વારા લેવાયેલ કુલ સ્ટેશનરી: ₹${studentStTotal}
-              </div>
             </div>
-            <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
           `;
         }
       });
@@ -1072,7 +1039,6 @@
       document.getElementById('infoMonthList').innerText = stats.monthNamesText || '-';
 
       document.getElementById('fDate').valueAsDate = new Date();
-      updateDayName();
       
       let initialFromDate = s.admissionDate || new Date().toISOString().split('T')[0];
       if (s.payments && s.payments.length > 0) {
@@ -1178,19 +1144,13 @@
       });
 
       let grandTotalItem = tFee + selectedStTotal;
-      let discountAmt = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
       let paidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
+      let dueAmt = grandTotalItem - paidAmt;
+      if (dueAmt < 0) dueAmt = 0;
 
       document.getElementById('lblCalcTotal').innerText = grandTotalItem;
-      document.getElementById('lblCalcDiscount').innerText = discountAmt;
       document.getElementById('lblCalcPaid').innerText = paidAmt;
-    }
-
-    function updateDayName() {
-      const dateVal = document.getElementById('fDate').value;
-      if (dateVal) {
-        const d = new Date(dateVal);
-      }
+      document.getElementById('lblCalcDue').innerText = dueAmt;
     }
 
     function toggleStudentStatus() {
@@ -1211,7 +1171,6 @@
       const feeAmt = parseFloat(document.getElementById('fFeeAmount').value) || 0;
       const paidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
       const discAmt = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
-      const receiptType = document.querySelector('input[name="receiptStatusType"]:checked').value;
 
       let chosenStationery = [];
       const checkedBoxes = document.querySelectorAll('.st-pay-check:checked');
@@ -1225,15 +1184,16 @@
 
       const rNo = (s.payments.length + 1).toString();
       let newPId = Date.now();
-
       let payDate = document.getElementById('fDate').value;
-      let payDayName = getDayNameGuj(payDate);
+
+      // શરૂઆતમાં પહોંચ બાકી બતાવશે જો જમા રકમ પૂરી ન હોય અથવા નવું જ બન્યું હોય
+      let totalBill = feeAmt + chosenStationery.reduce((a,b)=>a+b.price,0) - discAmt;
+      let isFullyPaid = (paidAmt >= totalBill && totalBill > 0);
 
       s.payments.push({
         id: newPId,
         receiptNo: rNo,
         date: payDate,
-        day: payDayName,
         paidBy: document.getElementById('fPaidBy').value,
         mode: document.getElementById('fMode').value,
         fromDate: document.getElementById('fFromDate').value,
@@ -1242,16 +1202,33 @@
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
         paidAmount: paidAmt,
-        receiptType: receiptType
+        isPaid: isFullyPaid
       });
 
       selectedPaymentId = newPId;
 
       saveDataLocally();
-      alert("પહોંચ સફળતાપૂર્વક બની ગઈ છે!");
+      alert("પહોંચ સફળતાપૂર્વક બની ગઈ છે! (જો ફી જમા ન થઈ હોય તો નીચે બટન પર ક્લિક કરીને જમા કરો)");
       
       calculateAndRenderSystem(s);
       renderStudentList();
+    }
+
+    // 🌟 ફી જમા કરવાનું બટન ક્લિક ફંક્શન
+    function markPaymentAsPaid(pId) {
+      const s = students.find(item => item.id === currentStudentId);
+      if (!s) return;
+
+      let p = s.payments.find(item => item.id === pId);
+      if (p) {
+        let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
+        p.paidAmount = totalBill;
+        p.isPaid = true;
+        saveDataLocally();
+        alert("✅ ફી સફળતાપૂર્વક જમા થઈ ગઈ છે!");
+        calculateAndRenderSystem(s);
+        renderStudentList();
+      }
     }
 
     function deletePayment(pId) {
@@ -1278,9 +1255,10 @@
     function formatDateGuj(dateStr) {
       if(!dateStr) return '';
       const parts = dateStr.split('-');
-      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
 
+    // 🌟 EXACT IMAGE BASED RECEIPT GENERATOR
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) {
         return `<p style="text-align:center; color:#999; padding:15px;">અત્યાર સુધી કોઈ પહોંચ બનાવેલ નથી.</p>`;
@@ -1291,133 +1269,96 @@
       }
 
       let p = s.payments[targetPaymentIndex];
-
-      let rNo = p.receiptNo || (targetPaymentIndex + 1).toString();
       let dateFormatted = formatDateGuj(p.date);
-      let dayName = p.day || getDayNameGuj(p.date);
 
       let calc = calculateExactFeeAndDuration(p.fromDate, p.toDate, s.courseFee || 0);
 
-      let monthTableRowsHTML = "";
+      let itemRows = [];
+      let itemIndex = 1;
+
       if (s.feeType === 'Monthly' && calc.monthListDetails && calc.monthListDetails.length > 0) {
         calc.monthListDetails.forEach(m => {
-          monthTableRowsHTML += `
-            <tr>
-              <td style="border:1px solid #000; padding:6px; width:65%;">મહિનાનું નામ: ${m.name}</td>
-              <td style="border:1px solid #000; padding:6px; text-align:right; width:35%;">₹${m.fee}</td>
-            </tr>
-          `;
+          itemRows.push({ sr: itemIndex++, name: m.name, amount: m.fee });
         });
       } else {
-        monthTableRowsHTML += `
-          <tr>
-            <td style="border:1px solid #000; padding:6px; width:65%;">ટ્યુશન ફી (ફી ની મુદ્દત): ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}</td>
-            <td style="border:1px solid #000; padding:6px; text-align:right; width:35%;">₹${p.feeAmount || 0}</td>
-          </tr>
-        `;
+        itemRows.push({ sr: itemIndex++, name: `ટ્યુશન ફી (${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)})`, amount: p.feeAmount || 0 });
       }
 
-      let stationeryRowsHTML = "";
-      let stationeryTotal = 0;
       if (p.selectedStationery && p.selectedStationery.length > 0) {
         p.selectedStationery.forEach(st => {
-          stationeryTotal += st.price;
-          stationeryRowsHTML += `
-            <tr>
-              <td style="border:1px solid #000; padding:6px;">સ્ટેશનરી વસ્તુ: ${st.name}</td>
-              <td style="border:1px solid #000; padding:6px; text-align:right;">₹${st.price}</td>
-            </tr>
-          `;
+          itemRows.push({ sr: itemIndex++, name: st.name, amount: st.price });
         });
       }
 
-      let grandTotalCost = (p.feeAmount || 0) + stationeryTotal;
+      let totalCost = itemRows.reduce((acc, row) => acc + row.amount, 0);
+      let paidAmt = p.isPaid ? totalCost : p.paidAmount;
+      let dueAmt = totalCost - paidAmt;
+      if(dueAmt < 0) dueAmt = 0;
 
-      let discountRow = "";
-      if (p.discountAmount > 0) {
-        discountRow = `
+      let tableBodyHTML = "";
+      itemRows.forEach(row => {
+        tableBodyHTML += `
           <tr>
-            <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#e67e22;">🎁 આપેલ ડિસ્કાઉન્ટ (-):</td>
-            <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#e67e22;">₹${p.discountAmount}</td>
+            <td class="txt-center">${row.sr}</td>
+            <td>${row.name}</td>
+            <td class="txt-center">${row.amount}</td>
           </tr>
         `;
-      }
-
-      let netPayable = grandTotalCost - (p.discountAmount || 0);
-      let dueFee = netPayable - (p.paidAmount || 0);
-      if (dueFee < 0) dueFee = 0;
-
-      let modeGuj = p.mode === 'Cash' ? 'રોકડા (Cash) / ઓનલાઇન' : 'ઓનલાઇન (Online UPI)';
+      });
 
       return `
-        <div style="width:100%; max-width:550px; margin:auto; padding:15px; border:2px solid #000; background:#fff; font-family:Arial, sans-serif; color:#000;">
-          
-          <!-- ૧. હેડિંગ સેક્શન -->
-          <div style="text-align:center; margin-bottom:5px;">
-            <h1 style="color:#1a73e8; font-size:24px; font-weight:bold; margin-bottom:2px;">નિર્મળા નવોદય ક્લાસિસ</h1>
-            <h3 style="font-size:16px; color:#333; margin-bottom:4px; font-weight:bold;">ફી પહોંચ</h3>
-          </div>
-          
-          <hr style="border:none; border-top:2px solid #000; margin-bottom:12px;">
-          
-          <!-- ૨. વિધાર્થી નામ તથા તારીખ -->
-          <table style="width:100%; margin-bottom:10px; font-size:14px; border:none;">
-            <tr style="border:none;">
-              <td style="padding:3px 0; border:none;"><b>વિધાર્થીનું નામ:</b> ${s.name}</td>
-              <td style="text-align:right; padding:3px 0; border:none;"><b>તારીખ:</b> ${dateFormatted}</td>
+        <div class="receipt-excel-box">
+          <table class="receipt-excel-table">
+            <!-- 1. HEADER -->
+            <tr>
+              <td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td>
             </tr>
-            <tr style="border:none;">
-              <td style="padding:3px 0; border:none;" colspan="2"><b>ધોરણ / કોર્સ:</b> ${s.std} - ${s.course}</td>
+            <!-- 2. STUDENT & DATE -->
+            <tr>
+              <td colspan="2" class="txt-bold">${s.name}</td>
+              <td class="txt-right txt-bold">તારીખ ${dateFormatted}</td>
+            </tr>
+            <!-- 3. STD & COURSE -->
+            <tr>
+              <td colspan="2" class="txt-bold">ધોરણ ${s.std}</td>
+              <td class="txt-right txt-bold">કોર્સ. ${s.course}</td>
+            </tr>
+            <!-- 4. TABLE HEAD -->
+            <tr style="background:#f2f2f2;">
+              <th style="width:15%;" class="txt-center">ક્રમ</th>
+              <th style="width:55%;" class="txt-center">મહિનાના નામ</th>
+              <th style="width:30%;" class="txt-center">ફી</th>
+            </tr>
+            <!-- 5. TABLE ROWS -->
+            ${tableBodyHTML}
+            <!-- 6. TOTAL -->
+            <tr>
+              <td colspan="2" class="txt-right txt-bold text-red">ટોટલ</td>
+              <td class="txt-center txt-bold text-red">${totalCost}</td>
+            </tr>
+            <!-- 7. PAID -->
+            <tr>
+              <td colspan="2" class="txt-right txt-bold text-red">જમા</td>
+              <td class="txt-center txt-bold text-red">${paidAmt}</td>
+            </tr>
+            <!-- 8. DUE -->
+            <tr>
+              <td colspan="2" class="txt-right txt-bold text-red">બાકી</td>
+              <td class="txt-center txt-bold text-red">${dueAmt}</td>
+            </tr>
+            <!-- 9. FOOTER INFO -->
+            <tr>
+              <td colspan="3" style="padding:10px 8px; vertical-align:top;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold;">
+                  <span>પેમેન્ટ મોડ ${p.mode}</span>
+                  <span>ફી ભરનાર ${p.paidBy}</span>
+                </div>
+                <div style="text-align:center; margin-top:25px; font-weight:bold; font-size:13px;">
+                  વાઘેલા રવિ વિનોદભાઈ (9033197515)
+                </div>
+              </td>
             </tr>
           </table>
-
-          <!-- લાલ રંગનું બેનર બાકી ફી દર્શાવવા -->
-          <div class="due-banner">
-            ફી બાકી: ₹${dueFee}
-          </div>
-
-          <!-- ૩. ફી તથા સ્ટેશનરી ની વિગતવાર ટેબલ -->
-          <table style="width:100%; border-collapse:collapse; margin-top:8px; border:1px solid #000;">
-            <thead>
-              <tr style="background-color:#f2f2f2;">
-                <th style="border:1px solid #000; padding:6px; text-align:center;">વિગત / વસ્તુ નું નામ</th>
-                <th style="border:1px solid #000; padding:6px; text-align:right; width:30%;">ફી / કિંમત</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${monthTableRowsHTML}
-              ${stationeryRowsHTML}
-              <tr>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">કુલ ફી (સરવાળો):</td>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold;">₹${grandTotalCost}</td>
-              </tr>
-              ${discountRow}
-              <tr>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#27ae60;">જમા ફી:</td>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#27ae60;">₹${p.paidAmount}</td>
-              </tr>
-              <tr>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#d32f2f;">બાકી ફી:</td>
-                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:bold; color:#d32f2f;">₹${dueFee}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- ૪. કેવી રીતે ફી ભરી અને ફી ભરનાર નું નામ -->
-          <div style="margin-top:12px; font-size:13px; line-height:1.6;">
-            <p><b>ફી ભરવાનો પ્રકાર:</b> ${modeGuj}</p>
-            <p><b>ફી ભરનારનું નામ:</b> ${p.paidBy}</p>
-          </div>
-
-          <!-- ૫. સહી સેક્શન -->
-          <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:flex-end;">
-            <div style="font-size:11px; color:#555;">* કમ્પ્યુટર જનરેટેડ પહોંચ</div>
-            <div style="text-align:center;">
-              <p style="font-size:13px; font-weight:bold; color:#000;">વાઘેલા રવિ વિનોદભાઈ (9033197515)</p>
-              <p style="font-size:11px; color:#555; margin-top:2px;">(સહી / નિર્મળા નવોદય ક્લાસિસ)</p>
-            </div>
-          </div>
-
         </div>
       `;
     }
@@ -1448,25 +1389,19 @@
       } else {
         s.payments.forEach((p, idx) => {
           let isSelected = p.id === selectedPaymentId;
-          let calc = calculateExactFeeAndDuration(p.fromDate, p.toDate, s.courseFee);
-          let mNameStr = calc.monthNamesText ? ` (${calc.monthNamesText})` : '';
-          let rangeStr = (p.fromDate && p.toDate) ? `${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}${mNameStr}` : '-';
           
-          let summaryLabel = p.feeAmount > 0 ? `ટ્યુશન ફી (${rangeStr})` : '';
-          if (p.selectedStationery && p.selectedStationery.length > 0) {
-            let stNames = p.selectedStationery.map(st => st.name).join(', ');
-            summaryLabel += summaryLabel ? ` + ${stNames}` : stNames;
-          }
-
-          let badgeTxt = p.receiptType === 'DUE' ? '🔴 બાકી' : '🟢 જમા';
+          let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
+          let isPaid = p.isPaid;
+          let badgeTxt = isPaid ? '<span style="color:green; font-weight:bold;">🟢 જમા</span>' : '<span style="color:red; font-weight:bold;">🔴 બાકી</span>';
 
           tbody.innerHTML += `
             <tr style="${isSelected ? 'background:#e8f0fe;' : ''}">
-              <td><b>${formatDateGuj(p.date)}</b> (${p.day || getDayNameGuj(p.date)})<br><small style="color:#666;">${badgeTxt}</small></td>
-              <td><small style="color:#1a73e8; font-weight:bold;">${summaryLabel}</small></td>
-              <td style="color:green; font-weight:bold;">₹${p.paidAmount}</td>
+              <td><b>${formatDateGuj(p.date)}</b></td>
+              <td><b>₹${totalBill}</b></td>
+              <td>${badgeTxt}</td>
               <td style="white-space:nowrap;">
-                <button class="btn-view" title="પહોંચ જુઓ" onclick="viewSpecificReceipt(${p.id})">👁️ પહોંચ ${idx+1}</button>
+                <button class="btn-view" title="પહોંચ જુઓ" onclick="viewSpecificReceipt(${p.id})">👁️ જુઓ</button>
+                ${!isPaid ? `<button class="btn-pay-action" title="ફી જમા કરો" onclick="markPaymentAsPaid(${p.id})">🟢 જમા કરો</button>` : ''}
                 <button class="btn-danger" onclick="deletePayment(${p.id})">❌</button>
               </td>
             </tr>
@@ -1488,37 +1423,26 @@
       if(!s.payments || s.payments.length === 0) return "";
       
       let p = s.payments[idx];
-      let totalFeeOnly = p.feeAmount || 0;
-      let totalStationeryOnly = 0;
-
-      if (p.selectedStationery && p.selectedStationery.length > 0) {
-        p.selectedStationery.forEach(st => {
-          totalStationeryOnly += st.price;
-        });
-      }
-
-      let totalCost = totalFeeOnly + totalStationeryOnly;
-      let discText = p.discountAmount > 0 ? `🎁 *ડિસ્કાઉન્ટ:* ₹${p.discountAmount}\n` : '';
-      let netPayable = totalCost - p.discountAmount;
-      let dueFee = netPayable - p.paidAmount;
+      let totalCost = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
+      let paidAmt = p.isPaid ? totalCost : p.paidAmount;
+      let dueFee = totalCost - paidAmt;
       if (dueFee < 0) dueFee = 0;
 
-      let rTypeTitle = p.receiptType === 'DUE' ? '🔴 બાકી પહોંચ' : '🟢 જમા પહોંચ';
-      let dayName = p.day || getDayNameGuj(p.date);
-      let modeGuj = p.mode === 'Cash' ? 'રોકડા' : 'ઓનલાઇન';
+      let statusTxt = p.isPaid ? "🟢 જમા પહોંચ" : "🔴 બાકી પહોંચ";
 
       return `🧾 *નિર્મળા નવોદય ક્લાસિસ*
-*ફી પહોંચ* (${rTypeTitle})
+*ફી પહોંચ* (${statusTxt})
 ----------------------------------
 👤 *વિધાર્થી નું નામ:* ${s.name}
-🗓️ *તારીખ અને વાર:* ${formatDateGuj(p.date)} (${dayName})
+🗓️ *તારીખ:* ${formatDateGuj(p.date)}
+📚 *ધોરણ/કોર્સ:* ${s.std} - ${s.course}
 ----------------------------------
-💰 *કુલ ફી:* ₹${totalCost}
-${discText}✅ *જમા ફી:* ₹${p.paidAmount}
-🔴 *બાકી ફી:* ₹${dueFee}
+💰 *ટોટલ:* ₹${totalCost}
+✅ *જમા:* ₹${paidAmt}
+🔴 *બાકી:* ₹${dueFee}
 ----------------------------------
-💳 *ફી ભરવાનો પ્રકાર:* ${modeGuj}
-👤 *ફી ભરનાર નું નામ:* ${p.paidBy}
+💳 *પેમેન્ટ મોડ:* ${p.mode}
+👤 *ફી ભરનાર:* ${p.paidBy}
 ----------------------------------
 *વાઘેલા રવિ વિનોદભાઈ (9033197515)*`;
     }
@@ -1536,122 +1460,8 @@ ${discText}✅ *જમા ફી:* ₹${p.paidAmount}
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) { alert("પહેલા ફી જમા કરીને પહોંચ બનાવો."); return; }
 
-      let idx = getSelectedPaymentIndex(s);
-      let p = s.payments[idx];
-
-      const canvas = document.getElementById('hiddenCanvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = 550;
-      canvas.height = 540;
-
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
-
-      ctx.fillStyle = "#1a73e8";
-      ctx.font = "bold 24px Arial";
-      ctx.textAlign = "center";
-      ctx.fillText("નિર્મળા નવોદય ક્લાસિસ", canvas.width / 2, 45);
-
-      ctx.fillStyle = "#333333";
-      ctx.font = "bold 16px Arial";
-      ctx.fillText("ફી પહોંચ", canvas.width / 2, 70);
-
-      ctx.strokeStyle = "#000";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(20, 80); ctx.lineTo(canvas.width - 20, 80); ctx.stroke();
-
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#000";
-      ctx.font = "14px Arial";
-      ctx.fillText(`વિધાર્થીનું નામ: ${s.name}`, 25, 105);
-
-      ctx.fillText(`તારીખ: ${formatDateGuj(p.date)}`, canvas.width - 150, 105);
-
-      let startY = 150;
-      let totalFeeOnly = p.feeAmount || 0;
-      let totalStationeryOnly = 0;
-
-      if (p.selectedStationery && p.selectedStationery.length > 0) {
-        p.selectedStationery.forEach(st => {
-          totalStationeryOnly += st.price;
-        });
-      }
-
-      let totalItemsCost = totalFeeOnly + totalStationeryOnly;
-      let rowOffset = 0;
-
-      ctx.strokeRect(25, startY, canvas.width - 50, 32);
-      ctx.textAlign = "left";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("કુલ ફી (સરવાળો):", 35, startY + 20);
-      ctx.textAlign = "right";
-      ctx.fillText(`₹${totalItemsCost}`, canvas.width - 35, startY + 20);
-      rowOffset += 32;
-
-      let netPayable = totalItemsCost - p.discountAmount;
-      let dueFee = netPayable - p.paidAmount;
-      if (dueFee < 0) dueFee = 0;
-
-      ctx.fillStyle = "#e8f5e9";
-      ctx.fillRect(25, startY + rowOffset, canvas.width - 50, 32);
-      ctx.strokeStyle = "#000";
-      ctx.strokeRect(25, startY + rowOffset, canvas.width - 50, 32);
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#000";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("જમા ફી:", 35, startY + 20 + rowOffset);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#27ae60";
-      ctx.fillText(`₹${p.paidAmount}`, canvas.width - 35, startY + 20 + rowOffset);
-      rowOffset += 32;
-
-      ctx.fillStyle = "#ffebee";
-      ctx.fillRect(25, startY + rowOffset, canvas.width - 50, 32);
-      ctx.strokeStyle = "#000";
-      ctx.strokeRect(25, startY + rowOffset, canvas.width - 50, 32);
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#000";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("બાકી ફી:", 35, startY + 20 + rowOffset);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#d32f2f";
-      ctx.fillText(`₹${dueFee}`, canvas.width - 35, startY + 20 + rowOffset);
-      rowOffset += 32;
-
-      let footerY = startY + 25 + rowOffset;
-      ctx.fillStyle = "#000";
-      ctx.font = "13px Arial";
-      ctx.textAlign = "left";
-      let modeGuj = p.mode === 'Cash' ? 'રોકડા' : 'ઓનલાઇન';
-      ctx.fillText(`ફી ભરવાનો પ્રકાર: ${modeGuj}`, 25, footerY);
-      ctx.fillText(`ફી ભરનાર નું નામ: ${p.paidBy}`, 25, footerY + 22);
-
-      ctx.textAlign = "right";
-      ctx.font = "bold 14px Arial";
-      ctx.fillText("વાઘેલા રવિ વિનોદભાઈ (9033197515)", canvas.width - 25, footerY + 22);
-      ctx.font = "11px Arial";
-      ctx.fillStyle = "#555";
-      ctx.fillText("(સહી / નિર્મળા નવોદય ક્લાસિસ)", canvas.width - 25, footerY + 38);
-
-      canvas.toBlob(function(blob) {
-        const file = new File([blob], `Receipt_${s.name}.jpg`, { type: 'image/jpeg' });
-        
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({
-            files: [file],
-            title: `Fee Receipt - ${s.name}`,
-            text: buildTextMessage(s)
-          });
-        } else {
-          const msg = buildTextMessage(s);
-          window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-      }, 'image/jpeg', 0.95);
+      const msg = buildTextMessage(s);
+      window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function printReceiptPDF() {
