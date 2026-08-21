@@ -54,7 +54,7 @@
     .btn-edit { background: #f39c12; margin-top: 5px; }
     .btn-settings { background: #6f42c1; margin-top: 10px; }
     .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
-    .btn-whatsapp-direct { background: #075E54; color: white; font-size: 15px; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 15px; }
+    .btn-whatsapp-direct { background: #25D366; color: white; font-size: 15px; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 15px; }
     .btn-copy { background: #17a2b8; color: white; margin-top: 5px; }
     .btn-pdf { background: #e74c3c; color: white; margin-top: 5px; }
     .btn-danger { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
@@ -1167,10 +1167,10 @@
     function formatDateGuj(dateStr) {
       if(!dateStr) return '';
       const parts = dateStr.split('-');
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      return `${parts[2]}-${parts[1]}-${parts0] || parts[0]}`;
     }
 
-    /* 🌟 કલરફુલ પહોંચ જનરેટર (આબેહૂબ દેખાવ) 🌟 */
+    /* 🌟 કલરફુલ પહોંચ જનરેટર (આબેહૂબ લેઆઉટ) 🌟 */
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ નથી.</p>`;
 
@@ -1187,7 +1187,7 @@
       if (s.feeType === 'Monthly' && calc.monthListDetails && calc.monthListDetails.length > 0) {
         calc.monthListDetails.forEach(m => itemRows.push({ sr: itemIndex++, name: m.name, amount: m.fee }));
       } else {
-        itemRows.push({ sr: itemIndex++, name: `ટ્યુશન ફી (${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)})`, amount: p.feeAmount || 0 });
+        itemRows.push({ sr: itemIndex++, name: `ટ્યુશન ફી`, amount: p.feeAmount || 0 });
       }
 
       if (p.selectedStationery && p.selectedStationery.length > 0) {
@@ -1195,7 +1195,7 @@
       }
 
       let totalCost = itemRows.reduce((acc, row) => acc + row.amount, 0);
-      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : 0;
+      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : p.paidAmount;
       let dueAmt = totalCost - paidAmt;
       if(dueAmt < 0) dueAmt = 0;
 
@@ -1210,15 +1210,13 @@
             <tr><td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td></tr>
             <tr class="sub-header-row">
               <td colspan="3" style="padding: 8px 10px;">
-                <div style="font-size:15px;" class="txt-bold text-blue">👤 વિદ્યાર્થીનું નામ: ${s.name}</div>
-                <div style="margin-top: 4px;" class="txt-bold">📅 જમા તારીખ: ${formatDateGuj(p.date)}</div>
-              </td>
-            </tr>
-            <tr class="sub-header-row">
-              <td colspan="3" style="padding: 8px 10px;">
-                <span class="txt-bold">ધોરણ: ${s.std}</span> | 
-                <span class="txt-bold">કોર્સ: ${s.course}</span> | 
-                <span class="txt-bold text-blue">સમયગાળો: ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}</span>
+                <div style="font-size:15px; display:flex; justify-content:space-between;" class="txt-bold text-blue">
+                  <span>👤 વિદ્યાર્થીનું નામ: ${s.name}</span>
+                  <span style="color:#333;">📅 જમા તારીખ: ${formatDateGuj(p.date)}</span>
+                </div>
+                <div style="margin-top: 5px; font-size:13px;" class="txt-bold">
+                  <span>ધોરણ: ${s.std}</span> | <span>કોર્સ: ${s.course}</span>
+                </div>
               </td>
             </tr>
             <tr class="table-head-row">
@@ -1230,6 +1228,11 @@
             <tr><td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">ટોટલ</td><td class="txt-center txt-bold text-red" style="font-size:15px;">${totalCost}</td></tr>
             <tr><td colspan="2" class="txt-right txt-bold text-green" style="font-size:15px;">જમા</td><td class="txt-center txt-bold text-green" style="font-size:15px;">${paidAmt}</td></tr>
             <tr><td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">બાકી</td><td class="txt-center txt-bold text-red" style="font-size:15px;">${dueAmt}</td></tr>
+            <tr class="sub-header-row">
+              <td colspan="3" class="txt-center txt-bold text-blue" style="padding: 8px; font-size:13px; background:#e8f0fe;">
+                🗓️ સમયગાળો: ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}
+              </td>
+            </tr>
             <tr>
               <td colspan="3" style="padding:12px 10px; background-color:#fafafa;">
                 <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold; color:#444;">
@@ -1331,7 +1334,7 @@
       if(!s.payments || s.payments.length === 0) return "";
       let p = s.payments[idx];
       let totalCost = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : 0;
+      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : p.paidAmount;
       let dueFee = totalCost - paidAmt;
       if (dueFee < 0) dueFee = 0;
 
@@ -1379,7 +1382,7 @@
           link.href = canvas.toDataURL('image/png');
           link.click();
 
-          alert("📸 આબેહૂબ ફોટો ડાઉનલોડ થઈ ગયો છે. વૉટ્સએપમાં ગેલેરીમાંથી ફોટો સાથે મોકલો.");
+          alert("📸 પહોંચનો આબેહૂબ ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે. વૉટ્સએપમાં ગેલેરીમાંથી ફોટો સાથે મોકલો.");
           window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
         }
       }, 'image/png');
@@ -1391,17 +1394,26 @@
       if(!s || s.payments.length === 0) return;
       const element = document.getElementById('receiptImageCapture');
 
-      alert("PDF જનરેટ થઈ રહી છે, કૃપા કરીને એક સેકન્ડ રાહ જુઓ...");
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL('image/png');
+      if (!element) {
+        alert("પહોંચ પ્રીવ્યૂ ઉપલબ્ધ નથી.");
+        return;
+      }
 
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      alert("📄 PDF જનરેટ થઈ રહી છે, કૃપા કરીને એક સેકન્ડ રાહ જુઓ...");
+      try {
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
 
-      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-      pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 190;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+        pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
+      } catch (err) {
+        alert("PDF જનરેટ કરવામાં ભુલ થઈ: " + err);
+      }
     }
   </script>
 </body>
