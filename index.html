@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>નિર્મળા નવોદય ક્લાસિસ - Billing System</title>
   
+  <!-- CDN Libraries for Canvas & PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -54,7 +55,7 @@
     .btn-settings { background: #6f42c1; margin-top: 10px; }
     .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
     
-    /* WhatsApp Share & Image Download Buttons */
+    /* Buttons */
     .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
     .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
     .btn-img-download { background: #8e44ad; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
@@ -1342,7 +1343,7 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* રસીદને ઈમેજ તરીકે ડાઉનલોડ કરવાનું નવું ફંક્શન (Offline ઓપરેટ થાય છે) */
+    /* રસીદને ઈમેજ (PNG) તરીકે ડાઉનલોડ કરવાનો સુધારેલો કોડ */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1354,7 +1355,7 @@
       if(!element) return;
 
       if(typeof html2canvas === 'undefined') {
-        alert("ઈમેજ કન્વર્ટર લાઈબ્રેરી લોડ થઈ નથી. કૃપા કરીને એકવાર ઇન્ટરનેટ ચાલુ કરો.");
+        alert("ઈમેજ કન્વર્ટર લાઈબ્રેરી લોડ થઈ નથી. કૃપા કરીને ઇન્ટરનેટ કનેક્શન તપાસો.");
         return;
       }
 
@@ -1373,7 +1374,7 @@
       }
     }
 
-    /* વ્હોટ્સએપ ઈમેજ / PDF શેરિંગ માટેનું અપડેટ ફંક્શન */
+    /* વ્હોટ્સએપ શેર અને ઓટો ડાઉનલોડ વિગત */
     async function shareReceiptToWhatsApp(type) {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) return;
@@ -1385,7 +1386,7 @@
 
       try {
         if(typeof html2canvas === 'undefined') {
-          alert("લાઈબ્રેરી લોડ નથી. ઓફલાઈન લાઈબ્રેરી મોડ ચાલુ છે.");
+          alert("લાઈબ્રેરી ઉપલબ્ધ નથી.");
           return;
         }
 
@@ -1405,7 +1406,6 @@
                 });
               } catch (err) { console.log("Share canceled"); }
             } else {
-              // ડાયરેક્ટ ઓટો ડાઉનલોડ કરીને WhatsApp ખોલવું
               let a = document.createElement('a');
               a.href = URL.createObjectURL(blob);
               a.download = `Receipt_${s.name}.png`;
@@ -1450,6 +1450,7 @@
       }
     }
 
+    /* Local PDF ડાઉનલોડ ફંક્શન */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
