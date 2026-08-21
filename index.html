@@ -18,7 +18,7 @@
     .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     
     .status-counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-    .counter-box { padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
+    .counter-box { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; user-select: none; }
     .counter-box:active { transform: scale(0.96); }
     .counter-active { background: #27ae60; }
     .counter-inactive { background: #e74c3c; }
@@ -33,7 +33,7 @@
     .filter-box label { font-size: 13px; font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; }
 
     .fee-3boxes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; margin-bottom: 12px; }
-    .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s, opacity 0.2s; }
+    .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s, opacity 0.2s; user-select: none; }
     .fee-box:active { transform: scale(0.96); }
     .fee-box-total { background: #1a73e8; }
     .fee-box-paid { background: #27ae60; }
@@ -42,7 +42,7 @@
     .fee-box-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
     .fee-box.selected-filter { outline: 3px solid #ffeb3b; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 
-    .grand-summary { background: #34a853; color: white; border-radius: 10px; padding: 15px; margin-top: 15px; }
+    .grand-summary { background: #2e7d32; color: white; border-radius: 10px; padding: 15px; margin-top: 15px; }
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
@@ -83,7 +83,7 @@
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
 
-    /* 🎨 કલરફુલ પહોંચ ટેબલ ડિઝાઇન 🎨 */
+    /* પહોંચ ડિઝાઇન */
     .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .receipt-excel-table { width: 100%; border-collapse: collapse; }
     .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
@@ -100,7 +100,6 @@
     .text-green { color: #27ae60; font-weight: bold; }
     .text-blue { color: #1a73e8; font-weight: bold; }
 
-    /* સેવ ઈમેજ પ્રીવ્યૂ મોડલ */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
     .modal-content { background: white; margin: 10% auto; padding: 15px; max-width: 90%; border-radius: 8px; text-align: center; }
   </style>
@@ -145,13 +144,13 @@
         <!-- વિદ્યાર્થીઓનું લિસ્ટ -->
         <div id="studentListContainer"></div>
 
-        <!-- સ્ટેશનરી અને એડમિન ખર્ચ ના અડધા અડધા બટનો -->
+        <!-- સ્ટેશનરી અને એડમિન ખર્ચ બટન -->
         <div class="half-btn-grid">
           <button class="btn" style="background:#ffb300; color:#333; font-size:13px; margin:0;" onclick="showPage('stationeryReportPage')">📖 સ્ટેશનરી રિપોર્ટ</button>
           <button class="btn" style="background:#e67e22; color:#fff; font-size:13px; margin:0;" onclick="showPage('adminExpensePage')">💸 Admin ખર્ચ વિગત</button>
         </div>
 
-        <!-- બધા વિદ્યાર્થીઓનું કુલ સરવૈયું -->
+        <!-- સરવૈયું -->
         <div class="grand-summary">
           <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
           <p style="text-align: center; font-size: 11px; margin-top: 2px; opacity: 0.9;">(નીચેના બટન પર ક્લિક કરીને ફિલ્ટર કરો)</p>
@@ -174,11 +173,11 @@
         <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
       </div>
 
-      <!-- PAGE: ADMIN EXPENSE PAGE -->
+      <!-- PAGE: ADMIN EXPENSE -->
       <div id="adminExpensePage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
         <div class="card" style="border-left: 4px solid #e67e22;">
-          <h3 style="color:#e67e22; margin-bottom:10px;">💸 વર્ષ દરમિયાન Admin દ્વારા થતો ખર્ચ</h3>
+          <h3 style="color:#e67e22; margin-bottom:10px;">💸 Admin દ્વારા થતો ખર્ચ</h3>
           
           <form onsubmit="addAdminExpense(event)">
             <div style="display: flex; gap: 10px;">
@@ -192,20 +191,15 @@
               </div>
             </div>
             <div class="form-group">
-              <label>શું લીધું / ખર્ચની વિગત</label>
-              <input type="text" id="expTitle" class="form-control" placeholder="દા.ત. પ્રિન્ટર શાહી, ચા-નાસ્તો, લાઈટ બિલ" required>
+              <label>વિગત</label>
+              <input type="text" id="expTitle" class="form-control" placeholder="દા.ત. સ્ટેશનરી, ચા-નાસ્તો" required>
             </div>
-            <button type="submit" class="btn" style="background:#e67e22;">+ નવો ખર્ચ ઉમેરો</button>
+            <button type="submit" class="btn" style="background:#e67e22;">+ ઉમેરો</button>
           </form>
 
           <table style="margin-top:15px;">
             <thead>
-              <tr>
-                <th>તારીખ</th>
-                <th>વિગત</th>
-                <th>રકમ</th>
-                <th>એક્શન</th>
-              </tr>
+              <tr><th>તારીખ</th><th>વિગત</th><th>રકમ</th><th>એક્શન</th></tr>
             </thead>
             <tbody id="adminExpenseTableBody"></tbody>
           </table>
@@ -216,11 +210,11 @@
         </div>
       </div>
 
-      <!-- PAGE: STATIONERY REPORT PAGE -->
+      <!-- PAGE: STATIONERY REPORT -->
       <div id="stationeryReportPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
         <div class="card" style="border-left: 4px solid #ffb300;">
-          <h3 style="color:#b78103; margin-bottom:10px;">📖 વિદ્યાર્થીઓ દ્વારા લેવાયેલ સ્ટેશનરી ની સંપૂર્ણ વિગત</h3>
+          <h3 style="color:#b78103; margin-bottom:10px;">📖 સ્ટેશનરી રિપોર્ટ</h3>
           <div id="stationeryReportContainer"></div>
           <div style="background:#fff8e1; border:1px solid #ffe082; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
             <h4 style="color:#b78103;">કુલ સ્ટેશનરી ના કુલ રકમ: ₹<span id="grandStationeryTotal">0</span></h4>
@@ -237,7 +231,7 @@
             <input type="hidden" id="sEditId">
             <div class="form-group">
               <label>વિદ્યાર્થીનું નામ</label>
-              <input type="text" id="sName" class="form-control" required placeholder="દા.ત. રવિ વિનોદભાઈ વાઘેલા">
+              <input type="text" id="sName" class="form-control" required placeholder="રવિ વાઘેલા">
             </div>
             <div class="form-group">
               <label>મોબાઈલ ૧ (મુખ્ય)</label>
@@ -246,11 +240,11 @@
 
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
-                <label>ધોરણ (Standard)</label>
-                <input type="text" id="sStd" class="form-control" required placeholder="દા.ત. 5">
+                <label>ધોરણ</label>
+                <input type="text" id="sStd" class="form-control" required placeholder="5">
               </div>
               <div class="form-group" style="flex: 1;">
-                <label>કોર્સ પસંદ કરો</label>
+                <label>કોર્સ</label>
                 <select id="sCourseSelect" class="form-control" onchange="assignCourseFee()"></select>
               </div>
             </div>
@@ -259,10 +253,10 @@
               <label>ફી નો પ્રકાર</label>
               <div class="radio-group">
                 <label class="radio-option">
-                  <input type="radio" name="feeType" value="Monthly" checked onchange="updateFeeLabel()"> માસિક (Monthly)
+                  <input type="radio" name="feeType" value="Monthly" checked onchange="updateFeeLabel()"> માસિક
                 </label>
                 <label class="radio-option">
-                  <input type="radio" name="feeType" value="Yearly" onchange="updateFeeLabel()"> વાર્ષિક (Yearly)
+                  <input type="radio" name="feeType" value="Yearly" onchange="updateFeeLabel()"> વાર્ષિક
                 </label>
               </div>
             </div>
@@ -274,7 +268,7 @@
 
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
-                <label>દાખલ તારીખ (ફી શરૂ તારીખ)</label>
+                <label>દાખલ તારીખ</label>
                 <input type="date" id="sAdmissionDate" class="form-control" required>
               </div>
               <div class="form-group" style="flex: 1;">
@@ -331,17 +325,12 @@
             🎁 કુલ આપેલ ડિસ્કાઉન્ટ: ₹<span id="infoTotalDiscount">0</span>
           </div>
 
-          <!-- 📖 સ્ટેશનરી વિગત -->
+          <!-- 📖 સ્ટેશનરી -->
           <div class="stationery-box">
             <h4 style="color: #333; margin-bottom:8px; font-size: 15px;">📖 ખરીદેલ સ્ટેશનરી / ચોપડીઓ</h4>
             <table>
               <thead>
-                <tr>
-                  <th style="text-align:center;">તારીખ</th>
-                  <th>વસ્તુ / બુકનું નામ</th>
-                  <th style="text-align:center;">કિંમત</th>
-                  <th style="text-align:center;">એક્શન</th>
-                </tr>
+                <tr><th style="text-align:center;">તારીખ</th><th>વસ્તુ / બુકનું નામ</th><th style="text-align:center;">કિંમત</th><th style="text-align:center;">એક્શન</th></tr>
               </thead>
               <tbody id="assignedStationeryTableBody"></tbody>
             </table>
@@ -396,7 +385,7 @@
             </div>
 
             <div class="form-group">
-              <label style="color:#b78103; font-weight:bold;">📚 પહોંચમાં દર્શાવવા માટે સ્ટેશનરી પસંદ કરો:</label>
+              <label style="color:#b78103; font-weight:bold;">📚 પહોંચ માટે સ્ટેશનરી પસંદ કરો:</label>
               <div id="paymentStationeryCheckboxes" class="checkbox-list"></div>
             </div>
 
@@ -411,11 +400,11 @@
               </div>
             </div>
 
-            <div class="info-box" style="background:#fff3e0; border-color:#ffe0b2; margin-bottom:12px; padding: 10px; border-radius: 6px; font-size: 13px;">
-              <b>📊 આ પહોંચનો લાઈવ હિસાબ:</b><br>
-              • પસંદ કરેલ કુલ ફી: <b>₹<span id="lblCalcTotal">0</span></b><br>
-              • જમા રકમ: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b><br>
-              • બાકી રકમ: <b style="color:#d32f2f;">₹<span id="lblCalcDue">0</span></b>
+            <div style="background:#fff3e0; border:1px solid #ffe0b2; margin-bottom:12px; padding: 10px; border-radius: 6px; font-size: 13px;">
+              <b>📊 લાઈવ હિસાબ:</b><br>
+              • પસંદ કરેલ ફી: <b>₹<span id="lblCalcTotal">0</span></b> | 
+              જમા: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b> | 
+              બાકી: <b style="color:#d32f2f;">₹<span id="lblCalcDue">0</span></b>
             </div>
 
             <div class="form-group">
@@ -437,15 +426,10 @@
         </div>
 
         <div class="card">
-          <h4>📊 ફી હિસ્ટ્રી (સેવ થયેલ ફોટો અને PDF)</h4>
+          <h4>📊 ફી હિસ્ટ્રી</h4>
           <table>
             <thead>
-              <tr>
-                <th>તારીખ</th>
-                <th>રકમ</th>
-                <th>સ્ટેટસ</th>
-                <th>સેવ ફાઈલ / એક્શન</th>
-              </tr>
+              <tr><th>તારીખ</th><th>રકમ</th><th>સ્ટેટસ</th><th>એક્શન</th></tr>
             </thead>
             <tbody id="paymentHistoryBody"></tbody>
           </table>
@@ -453,23 +437,22 @@
 
         <!-- RECEIPT PREVIEW AREA -->
         <div class="card" id="receiptCardArea" style="border: 1px solid #ccc; background: #fff;">
-          <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ (Fee Receipt)</h4>
+          <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-whatsapp-direct" onclick="generateAndSendPhotoWhatsApp()">📸 આબેહૂબ ફોટો જનરેટ કરી વૉટ્સએપ સેન્ડ કરો</button>
+          <button class="btn btn-whatsapp-direct" onclick="generateAndSendPhotoWhatsApp()">📸 આબેહૂબ ફોટો મોકલો (WhatsApp)</button>
           <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 PDF ડાઉનલોડ કરો</button>
           <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
       </div>
 
-      <!-- PAGE 4: MASTER SETTINGS & CLOUD CONNECT -->
+      <!-- PAGE 4: MASTER SETTINGS -->
       <div id="settingsPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
         
         <div class="card" style="border: 2px solid #34a853;">
           <h4 style="color: #34a853;">🔗 Google Sheets Cloud Sync સેટિંગ્સ</h4>
-          <p style="font-size: 12px; color: #666; margin-top: 4px;">તમારા Apps Script માંથી મળેલી વેબ એપ લિંક અહીં પેસ્ટ કરો.</p>
-          <input type="text" id="gdriveScriptUrl" class="form-control" placeholder="અહીં Google Web App URL લિંક પેસ્ટ કરો">
+          <input type="text" id="gdriveScriptUrl" class="form-control" style="margin-top:8px;" placeholder="અહીં Google Web App URL લિંક પેસ્ટ કરો">
           <button class="btn" style="background: #34a853; margin-top: 5px;" onclick="saveCloudUrl()">🔗 લિંક સેવ કરો</button>
         </div>
 
@@ -506,7 +489,7 @@
   <!-- Image Viewer Modal -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
-      <h3 style="margin-bottom:10px;">🖼️ સેવ થયેલી ફી પહોંચનો ફોટો</h3>
+      <h3 style="margin-bottom:10px;">🖼️ ફી પહોંચનો ફોટો</h3>
       <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px;">
       <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
         <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ</a>
@@ -516,8 +499,8 @@
   </div>
 
   <script>
-    let currentTab = null;
-    let currentFeeFilter = null;
+    let currentTab = 'Active'; 
+    let currentFeeFilter = 'ALL';
     let currentStudentId = null;
     let selectedPaymentId = null;
 
@@ -532,19 +515,23 @@
       { id: 2, name: "Exam ped", price: 120 }
     ];
 
-    let defaultStudents = [];
-    let defaultAdminExpenses = [];
-
     let masterCourses = JSON.parse(localStorage.getItem('NIRMALA_COURSES')) || defaultCourses;
     let masterBooks = JSON.parse(localStorage.getItem('NIRMALA_BOOKS')) || defaultBooks;
-    let students = JSON.parse(localStorage.getItem('NIRMALA_STUDENTS')) || defaultStudents;
-    let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || defaultAdminExpenses;
+    let students = JSON.parse(localStorage.getItem('NIRMALA_STUDENTS')) || [];
+    let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || [];
 
     function saveDataLocally() {
       localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
       localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
       localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
+    }
+
+    function formatDateGuj(dateStr) {
+      if(!dateStr) return '';
+      const parts = dateStr.split('-');
+      if(parts.length !== 3) return dateStr;
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
 
     window.onload = function() {
@@ -575,10 +562,10 @@
     function uploadAllDataToDrive() {
       let url = localStorage.getItem('GDRIVE_SCRIPT_URL');
       if(!url) {
-        alert("❌ ભુલ: માસ્ટર સેટિંગ્સ પેજ પર જઈને Google Sheet લિંક ઉમેરો!");
+        alert("❌ માસ્ટર સેટિંગ્સમાં Google Sheet લિંક ઉમેરો!");
         return;
       }
-      alert("ગુગલ ડ્રાઈવમાં બેકઅપ અપલોડ થઈ રહ્યો છે...");
+      alert("ડ્રાઈવમાં બેકઅપ સેવ થઈ રહ્યો છે...");
       fetch(url, {
         method: "POST",
         mode: "no-cors",
@@ -753,8 +740,8 @@
 
     function switchStatusTab(tab) {
       currentTab = tab;
-      currentFeeFilter = null;
-      document.getElementById('btnFilterAll').classList.remove('selected-filter');
+      currentFeeFilter = 'ALL';
+      document.getElementById('btnFilterAll').classList.add('selected-filter');
       document.getElementById('btnFilterPaid').classList.remove('selected-filter');
       document.getElementById('btnFilterDue').classList.remove('selected-filter');
       renderStudentList();
@@ -799,11 +786,6 @@
       updateLiveStatusCounters();
       const container = document.getElementById('studentListContainer');
       container.innerHTML = '';
-
-      if (currentTab === null) {
-        container.innerHTML = `<p style="text-align:center; color:#1a73e8; padding:20px; font-weight:bold;">ઉપરના એક્ટિવ અથવા ઇન-એક્ટિવ બટન પર ક્લિક કરો.</p>`;
-        return;
-      }
 
       const selectedCourseFilter = document.getElementById('courseFilter').value;
       let filtered = students.filter(s => s.status === currentTab);
@@ -1066,7 +1048,6 @@
       }
     }
 
-    /* 🌟 ફી પહોંચ ઉમેરતી વખતે ઓટોમેટિક ઈમેજ (આબેહૂબ ફોટો) અને PDF હિસ્ટ્રીમાં સેવ કરવાની પ્રોસેસ 🌟 */
     async function addNewPayment(event) {
       event.preventDefault();
       const s = students.find(item => item.id === currentStudentId);
@@ -1097,7 +1078,7 @@
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
         paidAmount: inputPaidAmt,
-        isPaid: false,
+        isPaid: inputPaidAmt > 0,
         receiptImage: "",
         receiptPDF: ""
       };
@@ -1107,7 +1088,6 @@
 
       calculateAndRenderSystem(s);
 
-      // પહોંચ પ્રીવ્યૂ માંથી ઓટોમેટિક આબેહૂબ ફોટો અને PDF જનરેટ કરીને હિસ્ટ્રી માં ડાયરેક્ટ સેવ કરો
       setTimeout(async () => {
         let el = document.getElementById('receiptImageCapture');
         if(el) {
@@ -1127,7 +1107,7 @@
         }
       }, 300);
 
-      alert("🧾 પહોંચ જનરેટ થઈ ગઈ છે અને વિદ્યાર્થીની હિસ્ટ્રીમાં ફોટો તથા PDF સેવ પણ થઈ ગયા છે.");
+      alert("🧾 પહોંચ જનરેટ થઈ ગઈ છે!");
       renderStudentList();
     }
 
@@ -1164,13 +1144,6 @@
       }
     }
 
-    function formatDateGuj(dateStr) {
-      if(!dateStr) return '';
-      const parts = dateStr.split('-');
-      return `${parts[2]}-${parts[1]}-${parts0] || parts[0]}`;
-    }
-
-    /* 🌟 કલરફુલ પહોંચ જનરેટર (આબેહૂબ લેઆઉટ) 🌟 */
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ નથી.</p>`;
 
@@ -1283,8 +1256,8 @@
               <td>${badgeTxt}</td>
               <td style="white-space:nowrap;">
                 <button class="btn-view" onclick="viewSpecificReceipt(${p.id})">👁️ જુઓ</button>
-                ${p.receiptImage ? `<button class="btn-view" style="background:#009688;" onclick="viewSavedPhoto('${p.id}')">🖼️ ફોટો</button>` : ''}
-                ${p.receiptPDF ? `<button class="btn-view" style="background:#e74c3c;" onclick="downloadSavedPDF('${p.id}')">📄 PDF</button>` : ''}
+                ${p.receiptImage ? `<button class="btn-view" style="background:#009688;" onclick="viewSavedPhoto('${p.id}')">🖼️</button>` : ''}
+                ${p.receiptPDF ? `<button class="btn-view" style="background:#e74c3c;" onclick="downloadSavedPDF('${p.id}')">📄</button>` : ''}
                 ${!p.isPaid ? `<button class="btn-pay-action" onclick="markPaymentAsPaid(${p.id})">🟢 જમા</button>` : ''}
                 <button class="btn-danger" onclick="deletePayment(${p.id})">❌</button>
               </td>
@@ -1362,7 +1335,6 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* 📸 આબેહૂબ ફોટો જનરેટ કરી વૉટ્સએપ શેર કરો */
     async function generateAndSendPhotoWhatsApp() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1382,24 +1354,19 @@
           link.href = canvas.toDataURL('image/png');
           link.click();
 
-          alert("📸 પહોંચનો આબેહૂબ ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે. વૉટ્સએપમાં ગેલેરીમાંથી ફોટો સાથે મોકલો.");
+          alert("📸 પહોંચનો ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે.");
           window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
         }
       }, 'image/png');
     }
 
-    /* 📥 PDF ઓટોમેટિક જનરેટ કરી ડાઉનલોડ કરવા માટે ની પ્રોસેસ */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
       const element = document.getElementById('receiptImageCapture');
 
-      if (!element) {
-        alert("પહોંચ પ્રીવ્યૂ ઉપલબ્ધ નથી.");
-        return;
-      }
+      if (!element) return;
 
-      alert("📄 PDF જનરેટ થઈ રહી છે, કૃપા કરીને એક સેકન્ડ રાહ જુઓ...");
       try {
         const canvas = await html2canvas(element, { scale: 2 });
         const imgData = canvas.toDataURL('image/png');
