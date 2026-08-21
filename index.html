@@ -54,9 +54,10 @@
     .btn-settings { background: #6f42c1; margin-top: 10px; }
     .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
     
-    /* WhatsApp Share Buttons */
+    /* WhatsApp Share & Image Download Buttons */
     .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
     .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
+    .btn-img-download { background: #8e44ad; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
 
     .btn-copy { background: #17a2b8; color: white; margin-top: 8px; }
     .btn-pdf { background: #e74c3c; color: white; margin-top: 8px; }
@@ -431,6 +432,8 @@
         <div class="card" id="receiptCardArea" style="border: 1px solid #ccc; background: #fff;">
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
+          
+          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો (PNG)</button>
           
           <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટસએપ પર Photo શેર કરો</button>
           <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટસએપ પર PDF શેર કરો</button>
@@ -1087,7 +1090,7 @@
 
       setTimeout(async () => {
         let el = document.getElementById('receiptImageCapture');
-        if(el) {
+        if(el && window.html2canvas) {
           let canvas = await html2canvas(el, { scale: 2, useCORS: true });
           let imgData = canvas.toDataURL('image/png');
           newPaymentObj.receiptImage = imgData;
@@ -1339,6 +1342,37 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
+    /* રસીદને ઈમેજ તરીકે ડાઉનલોડ કરવાનું નવું ફંક્શન (Offline ઓપરેટ થાય છે) */
+    async function downloadReceiptAsImage() {
+      const s = students.find(item => item.id === currentStudentId);
+      if(!s || !s.payments || s.payments.length === 0) {
+        alert("ડાઉનલોડ કરવા માટે કોઈ પહોંચ મળી નથી.");
+        return;
+      }
+      
+      const element = document.getElementById('receiptImageCapture');
+      if(!element) return;
+
+      if(typeof html2canvas === 'undefined') {
+        alert("ઈમેજ કન્વર્ટર લાઈબ્રેરી લોડ થઈ નથી. કૃપા કરીને એકવાર ઇન્ટરનેટ ચાલુ કરો.");
+        return;
+      }
+
+      try {
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+        const imgData = canvas.toDataURL('image/png');
+
+        let link = document.createElement('a');
+        link.href = imgData;
+        link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
+      }
+    }
+
     /* વ્હોટ્સએપ ઈમેજ / PDF શેરિંગ માટેનું અપડેટ ફંક્શન */
     async function shareReceiptToWhatsApp(type) {
       const s = students.find(item => item.id === currentStudentId);
@@ -1350,6 +1384,11 @@
       const msg = buildTextMessage(s);
 
       try {
+        if(typeof html2canvas === 'undefined') {
+          alert("લાઈબ્રેરી લોડ નથી. ઓફલાઈન લાઈબ્રેરી મોડ ચાલુ છે.");
+          return;
+        }
+
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         
         if (type === 'image') {
