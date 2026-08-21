@@ -505,7 +505,7 @@
     let selectedPaymentId = null;
 
     let defaultCourses = [
-      { id: 1, name: "નવોદય", fee: 350 },
+      { id: 1, name: "Navoday", fee: 350 },
       { id: 2, name: "Gyan Sadhana", fee: 350 },
       { id: 3, name: "સામાન્ય ટ્યુશન", fee: 800 }
     ];
@@ -1144,6 +1144,7 @@
       }
     }
 
+    /* 🎯 સુધારેલ પહોંચ લેઆઉટ (ધોરણ, કોર્સ અને જમા તારીખ એક જ લાઈનમાં) */
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ નથી.</p>`;
 
@@ -1183,12 +1184,12 @@
             <tr><td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td></tr>
             <tr class="sub-header-row">
               <td colspan="3" style="padding: 8px 10px;">
-                <div style="font-size:15px; display:flex; justify-content:space-between;" class="txt-bold text-blue">
-                  <span>👤 વિદ્યાર્થીનું નામ: ${s.name}</span>
-                  <span style="color:#333;">📅 જમા તારીખ: ${formatDateGuj(p.date)}</span>
+                <div style="font-size:15px; margin-bottom: 4px;" class="txt-bold text-blue">
+                  👤 વિદ્યાર્થીનું નામ: ${s.name}
                 </div>
-                <div style="margin-top: 5px; font-size:13px;" class="txt-bold">
-                  <span>ધોરણ: ${s.std}</span> | <span>કોર્સ: ${s.course}</span>
+                <!-- 🌟 સુધારો: ધોરણ, કોર્સ અને જમા તારીખ હવે ત્રણેય એક જ લાઈનમાં છે -->
+                <div style="font-size:12px; color:#333;" class="txt-bold">
+                  ધોરણ: ${s.std} | કોર્સ: ${s.course} | 📅 જમા તારીખ: ${formatDateGuj(p.date)}
                 </div>
               </td>
             </tr>
@@ -1335,31 +1336,54 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
+    /* 🎯 સુધારેલ ફોટો મોકલવાનો ફંકશન: ક્રેશ થવાની અને ડાઉનલોડિંગ પોપઅપની સમસ્યા દૂર કરી */
     async function generateAndSendPhotoWhatsApp() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
       const element = document.getElementById('receiptImageCapture');
       if(!element) return;
 
-      const canvas = await html2canvas(element, { scale: 2 });
-      canvas.toBlob(blob => {
+      try {
+        const canvas = await html2canvas(element, { scale: 2 });
         const msg = buildTextMessage(s);
-        const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] }).catch(() => {});
-        } else {
-          let link = document.createElement('a');
-          link.download = `Receipt_${s.name}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
+            return;
+          }
+          const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
-          alert("📸 પહોંચનો ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે.");
-          window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-      }, 'image/png');
+          // સુરક્ષિત શેરિંગ ચેક - મોબાઈલ બંધ પડી જવાથી બચાવવા
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: 'ફી પહોંચ',
+                text: msg,
+                files: [file]
+              });
+            } catch (shareErr) {
+              // શેર કેન્સલ કરે તો એપ ક્રેશ નહીં થાય
+              console.log("Share dismissed");
+            }
+          } else {
+            // Web Share સપોર્ટ ન હોય ત્યારે સક્ષમ બેકઅપ ફ્લો
+            let link = document.createElement('a');
+            link.download = `Receipt_${s.name}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            alert("📸 પહોંચનો ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે.");
+            window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+          }
+        }, 'image/png');
+
+      } catch (err) {
+        alert("ફોટો જનરેટ કરતી વખતે એરર: " + err);
+      }
     }
 
+    /* 🎯 સુધારેલ PDF ડાઉનલોડ ફંકશન */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1379,7 +1403,7 @@
         pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
         pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (err) {
-        alert("PDF જનરેટ કરવામાં ભુલ થઈ: " + err);
+        alert("PDF જનરેટ કરવામાં ભૂલ થઈ: " + err);
       }
     }
   </script>
