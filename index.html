@@ -440,7 +440,7 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-whatsapp-direct" onclick="generateAndSendPhotoWhatsApp()">📸 આબેહૂબ ફોટો મોકલો (WhatsApp)</button>
+          <button class="btn btn-whatsapp-direct" onclick="generateAndSendPhotoWhatsApp()">📲 વૉટ્સએપ પર સેન્ડ કરો (Direct Image Share)</button>
           <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 PDF ડાઉનલોડ કરો</button>
           <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
@@ -1091,7 +1091,7 @@
       setTimeout(async () => {
         let el = document.getElementById('receiptImageCapture');
         if(el) {
-          let canvas = await html2canvas(el, { scale: 2 });
+          let canvas = await html2canvas(el, { scale: 2, useCORS: true });
           let imgData = canvas.toDataURL('image/png');
           newPaymentObj.receiptImage = imgData;
 
@@ -1187,7 +1187,6 @@
                 <div style="font-size:15px; margin-bottom: 4px;" class="txt-bold text-blue">
                   👤 વિદ્યાર્થીનું નામ: ${s.name}
                 </div>
-                <!-- 🌟 સુધારો: ધોરણ, કોર્સ અને જમા તારીખ હવે ત્રણેય એક જ લાઈનમાં છે -->
                 <div style="font-size:12px; color:#333;" class="txt-bold">
                   ધોરણ: ${s.std} | કોર્સ: ${s.course} | 📅 જમા તારીખ: ${formatDateGuj(p.date)}
                 </div>
@@ -1336,7 +1335,7 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* 🎯 સુધારેલ ફોટો મોકલવાનો ફંકશન: ક્રેશ થવાની અને ડાઉનલોડિંગ પોપઅપની સમસ્યા દૂર કરી */
+    /* 🎯 ૧. ડાયરેક્ટ વૉટ્સએપ શેરિંગ (ગેલેરીમાં ફોટો સેવ કે ડાઉનલોડ કર્યા વગર) */
     async function generateAndSendPhotoWhatsApp() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1344,7 +1343,7 @@
       if(!element) return;
 
       try {
-        const canvas = await html2canvas(element, { scale: 2 });
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         const msg = buildTextMessage(s);
 
         canvas.toBlob(async (blob) => {
@@ -1352,9 +1351,10 @@
             alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
             return;
           }
+          
           const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
-          // સુરક્ષિત શેરિંગ ચેક - મોબાઈલ બંધ પડી જવાથી બચાવવા
+          // Web Share API દ્વારા વૉટ્સએપમાં ડાયરેક્ટ ફાઇલ શેરિંગ
           if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
               await navigator.share({
@@ -1363,27 +1363,20 @@
                 files: [file]
               });
             } catch (shareErr) {
-              // શેર કેન્સલ કરે તો એપ ક્રેશ નહીં થાય
-              console.log("Share dismissed");
+              console.log("Share canceled by user");
             }
           } else {
-            // Web Share સપોર્ટ ન હોય ત્યારે સક્ષમ બેકઅપ ફ્લો
-            let link = document.createElement('a');
-            link.download = `Receipt_${s.name}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-
-            alert("📸 પહોંચનો ફોટો ગેલેરીમાં ડાઉનલોડ થઈ ગયો છે.");
+            // જો ડાયરેક્ટ શેર ઓપ્શન ઉપલબ્ધ ન હોય તો જ WhatsApp ઓપન થશે
             window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
           }
         }, 'image/png');
 
       } catch (err) {
-        alert("ફોટો જનરેટ કરતી વખતે એરર: " + err);
+        alert("ફોટો બનાવવામાં ભૂલ: " + err);
       }
     }
 
-    /* 🎯 સુધારેલ PDF ડાઉનલોડ ફંકશન */
+    /* 🎯 ૨. PDF ડાઉનલોડ સોલ્યુશન */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1392,18 +1385,26 @@
       if (!element) return;
 
       try {
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
+        // html2canvas વડે લાઈવ ઈમેજ કૅપ્ચર
+        const canvas = await html2canvas(element, { 
+          scale: 2,
+          useCORS: true,
+          logging: false
+        });
+        
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
+        // jsPDF નો ઉપયોગ કરીને સીધી જ PDF ફાઈલ ડાઉનલોડ
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190;
+        
+        const imgWidth = 190; // A4 સાઈઝ મુજબ પહોળાઈ
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
         pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (err) {
-        alert("PDF જનરેટ કરવામાં ભૂલ થઈ: " + err);
+        alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err);
       }
     }
   </script>
