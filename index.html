@@ -54,9 +54,13 @@
     .btn-edit { background: #f39c12; margin-top: 5px; }
     .btn-settings { background: #6f42c1; margin-top: 10px; }
     .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
-    .btn-whatsapp-direct { background: #25D366; color: white; font-size: 15px; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.15); margin-top: 15px; }
-    .btn-copy { background: #17a2b8; color: white; margin-top: 5px; }
-    .btn-pdf { background: #e74c3c; color: white; margin-top: 5px; }
+    
+    /* WhatsApp Share Buttons */
+    .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
+    .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
+
+    .btn-copy { background: #17a2b8; color: white; margin-top: 8px; }
+    .btn-pdf { background: #e74c3c; color: white; margin-top: 8px; }
     .btn-danger { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
     .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
     .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
@@ -440,8 +444,11 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-whatsapp-direct" onclick="generateAndSendPhotoWhatsApp()">📲 વૉટ્સએપ પર સેન્ડ કરો (Direct Image Share)</button>
-          <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 PDF ડાઉનલોડ કરો</button>
+          <!-- Direct WhatsApp Share Buttons -->
+          <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટસએપ પર Photo શેર કરો</button>
+          <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટસએપ પર PDF શેર કરો</button>
+          
+          <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ કરો</button>
           <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
       </div>
@@ -489,7 +496,6 @@
   <!-- Image Viewer Modal -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
-      <h3 style="margin-bottom:10px;">🖼️ ફી પહોંચનો ફોટો</h3>
       <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px;">
       <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
         <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ</a>
@@ -532,6 +538,10 @@
       const parts = dateStr.split('-');
       if(parts.length !== 3) return dateStr;
       return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
+    function getDaysInMonth(year, month) {
+      return new Date(year, month + 1, 0).getDate();
     }
 
     window.onload = function() {
@@ -643,10 +653,12 @@
 
       let diffTime = Math.abs(d2 - d1);
       let totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-      let months = Math.floor(totalDays / 30);
-      let remainingDays = totalDays % 30;
+      
+      let daysInCurMonth = getDaysInMonth(d1.getFullYear(), d1.getMonth());
+      let months = Math.floor(totalDays / daysInCurMonth);
+      let remainingDays = totalDays % daysInCurMonth;
 
-      let dailyFee = monthlyFee / 30;
+      let dailyFee = monthlyFee / daysInCurMonth;
       let calculatedFee = Math.round((months * monthlyFee) + (remainingDays * dailyFee));
 
       let durationText = `${months > 0 ? months + ' મહિનો ' : ''}${remainingDays > 0 ? remainingDays + ' દિવસ' : ''}`.trim();
@@ -1144,7 +1156,6 @@
       }
     }
 
-    /* 🎯 સુધારેલ પહોંચ લેઆઉટ (ધોરણ, કોર્સ અને જમા તારીખ એક જ લાઈનમાં) */
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ નથી.</p>`;
 
@@ -1283,14 +1294,20 @@
     }
 
     function downloadSavedPDF(pId) {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s) return;
-      let p = s.payments.find(item => item.id == pId);
-      if(p && p.receiptPDF) {
-        let link = document.createElement('a');
-        link.href = p.receiptPDF;
-        link.download = `Receipt_${s.name}_${p.date}.pdf`;
-        link.click();
+      try {
+        const s = students.find(item => item.id === currentStudentId);
+        if(!s) return;
+        let p = s.payments.find(item => item.id == pId);
+        if(p && p.receiptPDF) {
+          let link = document.createElement('a');
+          link.href = p.receiptPDF;
+          link.download = `Receipt_${s.name}_${p.date}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      } catch(e) {
+        alert("PDF ખોલવામાં સમસ્યા આવી: " + e.message);
       }
     }
 
@@ -1335,48 +1352,67 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* 🎯 ૧. ડાયરેક્ટ વૉટ્સએપ શેરિંગ (ગેલેરીમાં ફોટો સેવ કે ડાઉનલોડ કર્યા વગર) */
-    async function generateAndSendPhotoWhatsApp() {
+    /* 🎯 વ્હોટસએપ પર Photo / PDF સીધી શેર કરવા માટેનું નવું યુનિવર્સલ ફંક્શન */
+    async function shareReceiptToWhatsApp(type) {
       const s = students.find(item => item.id === currentStudentId);
-      if(!s || s.payments.length === 0) return;
+      if(!s || !s.payments || s.payments.length === 0) return;
+      
       const element = document.getElementById('receiptImageCapture');
       if(!element) return;
 
+      const msg = buildTextMessage(s);
+
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-        const msg = buildTextMessage(s);
+        
+        if (type === 'image') {
+          canvas.toBlob(async (blob) => {
+            if (!blob) return alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
+            const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
-            return;
-          }
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({
+                  title: 'ફી પહોંચ (Photo)',
+                  text: msg,
+                  files: [file]
+                });
+              } catch (err) { console.log("Share canceled"); }
+            } else {
+              window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+          }, 'image/png');
+
+        } else if (type === 'pdf') {
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'mm', 'a4');
           
-          const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
+          const imgWidth = 190;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
-          // Web Share API દ્વારા વૉટ્સએપમાં ડાયરેક્ટ ફાઇલ શેરિંગ
+          const pdfBlob = pdf.output('blob');
+          const file = new File([pdfBlob], `Receipt_${s.name}.pdf`, { type: 'application/pdf' });
+
           if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
               await navigator.share({
-                title: 'ફી પહોંચ',
+                title: 'ફી પહોંચ (PDF)',
                 text: msg,
                 files: [file]
               });
-            } catch (shareErr) {
-              console.log("Share canceled by user");
-            }
+            } catch (err) { console.log("Share canceled"); }
           } else {
-            // જો ડાયરેક્ટ શેર ઓપ્શન ઉપલબ્ધ ન હોય તો જ WhatsApp ઓપન થશે
+            pdf.save(`Receipt_${s.name}.pdf`);
             window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
           }
-        }, 'image/png');
-
+        }
       } catch (err) {
-        alert("ફોટો બનાવવામાં ભૂલ: " + err);
+        alert("શેર કરવામાં ભૂલ આવી: " + err);
       }
     }
 
-    /* 🎯 ૨. PDF ડાઉનલોડ સોલ્યુશન */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1385,20 +1421,13 @@
       if (!element) return;
 
       try {
-        // html2canvas વડે લાઈવ ઈમેજ કૅપ્ચર
-        const canvas = await html2canvas(element, { 
-          scale: 2,
-          useCORS: true,
-          logging: false
-        });
-        
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-        // jsPDF નો ઉપયોગ કરીને સીધી જ PDF ફાઈલ ડાઉનલોડ
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
-        const imgWidth = 190; // A4 સાઈઝ મુજબ પહોળાઈ
+        const imgWidth = 190;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
