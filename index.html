@@ -433,7 +433,7 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો (JPG)</button>
+          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ખોલો / ડાઉનલોડ કરો (PNG)</button>
           
           <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટસએપ પર Photo શેર કરો</button>
           <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટસએપ પર PDF શેર કરો</button>
@@ -486,7 +486,7 @@
     <div class="modal-content">
       <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px;">
       <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
-        <a id="modalDownloadBtn" download="Receipt.jpg" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ</a>
+        <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ</a>
         <button class="btn-danger" style="padding:8px 15px;" onclick="closeModal()">બંધ કરો</button>
       </div>
     </div>
@@ -1091,8 +1091,8 @@
       setTimeout(async () => {
         let el = document.getElementById('receiptImageCapture');
         if(el && window.html2canvas) {
-          let canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
-          let imgData = canvas.toDataURL('image/jpeg', 0.95);
+          let canvas = await html2canvas(el, { scale: 2, useCORS: true });
+          let imgData = canvas.toDataURL('image/png');
           newPaymentObj.receiptImage = imgData;
 
           const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
@@ -1100,7 +1100,7 @@
             let pdf = new jsPdfObj('p', 'mm', 'a4');
             let imgWidth = 190;
             let imgHeight = (canvas.height * imgWidth) / canvas.width;
-            pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
             newPaymentObj.receiptPDF = pdf.output('datauristring');
           }
 
@@ -1268,14 +1268,29 @@
       }
     }
 
+    /* ક્રોમ બ્રાઉઝરમાં સેવ કરેલો ફોટો નવી ટેબમાં ઓપન કરવા માટેનો સુધારો */
     function viewSavedPhoto(pId) {
       const s = students.find(item => item.id === currentStudentId);
       if(!s) return;
       let p = s.payments.find(item => item.id == pId);
       if(p && p.receiptImage) {
-        document.getElementById('modalImg').src = p.receiptImage;
-        document.getElementById('modalDownloadBtn').href = p.receiptImage;
-        document.getElementById('imageModal').style.display = 'block';
+        try {
+          fetch(p.receiptImage)
+            .then(res => res.blob())
+            .then(blob => {
+              const blobUrl = URL.createObjectURL(blob);
+              window.open(blobUrl, '_blank');
+            })
+            .catch(() => {
+              document.getElementById('modalImg').src = p.receiptImage;
+              document.getElementById('modalDownloadBtn').href = p.receiptImage;
+              document.getElementById('imageModal').style.display = 'block';
+            });
+        } catch(e) {
+          document.getElementById('modalImg').src = p.receiptImage;
+          document.getElementById('modalDownloadBtn').href = p.receiptImage;
+          document.getElementById('imageModal').style.display = 'block';
+        }
       }
     }
 
@@ -1291,7 +1306,7 @@
         if(p && p.receiptPDF) {
           let link = document.createElement('a');
           link.href = p.receiptPDF;
-          link.download = `Receipt_${s.name.replace(/\s+/g, '_')}_${p.date}.pdf`;
+          link.download = `Receipt_${s.name}_${p.date}.pdf`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -1342,7 +1357,7 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* રસીદને ઈમેજ તરીકે ડાઉનલોડ કરવાનું સેટિંગ (JPG) */
+    /* ક્રોમ બ્રાઉઝરમાં ઇમેજ સીધી નવી ટેબમાં ખોલવા અને ડાઉનલોડ કરવા માટેનું સુધારેલું ફંક્શન */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1360,21 +1375,34 @@
 
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
+            return;
+          }
+          
+          const blobUrl = URL.createObjectURL(blob);
+          
+          // 1. નવી ટેબમાં ખોલવાનો પ્રયાસ
+          window.open(blobUrl, '_blank');
 
-        let link = document.createElement('a');
-        link.href = imgData;
-        const cleanName = s.name.replace(/\s+/g, '_');
-        link.download = `Receipt_${cleanName}_${new Date().toISOString().split('T')[0]}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+          // 2. ડાઉનલોડ લિંક ટ્રિગર કરવી
+          let link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+        }, 'image/png');
+
       } catch (err) {
         alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
       }
     }
 
-    /* વ્હોટ્સએપ ઈમેજ / PDF શેરિંગ માટેનું સંપૂર્ણ અપડેટ ફંક્શન */
+    /* વ્હોટ્સએપ ઈમેજ / PDF શેરિંગ માટેનું અપડેટ ફંક્શન */
     async function shareReceiptToWhatsApp(type) {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) return;
@@ -1383,22 +1411,19 @@
       if(!element) return;
 
       const msg = buildTextMessage(s);
-      const cleanName = s.name.replace(/\s+/g, '_');
 
       try {
         if(typeof html2canvas === 'undefined') {
-          alert("લાઈબ્રેરી લોડ નથી.");
+          alert("લાઈબ્રેરી લોડ નથી. ઓફલાઈન લાઈબ્રેરી મોડ ચાલુ છે.");
           return;
         }
 
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         
         if (type === 'image') {
           canvas.toBlob(async (blob) => {
             if (!blob) return alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
-            
-            const fileName = `Receipt_${cleanName}.jpg`;
-            const file = new File([blob], fileName, { type: 'image/jpeg' });
+            const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
               try {
@@ -1407,21 +1432,20 @@
                   text: msg,
                   files: [file]
                 });
-              } catch (err) { 
-                console.log("Share canceled", err); 
-              }
+              } catch (err) { console.log("Share canceled"); }
             } else {
+              // ડાયરેક્ટ ઓટો ડાઉનલોડ કરીને WhatsApp ખોલવું
               let a = document.createElement('a');
               a.href = URL.createObjectURL(blob);
-              a.download = fileName;
+              a.download = `Receipt_${s.name}.png`;
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
 
-              alert("📸 પહોંચનો ફોટો (JPG) ડાઉનલોડ થઈ ગયો છે. હવે વ્હોટ્સએપ ગેલેરીમાંથી ફોટો પસંદ કરીને મોકલો.");
+              alert("📸 પહોંચનો ફોટો ડાઉનલોડ થઈ ગયો છે. વ્હોટ્સએપ ઓપન થશે જેમાં ફોટો અટેચ કરીને મોકલો.");
               window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
             }
-          }, 'image/jpeg', 0.95);
+          }, 'image/png');
 
         } else if (type === 'pdf') {
           const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -1434,8 +1458,7 @@
           pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
           const pdfBlob = pdf.output('blob');
-          const fileName = `Receipt_${cleanName}.pdf`;
-          const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+          const file = new File([pdfBlob], `Receipt_${s.name}.pdf`, { type: 'application/pdf' });
 
           if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
@@ -1444,11 +1467,9 @@
                 text: msg,
                 files: [file]
               });
-            } catch (err) { 
-              console.log("Share canceled", err); 
-            }
+            } catch (err) { console.log("Share canceled"); }
           } else {
-            pdf.save(fileName);
+            pdf.save(`Receipt_${s.name}.pdf`);
             alert("📄 પહોંચ PDF ડાઉનલોડ થઈ ગઈ છે. વ્હોટ્સએપ ઓપન થશે જેમાં PDF અટેચ કરીને મોકલો.");
             window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
           }
@@ -1477,8 +1498,7 @@
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-        const cleanName = s.name.replace(/\s+/g, '_');
-        pdf.save(`Receipt_${cleanName}_${new Date().toISOString().split('T')[0]}.pdf`);
+        pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (err) {
         alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err.message);
       }
