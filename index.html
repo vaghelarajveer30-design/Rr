@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>નિર્મળા નવોદય ક્લાસિસ - Billing System</title>
+  <title>નિર્મળા નવોદય ક્લાિસસ - Billing System</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -63,7 +63,6 @@
     .btn-pdf { background: #e74c3c; color: white; margin-top: 8px; }
     .btn-danger { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
     .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
-    .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
 
     .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
 
@@ -87,22 +86,34 @@
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
 
-    /* પહોંચ ડિઝાઇન */
-    .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .receipt-excel-table { width: 100%; border-collapse: collapse; }
-    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
-    
-    .receipt-title { font-size: 20px; font-weight: bold; text-align: center; background: linear-gradient(135deg, #0d47a1, #1a73e8); color: #ffffff !important; padding: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    .sub-header-row { background-color: #f4f8ff; font-weight: bold; }
-    .table-head-row { background-color: #e8f0fe; color: #1a73e8; }
-    
+    /* EXACT NEW RECEIPT CARD FORMAT DESIGN */
+    .exact-receipt-card { width: 100%; max-width: 420px; margin: auto; background: #ffffff; border: 2px solid #1862cd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.12); color: #111; font-family: Arial, 'Segoe UI', sans-serif; }
+    .exact-header-banner { background: #1565c0; color: white; font-size: 20px; font-weight: bold; text-align: center; padding: 12px 10px; }
+    .exact-student-info-box { background: #f4f7fc; padding: 12px 15px; border-bottom: 1px solid #cfd8dc; }
+    .exact-student-name { font-size: 18px; font-weight: bold; color: #1565c0; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .exact-student-sub { font-size: 13px; font-weight: bold; color: #222; }
+
+    .exact-receipt-table { width: 100%; border-collapse: collapse; }
+    .exact-receipt-table th { background: #eceff1; color: #1565c0; font-size: 14px; font-weight: bold; padding: 8px; border: 1px solid #cfd8dc; }
+    .exact-receipt-table td { padding: 8px 10px; border: 1px solid #cfd8dc; font-size: 14px; }
+
     .txt-center { text-align: center; }
     .txt-right { text-align: right; }
     .txt-bold { font-weight: bold; }
-    .text-red { color: #d32f2f; font-weight: bold; }
-    .text-green { color: #27ae60; font-weight: bold; }
-    .text-blue { color: #1a73e8; font-weight: bold; }
+
+    .row-total-lbl { font-size: 16px; font-weight: bold; color: #e53935; text-align: right; }
+    .row-total-val { font-size: 17px; font-weight: bold; color: #e53935; text-align: center; }
+
+    .row-paid-lbl { font-size: 16px; font-weight: bold; color: #2e7d32; text-align: right; }
+    .row-paid-val { font-size: 17px; font-weight: bold; color: #2e7d32; text-align: center; }
+
+    .row-due-lbl { font-size: 16px; font-weight: bold; color: #e53935; text-align: right; }
+    .row-due-val { font-size: 17px; font-weight: bold; color: #e53935; text-align: center; }
+
+    .exact-duration-bar { background: #e3f2fd; color: #1565c0; font-size: 13px; font-weight: bold; text-align: center; padding: 8px; border-top: 1px solid #cfd8dc; border-bottom: 1px solid #cfd8dc; }
+    .exact-footer-details { padding: 12px 15px; background: #fff; font-size: 13px; font-weight: bold; }
+    .exact-footer-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .exact-owner-name { border-top: 1px dashed #b0bec5; padding-top: 10px; text-align: center; font-size: 15px; font-weight: bold; color: #0d47a1; }
 
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); overflow-y: auto; }
     .modal-content { background: white; margin: 5% auto; padding: 15px; max-width: 90%; border-radius: 8px; text-align: center; }
@@ -355,6 +366,10 @@
                 <label>પહોંચ તારીખ</label>
                 <input type="date" id="fDate" class="form-control" required>
               </div>
+              <div class="form-group" style="flex: 1;">
+                <label>ફી ભરનારનું નામ</label>
+                <input type="text" id="fPayerName" class="form-control" placeholder="Ved / Self">
+              </div>
             </div>
 
             <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px dashed #2980b9; margin-bottom:12px;">
@@ -395,8 +410,8 @@
             </div>
 
             <div class="form-group">
-              <label>નોંધ / પેમેન્ટ મોડ</label>
-              <input type="text" id="fNote" class="form-control" placeholder="Cash / Online / UPI">
+              <label>પેમેન્ટ મોડ / નોંધ</label>
+              <input type="text" id="fNote" class="form-control" placeholder="Cash / Online / UPI" value="Cash">
             </div>
 
             <div style="background:#e8f0fe; padding:10px; border-radius:6px; margin-bottom:10px; font-size:13px; text-align:center;">
@@ -464,6 +479,7 @@
     </div>
   </div>
 
+  <!-- Image & PDF Preview Modal -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
       <h3 style="color:#1a73e8; margin-bottom:10px;" id="modalTitle">પહોંચ પ્રિવ્યૂ</h3>
@@ -485,7 +501,7 @@
     let selectedPaymentId = null;
 
     let defaultCourses = [
-      { id: 1, name: "Navoday", fee: 350 },
+      { id: 1, name: "નવોદય ક્લાસિસ", fee: 400 },
       { id: 2, name: "Gyan Sadhana", fee: 350 },
       { id: 3, name: "સામાન્ય ટ્યુશન", fee: 800 }
     ];
@@ -510,7 +526,7 @@
     function formatDateGuj(dStr) {
       if(!dStr) return "";
       const p = dStr.split('-');
-      if(p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`;
+      if(p.length === 3) return `${p[2]}-${p[1]}-${p[0]}`;
       return dStr;
     }
 
@@ -618,8 +634,15 @@
       let monthNames = [];
       let monthListDetails = [];
 
+      let gujMonths = {
+        'January': 'જાન્યુઆરી', 'February': 'ફેબ્રુઆરી', 'March': 'માર્ચ', 'April': 'એપ્રિલ',
+        'May': 'મે', 'June': 'જૂન', 'July': 'જુલાઈ', 'August': 'ઓગસ્ટ',
+        'September': 'સપ્ટેમ્બર', 'October': 'ઓક્ટોબર', 'November': 'નવેમ્બર', 'December': 'ડિસેમ્બર'
+      };
+
       while (temp <= d2) {
-        let mName = temp.toLocaleString('gu-IN', { month: 'long', year: 'numeric' });
+        let engMonth = temp.toLocaleString('en-US', { month: 'long' });
+        let mName = gujMonths[engMonth] || engMonth;
         if (!monthNames.includes(mName)) {
           monthNames.push(mName);
           monthListDetails.push({ name: mName, fee: monthlyFee });
@@ -635,7 +658,7 @@
       let exactMonths = Math.max(1, Math.round(monthsDecimal));
       let totalCalculatedFee = exactMonths * monthlyFee;
 
-      let durText = `${diffDays} દિવસ (${exactMonths} મહિના)`;
+      let durText = `${formatDateGuj(startDateStr)} થી ${formatDateGuj(endDateStr)}`;
 
       return {
         months: exactMonths,
@@ -1009,12 +1032,13 @@
       if(!s) return;
 
       const pDate = document.getElementById('fDate').value;
+      const payerName = document.getElementById('fPayerName').value.trim() || 'Ved';
       const fromDate = document.getElementById('fFromDate').value;
       const toDate = document.getElementById('fToDate').value;
       const feeAmount = parseFloat(document.getElementById('fFeeAmount').value) || 0;
       const paidAmount = parseFloat(document.getElementById('fPaidAmount').value) || 0;
       const discountAmount = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
-      const note = document.getElementById('fNote').value;
+      const note = document.getElementById('fNote').value || 'Cash';
 
       let selectedStationery = [];
       document.querySelectorAll('#paymentStationeryCheckboxes input[type="checkbox"]:checked').forEach(cb => {
@@ -1031,9 +1055,11 @@
       const paymentObj = {
         id: Date.now(),
         date: pDate,
+        payerName: payerName,
         fromDate: fromDate,
         toDate: toDate,
         durationText: durationInfo.durationText,
+        monthListDetails: durationInfo.monthListDetails,
         feeAmount: feeAmount,
         stationeryList: selectedStationery,
         paidAmount: paidAmount,
@@ -1103,105 +1129,106 @@
       }
     }
 
+    // EXACT NEW RECEIPT GENERATOR FUNCTION MATCHING YOUR IMAGE FORMAT
     function generateReceiptHTML(s, targetPaymentIndex) {
       if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ ઉપલબ્ધ નથી.</p>`;
 
       let p = s.payments[targetPaymentIndex];
       if(!p) p = s.payments[s.payments.length - 1];
 
-      let statTotal = 0;
-      let statRows = '';
-      if(p.stationeryList && p.stationeryList.length > 0) {
-        p.stationeryList.forEach((st, idx) => {
-          statTotal += st.price;
-          statRows += `
+      let tableItemsHTML = '';
+      let itemIndex = 1;
+
+      // 1. Months / Fees List
+      if (p.monthListDetails && p.monthListDetails.length > 0) {
+        p.monthListDetails.forEach(m => {
+          tableItemsHTML += `
             <tr>
-              <td class="txt-center">${idx + 2}</td>
-              <td>${st.name} (સ્ટેશનરી)</td>
-              <td class="txt-right">₹${st.price}</td>
+              <td class="txt-center txt-bold">${itemIndex++}</td>
+              <td class="txt-bold" style="padding-left:15px;">${m.name}</td>
+              <td class="txt-center txt-bold">${m.fee}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tableItemsHTML += `
+          <tr>
+            <td class="txt-center txt-bold">${itemIndex++}</td>
+            <td class="txt-bold" style="padding-left:15px;">ટ્યુશન ફી</td>
+            <td class="txt-center txt-bold">${p.feeAmount || 0}</td>
+          </tr>
+        `;
+      }
+
+      // 2. Stationery Items List
+      let statTotal = 0;
+      if(p.stationeryList && p.stationeryList.length > 0) {
+        p.stationeryList.forEach(st => {
+          statTotal += st.price;
+          tableItemsHTML += `
+            <tr>
+              <td class="txt-center txt-bold">${itemIndex++}</td>
+              <td class="txt-bold" style="padding-left:15px;">${st.name}</td>
+              <td class="txt-center txt-bold">${st.price}</td>
             </tr>
           `;
         });
       }
 
-      let subTotal = (p.feeAmount || 0) + statTotal;
-      let due = subTotal - (p.paidAmount || 0) - (p.discountAmount || 0);
-
-      let totalStats = getStudentTotalStats(s);
+      let grandTotal = (p.feeAmount || 0) + statTotal;
+      let due = grandTotal - (p.paidAmount || 0) - (p.discountAmount || 0);
 
       return `
-        <div class="receipt-excel-box" id="receiptImageCapture">
-          <div class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</div>
+        <div class="exact-receipt-card" id="receiptImageCapture">
+          <div class="exact-header-banner">નિર્મળા નવોદય ક્લાસિસ</div>
           
-          <table class="receipt-excel-table">
-            <tr class="sub-header-row">
-              <td colspan="2">વિદ્યાર્થી: <b>${s.name}</b></td>
-              <td class="txt-right">પહોંચ નં: <b>#${p.id.toString().slice(-4)}</b></td>
-            </tr>
-            <tr>
-              <td>કોર્સ: <b>${s.course} (ધો ${s.std})</b></td>
-              <td>મોબાઈલ: <b>${s.mobile1}</b></td>
-              <td class="txt-right">તારીખ: <b>${formatDateGuj(p.date)}</b></td>
-            </tr>
-            <tr style="background:#fffde7;">
-              <td colspan="3">
-                🗓️ સમયગાળો: <b>${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}</b> (${p.durationText || 'માસિક'})
-              </td>
-            </tr>
+          <div class="exact-student-info-box">
+            <div class="exact-student-name">
+              <span>👤</span> વિદ્યાર્થીનું નામ: ${s.name}
+            </div>
+            <div class="exact-student-sub">
+              ધોરણ: ${s.std} | કોર્સ: ${s.course} | 📅 જમા તારીખ: ${formatDateGuj(p.date)}
+            </div>
+          </div>
 
-            <tr class="table-head-row txt-bold">
-              <td style="width:10%;" class="txt-center">નં.</td>
-              <td style="width:65%;">વિગત / બાબત</td>
-              <td style="width:25%;" class="txt-right">રકમ (₹)</td>
-            </tr>
-
-            <tr>
-              <td class="txt-center">1</td>
-              <td>ટ્યુશન ફી (${p.durationText || 'ફી'})</td>
-              <td class="txt-right">₹${p.feeAmount || 0}</td>
-            </tr>
-
-            ${statRows}
-
-            <tr class="txt-bold" style="background:#f9f9f9;">
-              <td colspan="2" class="txt-right">કુલ પહોંચ રકમ:</td>
-              <td class="txt-right text-blue">₹${subTotal}</td>
-            </tr>
-
-            <tr class="txt-bold">
-              <td colspan="2" class="txt-right text-green">જમા કરાવેલ રકમ:</td>
-              <td class="txt-right text-green">₹${p.paidAmount || 0}</td>
-            </tr>
-
-            ${(p.discountAmount && p.discountAmount > 0) ? `
-              <tr class="txt-bold" style="color:#e67e22;">
-                <td colspan="2" class="txt-right">ડિસ્કાઉન્ટ:</td>
-                <td class="txt-right">₹${p.discountAmount}</td>
-              </tr>
-            ` : ''}
-
-            <tr class="txt-bold" style="background:#ffebee;">
-              <td colspan="2" class="txt-right text-red">આ પહોંચની બાકી ફી:</td>
-              <td class="txt-right text-red">₹${Math.max(0, due)}</td>
-            </tr>
-
-            <tr style="background:#e8f5e9; font-weight:bold;">
-              <td colspan="2" class="txt-right" style="color:#2e7d32;">કુલ ખાતાની બાકી ફી (ઓલ ઓવર):</td>
-              <td class="txt-right" style="color:#2e7d32;">₹${Math.max(0, totalStats.dueAmount)}</td>
-            </tr>
-
-            ${p.note ? `
+          <table class="exact-receipt-table">
+            <thead>
               <tr>
-                <td colspan="3" style="font-size:11px; color:#555;">નોંધ/મોડ: ${p.note}</td>
+                <th style="width: 15%;">ક્રમ</th>
+                <th style="width: 60%;">મહિનાના નામ / વિગત</th>
+                <th style="width: 25%;">ફી (₹)</th>
               </tr>
-            ` : ''}
-
-            <tr>
-              <td colspan="3" class="txt-center" style="font-size:11px; padding:10px; color:#555; background:#fafafa;">
-                આભાર! નિર્મળા નવોદય ક્લાસિસ, કોડીનાર.
-              </td>
-            </tr>
+            </thead>
+            <tbody>
+              ${tableItemsHTML}
+              <tr>
+                <td colspan="2" class="row-total-lbl">ટોટલ</td>
+                <td class="row-total-val">${grandTotal}</td>
+              </tr>
+              <tr>
+                <td colspan="2" class="row-paid-lbl">જમા</td>
+                <td class="row-paid-val">${p.paidAmount || 0}</td>
+              </tr>
+              <tr>
+                <td colspan="2" class="row-due-lbl">બાકી</td>
+                <td class="row-due-val">${Math.max(0, due)}</td>
+              </tr>
+            </tbody>
           </table>
+
+          <div class="exact-duration-bar">
+            🗓️ સમયગાળો: ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}
+          </div>
+
+          <div class="exact-footer-details">
+            <div class="exact-footer-flex">
+              <div>💳 પેમેન્ટ મોડ: ${p.note || 'Cash'}</div>
+              <div>✍️ ફી ભરનાર: ${p.payerName || 'Ved'}</div>
+            </div>
+            <div class="exact-owner-name">
+              વાઘેલા રવિ વિનોદભાઈ (9033197515)
+            </div>
+          </div>
         </div>
       `;
     }
@@ -1240,7 +1267,7 @@
       document.getElementById('imageModal').style.display = "none";
     }
 
-    // 1. Download Receipt as Image (Fixed for App / WebView)
+    // 1. Download Receipt as Image
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) return alert("કોઈ પહોંચ ઉપલબ્ધ નથી.");
@@ -1253,7 +1280,6 @@
         const imgData = canvas.toDataURL('image/png');
         const fileName = `Receipt_${s.name.replace(/\s+/g, '_')}.png`;
 
-        // Mobile / WebView Share Support
         if (navigator.share && navigator.canShare) {
           try {
             const blob = await (await fetch(imgData)).blob();
@@ -1268,7 +1294,6 @@
           } catch(e) { console.log("Native Share error fallback to modal", e); }
         }
 
-        // Direct Browser Trigger Download
         const link = document.createElement('a');
         link.href = imgData;
         link.download = fileName;
@@ -1276,7 +1301,6 @@
         link.click();
         document.body.removeChild(link);
 
-        // App WebView Fallback
         showModalImage(imgData, fileName);
 
       } catch (err) {
@@ -1319,7 +1343,6 @@
           }
         }
 
-        // WhatsApp Web / App Intent Fallback
         window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
         showModalImage(imgData, fileName);
 
@@ -1328,7 +1351,7 @@
       }
     }
 
-    // 3. Generate & Download PDF (Fixed for App / WebView)
+    // 3. Generate & Download PDF
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) return alert("કોઈ પહોંચ ઉપલબ્ધ નથી.");
@@ -1352,7 +1375,6 @@
         const fileName = `Receipt_${s.name.replace(/\s+/g, '_')}.pdf`;
         const pdfBlob = pdf.output('blob');
 
-        // Web Share for Mobile App
         if (navigator.share && navigator.canShare) {
           try {
             const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
@@ -1366,11 +1388,7 @@
           } catch(shareErr) { console.log("PDF Share cancelled/failed", shareErr); }
         }
 
-        // Standard PDF download
         pdf.save(fileName);
-
-        // Fallback for Mobile WebView: Open Data PDF Link
-        const pdfDataUri = pdf.output('datauristring');
         showModalImage(imgData, fileName);
 
       } catch (err) {
