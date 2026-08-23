@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>નિર્મળા નવોદય ક્લાસિસ - Billing System</title>
+  <title>નિર્મળા નવોદય ક્લાસિસ - Billing & Stock System</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -54,7 +54,6 @@
     .btn-settings { background: #6f42c1; margin-top: 10px; }
     .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
     
-    /* WhatsApp Share & Image Download Buttons */
     .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
     .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
     .btn-img-download { background: #8e44ad; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
@@ -65,7 +64,7 @@
     .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
     .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
 
-    .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
     .page { display: none; }
     .page.active { display: block; }
@@ -151,6 +150,9 @@
           <button class="btn" style="background:#e67e22; color:#fff; font-size:13px; margin:0;" onclick="showPage('adminExpensePage')">💸 Admin ખર્ચ વિગત</button>
         </div>
 
+        <!-- નવું બટન: સ્ટેશનરી સ્ટોક અને નફો/નુકસાન -->
+        <button class="btn" style="background:#8e44ad; color:#fff; font-size:14px; margin-bottom:15px;" onclick="showPage('stockManagerPage')">📦 સ્ટેશનરી સ્ટોક & નફો/નુકસાન</button>
+
         <div class="grand-summary">
           <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
           <p style="text-align: center; font-size: 11px; margin-top: 2px; opacity: 0.9;">(નીચેના બટન પર ક્લિક કરીને ફિલ્ટર કરો)</p>
@@ -171,6 +173,48 @@
         </div>
 
         <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
+      </div>
+
+      <!-- સ્ટેશનરી સ્ટોક અને ઓટો નફા/નુકસાનનું નવું પેજ -->
+      <div id="stockManagerPage" class="page">
+        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
+        <div class="card" style="border-left: 4px solid #8e44ad;">
+          <h3 style="color:#8e44ad; margin-bottom:10px;">📦 સ્ટેશનરી સ્ટોક & નફો / નુકસાન ગણતરી</h3>
+          <p style="font-size:11px; color:#666; margin-bottom:12px;">આ હિસાબ સ્વતંત્ર છે અને બીજા કોઈ હિસાબ સાથે મિક્સ થશે નહીં.</p>
+          
+          <form onsubmit="addStockItem(event)">
+            <div class="form-group">
+              <label>વસ્તુ / સ્ટેશનરી નું નામ</label>
+              <input type="text" id="stkName" class="form-control" placeholder="દા.ત. બોલપેન, નોટબુક" required>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;">
+                <label>જથ્થો (Qty)</label>
+                <input type="number" id="stkQty" class="form-control" placeholder="0" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label>ખરીદ કિંમત (₹/નંગ)</label>
+                <input type="number" id="stkBuy" class="form-control" placeholder="0" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>વેચાણ કિંમત (₹/નંગ)</label>
+              <input type="number" id="stkSell" class="form-control" placeholder="0" required>
+            </div>
+            <button type="submit" class="btn" style="background:#8e44ad;">+ સ્ટોકમાં ઉમેરો</button>
+          </form>
+
+          <table style="margin-top:15px;">
+            <thead>
+              <tr><th>વસ્તુ</th><th>જથ્થો</th><th>ખરીદ</th><th>વેચાણ</th><th>નફો/નુકસાન</th><th>એક્શન</th></tr>
+            </thead>
+            <tbody id="stockTableBody"></tbody>
+          </table>
+
+          <div style="background:#f3e5f5; border:1px solid #e1bee7; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
+            <h4 style="color:#4a148c;">કુલ અંદાજિત નફો/નુકસાન: ₹<span id="grandStockProfit">0</span></h4>
+          </div>
+        </div>
       </div>
 
       <div id="adminExpensePage" class="page">
@@ -338,7 +382,7 @@
             </div>
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:15px; justify- space-between; align-items: center;">
+          <div style="display:flex; gap:10px; margin-top:15px; justify-content: space-between; align-items: center;">
             <div style="display:flex; gap:8px;">
               <button class="btn btn-edit" style="font-size:12px; padding:6px 12px; margin:0;" onclick="editCurrentStudent()">✏️ સુધારો</button>
               <button class="btn" style="background:#5f6368; font-size:12px; padding:6px 12px; margin:0;" onclick="toggleStudentStatus()">સ્ટેટસ બદલો</button>
@@ -381,6 +425,13 @@
             <div class="form-group">
               <label style="color:#b78103; font-weight:bold;">📚 પહોંચ માટે સ્ટેશનરી પસંદ કરો:</label>
               <div id="paymentStationeryCheckboxes" class="checkbox-list"></div>
+            </div>
+
+            <!-- પહોંચનો પ્રકાર સ્વિચ બટન (જમા કે બાકી રાખવા માટે) -->
+            <div class="form-group" style="background:#fff; padding:8px; border-radius:6px; border:1px solid #ccc; text-align:center;">
+              <label style="font-weight:bold; color:#333; display:block; margin-bottom:5px;">પહોંચ સ્ટેટસ પસંદ કરો:</label>
+              <button type="button" id="btnToggleReceiptStatus" class="btn" style="background:#27ae60; margin:0; padding:8px;" onclick="toggleReceiptStatusChoice()">🟢 પહોંચ જમા પહોંચ બનાવવી</button>
+              <input type="hidden" id="fCustomStatus" value="PAID">
             </div>
 
             <div style="display: flex; gap: 10px;">
@@ -513,12 +564,14 @@
     let masterBooks = JSON.parse(localStorage.getItem('NIRMALA_BOOKS')) || defaultBooks;
     let students = JSON.parse(localStorage.getItem('NIRMALA_STUDENTS')) || [];
     let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || [];
+    let stationeryStock = JSON.parse(localStorage.getItem('NIRMALA_STOCK')) || [];
 
     function saveDataLocally() {
       localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
       localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
       localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
+      localStorage.setItem('NIRMALA_STOCK', JSON.stringify(stationeryStock));
     }
 
     function formatDateGuj(dateStr) {
@@ -537,6 +590,7 @@
       renderSettingsTables();
       renderStudentList();
       renderAdminExpenses();
+      renderStockTable();
       
       let savedUrl = localStorage.getItem('GDRIVE_SCRIPT_URL');
       if(savedUrl) {
@@ -568,9 +622,82 @@
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ students, adminExpenses })
+        body: JSON.stringify({ students, adminExpenses, stationeryStock })
       }).then(() => alert("✅ ડેટા Cloud માં સેવ થઈ ગયો છે."))
         .catch(err => alert("❌ બેકઅપ એરર: " + err));
+    }
+
+    /* પહોંચનું જમા / બાકી સ્ટેટસ બદલવાનું બટન ફંક્શન */
+    function toggleReceiptStatusChoice() {
+      const btn = document.getElementById('btnToggleReceiptStatus');
+      const input = document.getElementById('fCustomStatus');
+      if(input.value === 'PAID') {
+        input.value = 'DUE';
+        btn.style.background = '#d32f2f';
+        btn.innerText = '🔴 પહોંચ બાકી પહોંચ બનાવવી';
+      } else {
+        input.value = 'PAID';
+        btn.style.background = '#27ae60';
+        btn.innerText = '🟢 પહોંચ જમા પહોંચ બનાવવી';
+      }
+    }
+
+    /* સ્વતંત્ર સ્ટેશનરી સ્ટોક મેનેજમેન્ટ ફંક્શન્સ */
+    function addStockItem(event) {
+      event.preventDefault();
+      const name = document.getElementById('stkName').value.trim();
+      const qty = parseInt(document.getElementById('stkQty').value) || 0;
+      const buyPrice = parseFloat(document.getElementById('stkBuy').value) || 0;
+      const sellPrice = parseFloat(document.getElementById('stkSell').value) || 0;
+
+      if(!name || qty <= 0) return;
+
+      stationeryStock.push({ id: Date.now(), name, qty, buyPrice, sellPrice });
+      saveDataLocally();
+      renderStockTable();
+
+      document.getElementById('stkName').value = '';
+      document.getElementById('stkQty').value = '';
+      document.getElementById('stkBuy').value = '';
+      document.getElementById('stkSell').value = '';
+    }
+
+    function deleteStockItem(id) {
+      if(confirm("સ્ટોકમાંથી રદ કરવું છે?")) {
+        stationeryStock = stationeryStock.filter(s => s.id !== id);
+        saveDataLocally();
+        renderStockTable();
+      }
+    }
+
+    function renderStockTable() {
+      const tbody = document.getElementById('stockTableBody');
+      tbody.innerHTML = '';
+      let grandProfit = 0;
+
+      if(stationeryStock.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">સ્ટોકમાં કોઈ વસ્તુ ઉમેરેલ નથી.</td></tr>`;
+      } else {
+        stationeryStock.forEach(stk => {
+          let profitPerUnit = stk.sellPrice - stk.buyPrice;
+          let totalProfit = profitPerUnit * stk.qty;
+          grandProfit += totalProfit;
+
+          let profitClass = totalProfit >= 0 ? 'color:#27ae60;' : 'color:#d32f2f;';
+
+          tbody.innerHTML += `
+            <tr>
+              <td><b>${stk.name}</b></td>
+              <td>${stk.qty}</td>
+              <td>₹${stk.buyPrice}</td>
+              <td>₹${stk.sellPrice}</td>
+              <td style="${profitClass} font-weight:bold;">₹${totalProfit}</td>
+              <td><button class="btn-danger" onclick="deleteStockItem(${stk.id})">❌</button></td>
+            </tr>
+          `;
+        });
+      }
+      document.getElementById('grandStockProfit').innerText = grandProfit;
     }
 
     function addAdminExpense(event) {
@@ -736,6 +863,7 @@
       document.getElementById(pageId).classList.add('active');
       if(pageId === 'stationeryReportPage') renderStationeryReport();
       if(pageId === 'adminExpensePage') renderAdminExpenses();
+      if(pageId === 'stockManagerPage') renderStockTable();
     }
 
     function switchStatusTab(tab) {
@@ -1065,6 +1193,8 @@
       const rNo = (s.payments.length + 1).toString();
       let newPId = Date.now();
       let payDate = document.getElementById('fDate').value;
+      
+      let customStatus = document.getElementById('fCustomStatus').value;
 
       let newPaymentObj = {
         id: newPId,
@@ -1078,7 +1208,7 @@
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
         paidAmount: inputPaidAmt,
-        isPaid: inputPaidAmt > 0,
+        isPaid: customStatus === 'PAID', // તમારી મરજી પ્રમાણે જમા કે બાકી રહેશે
         receiptImage: "",
         receiptPDF: ""
       };
@@ -1273,9 +1403,19 @@
       if(!s) return;
       let p = s.payments.find(item => item.id == pId);
       if(p && p.receiptImage) {
-        if (window.Android && window.Android.getBase64FromBlobData) {
-          window.Android.getBase64FromBlobData(p.receiptImage);
-        } else {
+        try {
+          fetch(p.receiptImage)
+            .then(res => res.blob())
+            .then(blob => {
+              const blobUrl = URL.createObjectURL(blob);
+              window.open(blobUrl, '_blank');
+            })
+            .catch(() => {
+              document.getElementById('modalImg').src = p.receiptImage;
+              document.getElementById('modalDownloadBtn').href = p.receiptImage;
+              document.getElementById('imageModal').style.display = 'block';
+            });
+        } catch(e) {
           document.getElementById('modalImg').src = p.receiptImage;
           document.getElementById('modalDownloadBtn').href = p.receiptImage;
           document.getElementById('imageModal').style.display = 'block';
@@ -1293,17 +1433,12 @@
         if(!s) return;
         let p = s.payments.find(item => item.id == pId);
         if(p && p.receiptPDF) {
-          let cleanName = `Receipt_${s.name.replace(/[^a-zA-Z0-9]/g, "_")}_${p.date}.pdf`;
-          if (window.Android && window.Android.getBase64FromBlobData) {
-            window.Android.getBase64FromBlobData(p.receiptPDF);
-          } else {
-            let link = document.createElement('a');
-            link.href = p.receiptPDF;
-            link.download = cleanName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }
+          let link = document.createElement('a');
+          link.href = p.receiptPDF;
+          link.download = `Receipt_${s.name}_${p.date}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
         }
       } catch(e) {
         alert("PDF ખોલવામાં સમસ્યા આવી: " + e.message);
@@ -1351,7 +1486,6 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* એન્ડ્રોઈડ એપ્લિકેશન અને બ્રાઉઝર બંનેમાં ઈમેજ ડાઉનલોડ કરવા માટેનો સુધારેલો કોડ */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1369,19 +1503,7 @@
 
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        const dataUrl = canvas.toDataURL("image/png");
         
-        // સ્પેસ કે ખાસ સંકેતો વિનાનું ફાઈલનું નામ
-        const cleanStudentName = s.name.replace(/[^a-zA-Z0-9]/g, "_");
-        const fileName = `Receipt_${cleanStudentName}_${Date.now()}.png`;
-
-        // ૧. જો Android App WebView હોય તો Java Interface વાપરવું
-        if (window.Android && window.Android.getBase64FromBlobData) {
-          window.Android.getBase64FromBlobData(dataUrl);
-          return;
-        }
-
-        // ૨. બ્રાઉઝર માટે Standard Direct Download
         canvas.toBlob(function(blob) {
           if (!blob) {
             alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
@@ -1389,15 +1511,14 @@
           }
           
           const blobUrl = URL.createObjectURL(blob);
+          window.open(blobUrl, '_blank');
 
           let link = document.createElement('a');
           link.href = blobUrl;
-          link.download = fileName;
+          link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
         }, 'image/png');
 
@@ -1406,7 +1527,6 @@
       }
     }
 
-    /* વ્હોટ્સએપ ઈમેજ / PDF શેરિંગ માટેનું અપડેટ ફંક્શન */
     async function shareReceiptToWhatsApp(type) {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) return;
@@ -1418,30 +1538,25 @@
 
       try {
         if(typeof html2canvas === 'undefined') {
-          alert("લાઈબ્રેરી લોડ નથી. ઓફલાઈન લાઈબ્રેરી મોડ ચાલુ છે.");
+          alert("લાઈબ્રેરી લોડ નથી.");
           return;
         }
 
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-        const cleanStudentName = s.name.replace(/[^a-zA-Z0-9]/g, "_");
         
         if (type === 'image') {
           canvas.toBlob(async (blob) => {
             if (!blob) return alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
-            const file = new File([blob], `Receipt_${cleanStudentName}.png`, { type: 'image/png' });
+            const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
               try {
-                await navigator.share({
-                  title: 'ફી પહોંચ',
-                  text: msg,
-                  files: [file]
-                });
+                await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
               } catch (err) { console.log("Share canceled"); }
             } else {
               let a = document.createElement('a');
               a.href = URL.createObjectURL(blob);
-              a.download = `Receipt_${cleanStudentName}.png`;
+              a.download = `Receipt_${s.name}.png`;
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
@@ -1462,18 +1577,14 @@
           pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
           const pdfBlob = pdf.output('blob');
-          const file = new File([pdfBlob], `Receipt_${cleanStudentName}.pdf`, { type: 'application/pdf' });
+          const file = new File([pdfBlob], `Receipt_${s.name}.pdf`, { type: 'application/pdf' });
 
           if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
-              await navigator.share({
-                title: 'ફી પહોંચ',
-                text: msg,
-                files: [file]
-              });
+              await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
             } catch (err) { console.log("Share canceled"); }
           } else {
-            pdf.save(`Receipt_${cleanStudentName}.pdf`);
+            pdf.save(`Receipt_${s.name}.pdf`);
             alert("📄 પહોંચ PDF ડાઉનલોડ થઈ ગઈ છે. વ્હોટ્સએપ ઓપન થશે જેમાં PDF અટેચ કરીને મોકલો.");
             window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
           }
@@ -1502,8 +1613,7 @@
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-        const cleanStudentName = s.name.replace(/[^a-zA-Z0-9]/g, "_");
-        pdf.save(`Receipt_${cleanStudentName}_${new Date().toISOString().split('T')[0]}.pdf`);
+        pdf.save(`Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`);
       } catch (err) {
         alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err.message);
       }
