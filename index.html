@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>નિર્મળા નવોદય ક્લાસિસ - Billing & Stock System</title>
+  <title>નિર્મળા નવોદય ક્લાસિસ - Billing & Inventory System</title>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -64,7 +64,7 @@
     .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
     .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
 
-    .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
 
     .page { display: none; }
     .page.active { display: block; }
@@ -86,7 +86,6 @@
     .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
 
-    /* પહોંચ ડિઝાઇન */
     .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .receipt-excel-table { width: 100%; border-collapse: collapse; }
     .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
@@ -146,11 +145,9 @@
         <div id="studentListContainer"></div>
 
         <div class="half-btn-grid">
-          <button class="btn" style="background:#ffb300; color:#333; font-size:13px; margin:0;" onclick="showPage('stationeryReportPage')">📖 સ્ટેશનરી રિપોર્ટ</button>
+          <button class="btn" style="background:#ffb300; color:#333; font-size:13px; margin:0;" onclick="showPage('stationeryReportPage')">📖 સ્ટેશનરી રિપોર્ટ & સ્ટોક</button>
           <button class="btn" style="background:#e67e22; color:#fff; font-size:13px; margin:0;" onclick="showPage('adminExpensePage')">💸 Admin ખર્ચ વિગત</button>
         </div>
-
-        <button class="btn" style="background:#8e44ad; color:#fff; font-size:14px; margin-bottom:15px;" onclick="showPage('stockManagerPage')">📦 સ્ટેશનરી સ્ટોક & નફો/નુકસાન</button>
 
         <div class="grand-summary">
           <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
@@ -172,59 +169,6 @@
         </div>
 
         <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
-      </div>
-
-      <!-- સ્ટેશનરી સ્ટોક અને ઓટો નફા/નુકસાનનું નવું પેજ -->
-      <div id="stockManagerPage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
-        <div class="card" style="border-left: 4px solid #8e44ad;">
-          <h3 style="color:#8e44ad; margin-bottom:10px;">📦 સ્ટેશનરી સ્ટોક & નફો / નુકસાન ગણતરી</h3>
-          <p style="font-size:11px; color:#666; margin-bottom:12px;">વિદ્યાર્થીને વસ્તુ આપતા સ્ટોકમાંથી આપોઆપ જથ્થો ઓછો થશે.</p>
-          
-          <form onsubmit="addStockItem(event)">
-            <div class="form-group">
-              <label>વસ્તુ / સ્ટેશનરી નું નામ</label>
-              <input type="text" id="stkName" class="form-control" placeholder="દા.ત. બોલપેન, નોટબુક" required>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>જથ્થો (Qty)</label>
-                <input type="number" id="stkQty" class="form-control" placeholder="0" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>ખરીદ કિંમત (₹/નંગ)</label>
-                <input type="number" id="stkBuy" class="form-control" placeholder="0" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>વેચાણ કિંમત (₹/નંગ)</label>
-              <input type="number" id="stkSell" class="form-control" placeholder="0" required>
-            </div>
-            <button type="submit" class="btn" style="background:#8e44ad;">+ સ્ટોકમાં ઉમેરો</button>
-          </form>
-
-          <table style="margin-top:15px;">
-            <thead>
-              <tr><th>વસ્તુ</th><th>સ્ટોક</th><th>ખરીદ</th><th>વેચાણ</th><th>નફો/નુકસાન</th><th>એક્શન</th></tr>
-            </thead>
-            <tbody id="stockTableBody"></tbody>
-          </table>
-
-          <div style="background:#f3e5f5; border:1px solid #e1bee7; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
-            <h4 style="color:#4a148c;">કુલ અંદાજિત નફો/નુકસાન: ₹<span id="grandStockProfit">0</span></h4>
-          </div>
-        </div>
-
-        <!-- નવી વિગત: વસ્તુ કોને, ક્યારે અને શું આપ્યું તેની હિસ્ટ્રી -->
-        <div class="card" style="border-left: 4px solid #17a2b8;">
-          <h3 style="color:#17a2b8; margin-bottom:10px;">📜 સ્ટેશનરી આપ્યાની હિસ્ટ્રી (Delivery History)</h3>
-          <table>
-            <thead>
-              <tr><th>તારીખ</th><th>વિદ્યાર્થી</th><th>વસ્તુ/બુક</th><th>કિંમત</th></tr>
-            </thead>
-            <tbody id="stockDeliveryHistoryBody"></tbody>
-          </table>
-        </div>
       </div>
 
       <div id="adminExpensePage" class="page">
@@ -263,13 +207,50 @@
         </div>
       </div>
 
+      <!-- સ્ટેશનરી રિપોર્ટ અને સેપરેટ સ્ટોક/વેચાણનું પેજ -->
       <div id="stationeryReportPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
+        
+        <div class="card" style="border-left: 4px solid #8e44ad; background: #fbf5ff;">
+          <h3 style="color:#8e44ad; margin-bottom:10px;">🛒 સેપરેટ રોકડ સ્ટેશનરી વેચાણ (ફી પહોંચ વગર)</h3>
+          <form onsubmit="addDirectStationerySale(event)">
+            <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;">
+                <label>ગ્રાહક / બાળકનું નામ</label>
+                <input type="text" id="directSaleCustomer" class="form-control" placeholder="નામ લખો" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label>ચોપડી / આઇટમ</label>
+                <select id="directSaleBookSelect" class="form-control" required></select>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <div class="form-group" style="flex: 1;">
+                <label>જથ્થો (Qty)</label>
+                <input type="number" id="directSaleQty" class="form-control" value="1" min="1" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label>તારીખ</label>
+                <input type="date" id="directSaleDate" class="form-control" required>
+              </div>
+            </div>
+            <button type="submit" class="btn" style="background:#8e44ad;">🛍️ રોકડેથી વેચો (સ્ટોક ઓછો થશે)</button>
+          </form>
+
+          <h4 style="margin-top:15px; color:#6f42c1;">📜 સેપરેટ સ્ટેશનરી વેચાણ હિસ્ટ્રી</h4>
+          <table>
+            <thead>
+              <tr><th>તારીખ</th><th>ગ્રાહક</th><th>આઇટમ (Qty)</th><th>કુલ રકમ</th><th>એક્શન</th></tr>
+            </thead>
+            <tbody id="directSaleHistoryBody"></tbody>
+          </table>
+        </div>
+
         <div class="card" style="border-left: 4px solid #ffb300;">
-          <h3 style="color:#b78103; margin-bottom:10px;">📖 સ્ટેશનરી રિપોર્ટ</h3>
+          <h3 style="color:#b78103; margin-bottom:10px;">📖 વિદ્યાર્થીઓ વાઈઝ સ્ટેશનરી રિપોર્ટ</h3>
           <div id="stationeryReportContainer"></div>
           <div style="background:#fff8e1; border:1px solid #ffe082; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
-            <h4 style="color:#b78103;">કુલ સ્ટેશનરી ના કુલ રકમ: ₹<span id="grandStationeryTotal">0</span></h4>
+            <h4 style="color:#b78103;">વિદ્યાર્થીઓની સ્ટેશનરીની કુલ રકમ: ₹<span id="grandStationeryTotal">0</span></h4>
           </div>
         </div>
       </div>
@@ -384,7 +365,7 @@
               <tbody id="assignedStationeryTableBody"></tbody>
             </table>
             <div style="border-top:1px dashed #ccc; padding-top:10px; margin-top:10px;">
-              <label style="font-weight:bold; font-size:12px; color:#555;">➕ નવી ચોપડી આપો (સ્ટોકમાંથી બાદ થશે):</label>
+              <label style="font-weight:bold; font-size:12px; color:#555;">➕ નવી ચોપડી આપો (સ્ટોકમાંથી ઓછું થશે):</label>
               <div style="display:flex; gap:8px; margin-top:5px;">
                 <select id="directBookSelect" class="form-control" style="flex:2;"></select>
                 <button type="button" class="btn" style="flex:1; margin-top:0; background:#ffb300; color:#333; padding:8px;" onclick="addStationeryToStudent()">+ આપો</button>
@@ -437,12 +418,6 @@
               <div id="paymentStationeryCheckboxes" class="checkbox-list"></div>
             </div>
 
-            <div class="form-group" style="background:#fff; padding:8px; border-radius:6px; border:1px solid #ccc; text-align:center;">
-              <label style="font-weight:bold; color:#333; display:block; margin-bottom:5px;">પહોંચ સ્ટેટસ પસંદ કરો:</label>
-              <button type="button" id="btnToggleReceiptStatus" class="btn" style="background:#27ae60; margin:0; padding:8px;" onclick="toggleReceiptStatusChoice()">🟢 પહોંચ જમા પહોંચ બનાવવી</button>
-              <input type="hidden" id="fCustomStatus" value="PAID">
-            </div>
-
             <div style="display: flex; gap: 10px;">
               <div class="form-group" style="flex: 1;">
                 <label><b>જમા કરાવેલ રકમ (₹)</b></label>
@@ -493,7 +468,7 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ખોલો / ડાઉનલોડ કરો (PNG)</button>
+          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ડાઉનલોડ / સેવ કરો</button>
           
           <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટસએપ પર Photo શેર કરો</button>
           <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટસએપ પર PDF શેર કરો</button>
@@ -526,14 +501,15 @@
         </div>
 
         <div class="card">
-          <h4>ચોપડી અને કિંમત સેટિંગ્સ</h4>
-          <div style="display:flex; gap:10px; margin-top:10px;">
-            <input type="text" id="newBookName" class="form-control" placeholder="ચોપડીનું નામ">
-            <input type="number" id="newBookPrice" class="form-control" placeholder="કિંમત ₹">
+          <h4>📦 ચોપડી સ્ટોક અને કિંમત સેટિંગ્સ</h4>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <input type="text" id="newBookName" class="form-control" placeholder="ચોપડીનું નામ" style="flex:2;">
+            <input type="number" id="newBookPrice" class="form-control" placeholder="કિંમત ₹" style="flex:1;">
+            <input type="number" id="newBookStock" class="form-control" placeholder="સ્ટોક (Qty)" style="flex:1;">
             <button class="btn" style="margin-top:0; width:auto;" onclick="addMasterBook()">+ ઉમેરો</button>
           </div>
           <table style="margin-top:10px;">
-            <thead><tr><th>બુકનું નામ</th><th>કિંમત</th><th>એક્શન</th></tr></thead>
+            <thead><tr><th>બુકનું નામ</th><th>કિંમત</th><th>સ્ટોક જથ્થો</th><th>એક્શન</th></tr></thead>
             <tbody id="masterBookTable"></tbody>
           </table>
         </div>
@@ -565,22 +541,22 @@
     ];
 
     let defaultBooks = [
-      { id: 1, name: "નવોદય બુક", price: 300 },
-      { id: 2, name: "Exam ped", price: 120 }
+      { id: 1, name: "નવોદય બુક", price: 300, stock: 50 },
+      { id: 2, name: "Exam ped", price: 120, stock: 30 }
     ];
 
     let masterCourses = JSON.parse(localStorage.getItem('NIRMALA_COURSES')) || defaultCourses;
     let masterBooks = JSON.parse(localStorage.getItem('NIRMALA_BOOKS')) || defaultBooks;
     let students = JSON.parse(localStorage.getItem('NIRMALA_STUDENTS')) || [];
     let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || [];
-    let stationeryStock = JSON.parse(localStorage.getItem('NIRMALA_STOCK')) || [];
+    let directSales = JSON.parse(localStorage.getItem('NIRMALA_DIRECT_SALES')) || [];
 
     function saveDataLocally() {
       localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
       localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
       localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
-      localStorage.setItem('NIRMALA_STOCK', JSON.stringify(stationeryStock));
+      localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
     }
 
     function formatDateGuj(dateStr) {
@@ -599,7 +575,7 @@
       renderSettingsTables();
       renderStudentList();
       renderAdminExpenses();
-      renderStockTable();
+      renderDirectSaleHistory();
       
       let savedUrl = localStorage.getItem('GDRIVE_SCRIPT_URL');
       if(savedUrl) {
@@ -608,6 +584,7 @@
       
       document.getElementById('fDate').valueAsDate = new Date();
       document.getElementById('expDate').valueAsDate = new Date();
+      document.getElementById('directSaleDate').valueAsDate = new Date();
     };
 
     function saveCloudUrl() {
@@ -631,130 +608,9 @@
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ students, adminExpenses, stationeryStock })
+        body: JSON.stringify({ students, adminExpenses, directSales, masterBooks })
       }).then(() => alert("✅ ડેટા Cloud માં સેવ થઈ ગયો છે."))
         .catch(err => alert("❌ બેકઅપ એરર: " + err));
-    }
-
-    function toggleReceiptStatusChoice() {
-      const btn = document.getElementById('btnToggleReceiptStatus');
-      const input = document.getElementById('fCustomStatus');
-      if(input.value === 'PAID') {
-        input.value = 'DUE';
-        btn.style.background = '#d32f2f';
-        btn.innerText = '🔴 પહોંચ બાકી પહોંચ બનાવવી';
-      } else {
-        input.value = 'PAID';
-        btn.style.background = '#27ae60';
-        btn.innerText = '🟢 પહોંચ જમા પહોંચ બનાવવી';
-      }
-    }
-
-    /* સ્ટેશનરી સ્ટોક વ્યવસ્થાપન ફંક્શન્સ */
-    function addStockItem(event) {
-      event.preventDefault();
-      const name = document.getElementById('stkName').value.trim();
-      const qty = parseInt(document.getElementById('stkQty').value) || 0;
-      const buyPrice = parseFloat(document.getElementById('stkBuy').value) || 0;
-      const sellPrice = parseFloat(document.getElementById('stkSell').value) || 0;
-
-      if(!name || qty <= 0) return;
-
-      let existing = stationeryStock.find(s => s.name.toLowerCase() === name.toLowerCase());
-      if(existing) {
-        existing.qty += qty;
-        existing.buyPrice = buyPrice;
-        existing.sellPrice = sellPrice;
-      } else {
-        stationeryStock.push({ id: Date.now(), name, qty, buyPrice, sellPrice });
-      }
-
-      saveDataLocally();
-      renderStockTable();
-      renderSettingsTables();
-
-      document.getElementById('stkName').value = '';
-      document.getElementById('stkQty').value = '';
-      document.getElementById('stkBuy').value = '';
-      document.getElementById('stkSell').value = '';
-    }
-
-    function deleteStockItem(id) {
-      if(confirm("સ્ટોકમાંથી રદ કરવું છે?")) {
-        stationeryStock = stationeryStock.filter(s => s.id !== id);
-        saveDataLocally();
-        renderStockTable();
-        renderSettingsTables();
-      }
-    }
-
-    function renderStockTable() {
-      const tbody = document.getElementById('stockTableBody');
-      tbody.innerHTML = '';
-      let grandProfit = 0;
-
-      if(stationeryStock.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">સ્ટોકમાં કોઈ વસ્તુ ઉમેરેલ નથી.</td></tr>`;
-      } else {
-        stationeryStock.forEach(stk => {
-          let profitPerUnit = stk.sellPrice - stk.buyPrice;
-          let totalProfit = profitPerUnit * stk.qty;
-          grandProfit += totalProfit;
-
-          let profitClass = totalProfit >= 0 ? 'color:#27ae60;' : 'color:#d32f2f;';
-
-          tbody.innerHTML += `
-            <tr>
-              <td><b>${stk.name}</b></td>
-              <td><b style="color:${stk.qty > 0 ? '#1a73e8' : '#d32f2f'}">${stk.qty}</b></td>
-              <td>₹${stk.buyPrice}</td>
-              <td>₹${stk.sellPrice}</td>
-              <td style="${profitClass} font-weight:bold;">₹${totalProfit}</td>
-              <td><button class="btn-danger" onclick="deleteStockItem(${stk.id})">❌</button></td>
-            </tr>
-          `;
-        });
-      }
-      document.getElementById('grandStockProfit').innerText = grandProfit;
-      renderStockDeliveryHistory();
-    }
-
-    /* કોને, ક્યારે અને શું આપ્યું તેની સંપૂર્ણ હિસ્ટ્રી */
-    function renderStockDeliveryHistory() {
-      const tbody = document.getElementById('stockDeliveryHistoryBody');
-      if(!tbody) return;
-      tbody.innerHTML = '';
-
-      let history = [];
-      students.forEach(s => {
-        if(s.stationery && s.stationery.length > 0) {
-          s.stationery.forEach(st => {
-            history.push({
-              date: st.date,
-              studentName: s.name,
-              item: st.name,
-              price: st.price
-            });
-          });
-        }
-      });
-
-      history.sort((a,b) => new Date(b.date) - new Date(a.date));
-
-      if(history.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">કોઈ વિગત ઉપલબ્ધ નથી.</td></tr>`;
-      } else {
-        history.forEach(h => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${formatDateGuj(h.date)}</td>
-              <td><b>${h.studentName}</b></td>
-              <td>${h.item}</td>
-              <td style="color:#27ae60; font-weight:bold;">₹${h.price}</td>
-            </tr>
-          `;
-        });
-      }
     }
 
     function addAdminExpense(event) {
@@ -844,7 +700,7 @@
       let cur = new Date(startY, startM, 1);
       let limit = new Date(endY, endM, 1);
 
-      let standardMonths = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓક્ટોબર", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
+      let standardMonths = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
 
       while (cur <= limit) {
         monthListDetails.push({ name: standardMonths[cur.getMonth()], fee: monthlyFee });
@@ -866,16 +722,20 @@
     }
 
     function renderSettingsTables() {
-      let bookOptions = "";
-      if(stationeryStock.length > 0) {
-        bookOptions = stationeryStock.map(b => `<option value="${b.name}">${b.name} - ₹${b.sellPrice} (સ્ટોક: ${b.qty})</option>`).join('');
-      } else {
-        bookOptions = masterBooks.map(b => `<option value="${b.name}">${b.name} - ₹${b.price}</option>`).join('');
-      }
-      document.getElementById('directBookSelect').innerHTML = bookOptions;
-
+      let bookOptionsHtml = masterBooks.map(b => `<option value="${b.name}" ${b.stock <= 0 ? 'disabled' : ''}>${b.name} - ₹${b.price} (સ્ટોક: ${b.stock || 0})</option>`).join('');
+      document.getElementById('directBookSelect').innerHTML = bookOptionsHtml;
+      document.getElementById('directSaleBookSelect').innerHTML = bookOptionsHtml;
+      
       document.getElementById('masterCourseTable').innerHTML = masterCourses.map(c => `<tr><td><b>${c.name}</b></td><td>₹${c.fee}</td><td><button class="btn-danger" onclick="deleteMasterCourse(${c.id})">❌</button></td></tr>`).join('');
-      document.getElementById('masterBookTable').innerHTML = masterBooks.map(b => `<tr><td>${b.name}</td><td>₹${b.price}</td><td><button class="btn-danger" onclick="deleteMasterBook(${b.id})">❌</button></td></tr>`).join('');
+      
+      document.getElementById('masterBookTable').innerHTML = masterBooks.map(b => `
+        <tr>
+          <td><b>${b.name}</b></td>
+          <td>₹${b.price}</td>
+          <td style="font-weight:bold; color:${(b.stock || 0) > 5 ? '#27ae60' : '#d32f2f'};">${b.stock || 0}</td>
+          <td><button class="btn-danger" onclick="deleteMasterBook(${b.id})">❌</button></td>
+        </tr>
+      `).join('');
     }
 
     function addMasterCourse() {
@@ -902,12 +762,21 @@
     }
 
     function addMasterBook() {
-      const name = document.getElementById('newBookName').value;
+      const name = document.getElementById('newBookName').value.trim();
       const price = parseFloat(document.getElementById('newBookPrice').value) || 0;
+      const stock = parseInt(document.getElementById('newBookStock').value) || 0;
       if(name) { 
-        masterBooks.push({ id: Date.now(), name, price }); 
+        let existing = masterBooks.find(b => b.name.toLowerCase() === name.toLowerCase());
+        if(existing) {
+          existing.stock = (existing.stock || 0) + stock;
+          existing.price = price;
+        } else {
+          masterBooks.push({ id: Date.now(), name, price, stock }); 
+        }
         saveDataLocally(); renderSettingsTables(); 
-        document.getElementById('newBookName').value = ''; document.getElementById('newBookPrice').value = '';
+        document.getElementById('newBookName').value = ''; 
+        document.getElementById('newBookPrice').value = '';
+        document.getElementById('newBookStock').value = '';
       }
     }
 
@@ -925,9 +794,11 @@
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-      if(pageId === 'stationeryReportPage') renderStationeryReport();
+      if(pageId === 'stationeryReportPage') {
+        renderStationeryReport();
+        renderDirectSaleHistory();
+      }
       if(pageId === 'adminExpensePage') renderAdminExpenses();
-      if(pageId === 'stockManagerPage') renderStockTable();
     }
 
     function switchStatusTab(tab) {
@@ -1025,6 +896,73 @@
       document.getElementById('grandTotal').innerText = `₹${grandTotalSum}`;
       document.getElementById('grandPaid').innerText = `₹${grandPaidSum}`;
       document.getElementById('grandDue').innerText = `₹${grandDueSum}`;
+    }
+
+    /* સેપરેટ સ્ટોક વેચાણ લોજિક */
+    function addDirectStationerySale(e) {
+      e.preventDefault();
+      let customer = document.getElementById('directSaleCustomer').value.trim();
+      let bookName = document.getElementById('directSaleBookSelect').value;
+      let qty = parseInt(document.getElementById('directSaleQty').value) || 1;
+      let date = document.getElementById('directSaleDate').value;
+
+      let book = masterBooks.find(b => b.name === bookName);
+      if(!book) return alert("ચોપડી મળી નથી.");
+      if((book.stock || 0) < qty) return alert(`સ્ટોક અપર્યાપ્ત છે! હાલનો સ્ટોક: ${book.stock || 0}`);
+
+      book.stock -= qty; // સ્ટોક ઓછો કરવો
+      let total = book.price * qty;
+
+      directSales.push({
+        id: Date.now(),
+        date,
+        customer,
+        bookName,
+        qty,
+        price: book.price,
+        total
+      });
+
+      saveDataLocally();
+      renderSettingsTables();
+      renderDirectSaleHistory();
+      document.getElementById('directSaleCustomer').value = '';
+      alert("✅ સેપરેટ વેચાણ નોંધાઈ ગયું અને સ્ટોકમાંથી ઓછું થયું!");
+    }
+
+    function deleteDirectSale(id) {
+      if(confirm("આ સેપરેટ વેચાણ રદ કરવું છે? (સ્ટોક પાછો ઉમેરાઈ જશે)")) {
+        let sale = directSales.find(d => d.id === id);
+        if(sale) {
+          let book = masterBooks.find(b => b.name === sale.bookName);
+          if(book) book.stock = (book.stock || 0) + sale.qty;
+          directSales = directSales.filter(d => d.id !== id);
+          saveDataLocally();
+          renderSettingsTables();
+          renderDirectSaleHistory();
+        }
+      }
+    }
+
+    function renderDirectSaleHistory() {
+      let tbody = document.getElementById('directSaleHistoryBody');
+      if(!tbody) return;
+      tbody.innerHTML = '';
+      if(directSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">કોઈ સેપરેટ વેચાણ નોંધાયેલ નથી.</td></tr>`;
+      } else {
+        directSales.forEach(s => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${formatDateGuj(s.date)}</td>
+              <td><b>${s.customer}</b></td>
+              <td>${s.bookName} (x${s.qty})</td>
+              <td style="color:#27ae60; font-weight:bold;">₹${s.total}</td>
+              <td><button class="btn-danger" onclick="deleteDirectSale(${s.id})">❌</button></td>
+            </tr>
+          `;
+        });
+      }
     }
 
     function renderStationeryReport() {
@@ -1169,67 +1107,51 @@
       showPage('detailPage');
     }
 
-    /* વિદ્યાર્થીને સ્ટેશનરી આપતા ઓટો સ્ટોક બાદ કરવાનું ફંક્શન */
+    /* વિદ્યાર્થીને સ્ટેશનરી આપવી અને સ્ટોક ઓછો કરવો */
     function addStationeryToStudent() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s) return;
       const bookVal = document.getElementById('directBookSelect').value;
-
-      let stockMatch = stationeryStock.find(b => b.name === bookVal);
-      let bookName = bookVal;
-      let bookPrice = 0;
-
-      if(stockMatch) {
-        if(stockMatch.qty <= 0) {
-          alert(`❌ "${stockMatch.name}" સ્ટોકમાં ઉપલબ્ધ નથી! (જથ્થો: 0)`);
+      const match = masterBooks.find(b => b.name === bookVal);
+      
+      if(match) {
+        if((match.stock || 0) <= 0) {
+          alert(`❌ "${match.name}" સ્ટોકમાં નથી! સ્ટોક ઉમેરો.`);
           return;
         }
-        stockMatch.qty -= 1; // સ્ટોકમાંથી ઓછી થઈ
-        bookPrice = stockMatch.sellPrice;
-      } else {
-        let masterMatch = masterBooks.find(b => b.name === bookVal);
-        if(masterMatch) bookPrice = masterMatch.price;
-      }
 
-      if(!s.stationery) s.stationery = [];
-      s.stationery.push({ 
-        id: Date.now(), 
-        name: bookName, 
-        price: bookPrice, 
-        date: new Date().toISOString().split('T')[0] 
-      });
+        match.stock -= 1; // સ્ટોકમાંથી ઓછું કરવું
 
-      saveDataLocally(); 
-      renderStationeryTable(s); 
-      renderPaymentStationeryCheckboxes(s); 
-      calculateAndRenderSystem(s); 
-      renderStudentList();
-      renderStockTable();
-      renderSettingsTables();
-      alert(`✅ "${bookName}" વિદ્યાર્થીને સફળતાપૂર્વક અપાઈ ગઈ. સ્ટોકમાંથી 1 નંગ ઓછો થયો.`);
-    }
-
-    function removeStationeryItem(stId) {
-      if(confirm("આ સ્ટેશનરી નોંધ રદ કરવી છે?")) {
-        const s = students.find(item => item.id === currentStudentId);
-        if(!s) return;
+        if(!s.stationery) s.stationery = [];
+        s.stationery.push({ id: Date.now(), name: match.name, price: match.price, date: new Date().toISOString().split('T')[0] });
         
-        let targetSt = s.stationery.find(st => st.id === stId);
-        if(targetSt) {
-          let stockMatch = stationeryStock.find(stk => stk.name === targetSt.name);
-          if(stockMatch) {
-            stockMatch.qty += 1; // પાછો ઉમેરાઈ ગયો
-          }
-        }
-
-        s.stationery = s.stationery.filter(st => st.id !== stId);
         saveDataLocally(); 
+        renderSettingsTables(); 
         renderStationeryTable(s); 
         renderPaymentStationeryCheckboxes(s); 
         calculateAndRenderSystem(s); 
         renderStudentList();
-        renderStockTable();
+      }
+    }
+
+    function removeStationeryItem(stId) {
+      if(confirm("રદ કરવું છે? (સ્ટોક પાછો ઉમેરાઈ જશે)")) {
+        const s = students.find(item => item.id === currentStudentId);
+        if(!s) return;
+        
+        let removedItem = s.stationery.find(st => st.id === stId);
+        if(removedItem) {
+          let book = masterBooks.find(b => b.name === removedItem.name);
+          if(book) book.stock = (book.stock || 0) + 1; // સ્ટોક પાછો ઉમેરવો
+        }
+
+        s.stationery = s.stationery.filter(st => st.id !== stId);
+        saveDataLocally(); 
         renderSettingsTables();
+        renderStationeryTable(s); 
+        renderPaymentStationeryCheckboxes(s); 
+        calculateAndRenderSystem(s); 
+        renderStudentList();
       }
     }
 
@@ -1300,7 +1222,6 @@
       const rNo = (s.payments.length + 1).toString();
       let newPId = Date.now();
       let payDate = document.getElementById('fDate').value;
-      let customStatus = document.getElementById('fCustomStatus').value;
 
       let newPaymentObj = {
         id: newPId,
@@ -1314,7 +1235,7 @@
         selectedStationery: chosenStationery,
         discountAmount: discAmt,
         paidAmount: inputPaidAmt,
-        isPaid: customStatus === 'PAID',
+        isPaid: inputPaidAmt > 0,
         receiptImage: "",
         receiptPDF: ""
       };
@@ -1327,22 +1248,21 @@
       setTimeout(async () => {
         let el = document.getElementById('receiptImageCapture');
         if(el && window.html2canvas) {
-          try {
-            let canvas = await html2canvas(el, { scale: 2, useCORS: true });
-            let imgData = canvas.toDataURL('image/png');
-            newPaymentObj.receiptImage = imgData;
+          let canvas = await html2canvas(el, { scale: 2, useCORS: true });
+          let imgData = canvas.toDataURL('image/png');
+          newPaymentObj.receiptImage = imgData;
 
-            const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-            if (jsPdfObj) {
-              let pdf = new jsPdfObj('p', 'mm', 'a4');
-              let imgWidth = 190;
-              let imgHeight = (canvas.height * imgWidth) / canvas.width;
-              pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-              newPaymentObj.receiptPDF = pdf.output('datauristring');
-            }
-            saveDataLocally();
-            calculateAndRenderSystem(s);
-          } catch(e) { console.log(e); }
+          const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+          if (jsPdfObj) {
+            let pdf = new jsPdfObj('p', 'mm', 'a4');
+            let imgWidth = 190;
+            let imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            newPaymentObj.receiptPDF = pdf.output('datauristring');
+          }
+
+          saveDataLocally();
+          calculateAndRenderSystem(s);
         }
       }, 300);
 
@@ -1505,15 +1425,19 @@
       }
     }
 
-    /* ઈમેજ ખોલવાની અને ડાઉનલોડ કરવાની ક્ષતિ રહિત પદ્ધતિ */
     function viewSavedPhoto(pId) {
       const s = students.find(item => item.id === currentStudentId);
       if(!s) return;
       let p = s.payments.find(item => item.id == pId);
       if(p && p.receiptImage) {
-        document.getElementById('modalImg').src = p.receiptImage;
-        document.getElementById('modalDownloadBtn').href = p.receiptImage;
-        document.getElementById('imageModal').style.display = 'block';
+        let win = window.open("");
+        if(win) {
+          win.document.write(`<img src="${p.receiptImage}" style="max-width:100%;" />`);
+        } else {
+          document.getElementById('modalImg').src = p.receiptImage;
+          document.getElementById('modalDownloadBtn').href = p.receiptImage;
+          document.getElementById('imageModal').style.display = 'block';
+        }
       }
     }
 
@@ -1521,7 +1445,6 @@
       document.getElementById('imageModal').style.display = 'none';
     }
 
-    /* PDF ડાઉનલોડ કરવાની સુરક્ષિત રીત */
     function downloadSavedPDF(pId) {
       try {
         const s = students.find(item => item.id === currentStudentId);
@@ -1534,11 +1457,9 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-        } else {
-          alert("PDF પ્રાપ્ત થઈ નથી, નવી રસીદ ડાઉનલોડ કરો.");
         }
       } catch(e) {
-        alert("PDF ડાઉનલોડમાં એરર: " + e.message);
+        alert("PDF ખોલવામાં સમસ્યા આવી: " + e.message);
       }
     }
 
@@ -1583,7 +1504,7 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* Mobile Browser સુસંગત ઈમેજ ડાઉનલોડ ફંક્શન (Fixes Error: getBase64FromBlobData) */
+    /* સુધારેલું ઈમેજ ડાઉનલોડ લોજિક (Android/App સુસંગત) */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1594,22 +1515,33 @@
       const element = document.getElementById('receiptImageCapture');
       if(!element) return;
 
-      if(typeof html2canvas === 'undefined') {
-        alert("ઈમેજ કન્વર્ટર લાઈબ્રેરી લોડ થઈ નથી. કૃપા કરીને ઇન્ટરનેટ ચેક કરો.");
-        return;
-      }
-
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        const imgData = canvas.toDataURL('image/png');
+        let imageData = canvas.toDataURL("image/png");
 
-        document.getElementById('modalImg').src = imgData;
-        document.getElementById('modalDownloadBtn').href = imgData;
-        document.getElementById('modalDownloadBtn').download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
-        document.getElementById('imageModal').style.display = 'block';
-
+        // ૧. મોબાઈલ એપ્સ માટે નવી વિન્ડો ખોલીને લાંબા સમય સુધી દબાવીને ડાઉનલોડ કરવાનો ઓપ્શન
+        let newWin = window.open("");
+        if(newWin) {
+          newWin.document.write(`
+            <html>
+              <head><title>પહોંચ ઈમેજ</title></head>
+              <body style="margin:0; text-align:center; background:#222; padding:15px;">
+                <p style="color:#fff; font-family:sans-serif; font-size:14px;">📸 સેવ કરવા ઈમેજ પર ટચ કરી રાખો (Long Press) અને "Save Image" પસંદ કરો.</p>
+                <img src="${imageData}" style="max-width:100%; border:2px solid #fff; border-radius:8px;" />
+              </body>
+            </html>
+          `);
+        } else {
+          // ૨. જો પોપઅપ બ્લોક હોય તો ડાયરેક્ટ એન્કર ડાઉનલોડ
+          let link = document.createElement('a');
+          link.href = imageData;
+          link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
       } catch (err) {
-        alert("ઈમેજ બનાવવામાં સમસ્યા આવી: " + err.message);
+        alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
       }
     }
 
@@ -1623,21 +1555,29 @@
       const msg = buildTextMessage(s);
 
       try {
-        if(typeof html2canvas === 'undefined') {
-          alert("લાઈબ્રેરી લોડ નથી.");
-          return;
-        }
-
         const canvas = await html2canvas(element, { scale: 2, useCORS: true });
         
         if (type === 'image') {
-          let dataUrl = canvas.toDataURL('image/png');
-          document.getElementById('modalImg').src = dataUrl;
-          document.getElementById('modalDownloadBtn').href = dataUrl;
-          document.getElementById('imageModal').style.display = 'block';
+          canvas.toBlob(async (blob) => {
+            if (!blob) return alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
+            const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
 
-          alert("📸 ઈમેજ તૈયાર છે. જો સીધી શેર ન થાય તો ઈમેજ ડાઉનલોડ કરીને WhatsApp પર મોકલો.");
-          window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
+              } catch (err) { console.log("Share canceled"); }
+            } else {
+              let a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = `Receipt_${s.name}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+
+              alert("📸 પહોંચનો ફોટો ડાઉનલોડ થઈ ગયો છે. વ્હોટ્સએપ ઓપન થશે જેમાં ફોટો અટેચ કરીને મોકલો.");
+              window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+          }, 'image/png');
 
         } else if (type === 'pdf') {
           const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -1649,9 +1589,18 @@
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
           pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
-          pdf.save(`Receipt_${s.name}.pdf`);
-          alert("📄 પહોંચ PDF ડાઉનલોડ થઈ ગઈ છે. વ્હોટ્સએપ ઓપન થશે જેમાં PDF અટેચ કરીને મોકલો.");
-          window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+          const pdfBlob = pdf.output('blob');
+          const file = new File([pdfBlob], `Receipt_${s.name}.pdf`, { type: 'application/pdf' });
+
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
+            } catch (err) { console.log("Share canceled"); }
+          } else {
+            pdf.save(`Receipt_${s.name}.pdf`);
+            alert("📄 પહોંચ PDF ડાઉનલોડ થઈ ગઈ છે. વ્હોટ્સએપ ઓપન થશે જેમાં PDF અટેચ કરીને મોકલો.");
+            window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
+          }
         }
       } catch (err) {
         alert("શેર કરવામાં ભૂલ આવી: " + err.message);
