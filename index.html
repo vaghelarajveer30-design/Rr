@@ -8,10 +8,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <!-- Firebase Compat Scripts for Simple HTML Integration -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
@@ -56,7 +52,7 @@
     .btn { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; }
     .btn-edit { background: #f39c12; margin-top: 5px; }
     .btn-settings { background: #6f42c1; margin-top: 10px; }
-    .btn-firebase-sync { background: #ffca28; color: #333; font-size: 16px; margin-top: 10px; font-weight: bold; }
+    .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
     
     .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
     .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
@@ -106,6 +102,7 @@
     .text-green { color: #27ae60; font-weight: bold; }
     .text-blue { color: #1a73e8; font-weight: bold; }
 
+    /* Modal for Image Preview & Easy Saving in Apps */
     .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); overflow-y: auto; }
     .modal-content { background: white; margin: 5% auto; padding: 15px; max-width: 95%; width: 480px; border-radius: 10px; text-align: center; }
   </style>
@@ -123,9 +120,9 @@
           <button class="btn" style="width: auto; padding: 8px 15px;" onclick="showAddStudentForm()">+ નવો વિદ્યાર્થી</button>
         </div>
 
-        <div class="card" style="border: 2px solid #ffca28; background: #fffde7;">
-          <h4 style="color: #f57f17; text-align:center;">🔥 Firebase Realtime Cloud Sync</h4>
-          <p id="firebaseStatusText" style="text-align:center; font-size:12px; color:#666; margin-top:4px;">જોડાણ ચકાસી રહ્યું છે...</p>
+        <div class="card" style="border: 2px solid #34a853; background: #e8f5e9;">
+          <h4 style="color: #2e7d32; text-align:center;">☁️ Google Drive ક્લાઉડ બેકઅપ સિસ્ટમ</h4>
+          <button class="btn btn-drive-sync" onclick="uploadAllDataToDrive()">📤 એક ક્લિક પર બધો ડેટા Drive માં સેવ કરો</button>
         </div>
 
         <div class="status-counter-grid">
@@ -172,7 +169,7 @@
           </div>
         </div>
 
-        <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ</button>
+        <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
       </div>
 
       <div id="adminExpensePage" class="page">
@@ -472,15 +469,21 @@
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
         <a id="downloadImgBtn" href="#" onclick="downloadReceiptAsImage()" target="_blank" class="btn btn-img-download" style="text-decoration:none; display:inline-block; text-align:center;">🖼️ પહોંચ ઈમેજ ડાઉનલોડ / ઓપન કરો</a>
-        <button class="btn btn-wa-img" onclick="window.open(shareReceiptToWhatsApp('image'), '_blank')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
-        <button class="btn btn-wa-pdf" onclick="window.open(shareReceiptToWhatsApp('pdf'), '_blank')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
-        <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ / ઓપન કરો</button>
-        <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
+<button class="btn btn-wa-img" onclick="window.open(shareReceiptToWhatsApp('image'), '_blank')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
+<button class="btn btn-wa-pdf" onclick="window.open(shareReceiptToWhatsApp('pdf'), '_blank')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
+<button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ / ઓપન કરો</button>
+<button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
       </div>
 
       <div id="settingsPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
+        
+        <div class="card" style="border: 2px solid #34a853;">
+          <h4 style="color: #34a853;">🔗 Google Sheets Cloud Sync સેટિંગ્સ</h4>
+          <input type="text" id="gdriveScriptUrl" class="form-control" style="margin-top:8px;" placeholder="અહીં Google Web App URL લિંક પેસ્ટ કરો">
+          <button class="btn" style="background: #34a853; margin-top: 5px;" onclick="saveCloudUrl()">🔗 લિંક સેવ કરો</button>
+        </div>
 
         <div class="card" style="border: 2px solid #6f42c1;">
           <h4 style="color:#6f42c1;">➕ નવો કોર્સ ઉમેરો</h4>
@@ -513,6 +516,7 @@
     </div>
   </div>
 
+  <!-- App Safe Universal Image Modal Popup -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
       <h3 style="color:#1a73e8; margin-bottom: 8px;">🖼️ પહોંચ ઈમેજ તૈયાર છે</h3>
@@ -526,22 +530,6 @@
   </div>
 
   <script>
-    // --- FIREBASE CONFIGURATION (તમારા સ્ક્રીનશોટ મુજબ) ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkUTe1Oxtagt-4bMJDHwmavkeFuVop2nk",
-      authDomain: "nirmla-1010.firebaseapp.com",
-      databaseURL: "https://nirmla-1010-default-rtdb.firebaseio.com",
-      projectId: "nirmla-1010",
-      storageBucket: "nirmla-1010.firebasestorage.app",
-      messagingSenderId: "767829371502",
-      appId: "1:767829371502:web:a9db10382c25021bea547f",
-      measurementId: "G-DXQYKMGLE"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
     let currentTab = 'Active'; 
     let currentFeeFilter = 'ALL';
     let currentStudentId = null;
@@ -564,39 +552,12 @@
     let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || [];
     let directSales = JSON.parse(localStorage.getItem('NIRMALA_DIRECT_SALES')) || [];
 
-    // Save Data Locally & Sync to Firebase Realtime Database
     function saveDataLocally() {
       localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
       localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
       localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
       localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
       localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
-
-      // Sync to Firebase
-      // Sync to Firebase Realtime Database
-db.ref('students').set(students)
-.then(() => {
-    document.getElementById('firebaseStatusText').innerText = "🟢 ડેટા ઓનલાઈન સિંક થઈ ગયો છે (Live)";
-})
-.catch((err) => {
-    document.getElementById('firebaseStatusText').innerText = "🔴 Firebase એરર: " + err.message;
-});
-    }
-
-    function listenToFirebaseChanges() {
-    db.ref('students').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            students = Array.isArray(data) ? data : Object.values(data);
-            localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
-            
-            if (typeof renderStudentList === 'function') renderStudentList();
-            if (typeof refreshCurrentTab === 'function') refreshCurrentTab();
-
-            document.getElementById('firebaseStatusText').innerText = "🟢 રિયલ ટાઈમ ક્લાઉડ સાથે જોડાયેલ છે";
-        }
-    });
-}
     }
 
     function formatDateGuj(dateStr) {
@@ -617,13 +578,41 @@ db.ref('students').set(students)
       renderAdminExpenses();
       renderDirectSaleHistory();
       
+      let savedUrl = localStorage.getItem('GDRIVE_SCRIPT_URL');
+      if(savedUrl) {
+        document.getElementById('gdriveScriptUrl').value = savedUrl;
+      }
+      
       document.getElementById('fDate').valueAsDate = new Date();
       document.getElementById('expDate').valueAsDate = new Date();
       document.getElementById('directSaleDate').valueAsDate = new Date();
-
-      // Connect to Firebase Database live
-      listenToFirebaseChanges();
     };
+
+    function saveCloudUrl() {
+      let url = document.getElementById('gdriveScriptUrl').value.trim();
+      if(url) {
+        localStorage.setItem('GDRIVE_SCRIPT_URL', url);
+        alert("Google Sheet API લિંક સેવ થઈ ગઈ છે!");
+      } else {
+        alert("કૃપા કરીને સાચી લિંક ઉમેરો.");
+      }
+    }
+
+    function uploadAllDataToDrive() {
+      let url = localStorage.getItem('GDRIVE_SCRIPT_URL');
+      if(!url) {
+        alert("❌ માસ્ટર સેટિંગ્સમાં Google Sheet લિંક ઉમેરો!");
+        return;
+      }
+      alert("ડ્રાઈવમાં બેકઅપ સેવ થઈ રહ્યો છે...");
+      fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ students, adminExpenses, directSales, masterBooks })
+      }).then(() => alert("✅ ડેટા Cloud માં સેવ થઈ ગયો છે."))
+        .catch(err => alert("❌ બેકઅપ એરર: " + err));
+    }
 
     function addAdminExpense(event) {
       event.preventDefault();
@@ -1515,6 +1504,7 @@ db.ref('students').set(students)
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
+    /* 100% App-Safe Image Download & View Solution */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1529,8 +1519,10 @@ db.ref('students').set(students)
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
         let imageData = canvas.toDataURL("image/png");
 
+        // Open Modal Popup (App safe download & long press save)
         openModalWithImage(imageData, `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`);
 
+        // Also trigger direct anchor download standard fallback
         let link = document.createElement('a');
         link.href = imageData;
         link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
@@ -1542,6 +1534,7 @@ db.ref('students').set(students)
       }
     }
 
+    /* 100% App-Safe PDF Download & View Solution */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1562,6 +1555,7 @@ db.ref('students').set(students)
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
+        // Native app friendly PDF data URL open & download fallback
         const pdfUri = pdf.output('datauristring');
         
         let link = document.createElement('a');
