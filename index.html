@@ -583,32 +583,20 @@ db.ref('students').set(students)
 });
     }
 
-    // Realtime Listener from Firebase Database
     function listenToFirebaseChanges() {
-      db.ref('nirmala_data').on('value', (snapshot) => {
+    db.ref('students').on('value', (snapshot) => {
         const data = snapshot.val();
-        if(data) {
-          if(data.masterCourses) masterCourses = data.masterCourses;
-          if(data.masterBooks) masterBooks = data.masterBooks;
-          if(data.students) students = data.students;
-          if(data.adminExpenses) adminExpenses = data.adminExpenses;
-          if(data.directSales) directSales = data.directSales;
+        if (data) {
+            students = Array.isArray(data) ? data : Object.values(data);
+            localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
+            
+            if (typeof renderStudentList === 'function') renderStudentList();
+            if (typeof refreshCurrentTab === 'function') refreshCurrentTab();
 
-          localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
-          localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
-          localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
-          localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
-          localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
-
-          refreshCourseUI(); 
-          renderSettingsTables();
-          renderStudentList();
-          renderAdminExpenses();
-          renderDirectSaleHistory();
-
-          document.getElementById('firebaseStatusText').innerText = "🟢 રિયલ ટાઈમ ક્લાઉડ સાથે જોડાયેલ છે";
+            document.getElementById('firebaseStatusText').innerText = "🟢 રિયલ ટાઈમ ક્લાઉડ સાથે જોડાયેલ છે";
         }
-      });
+    });
+}
     }
 
     function formatDateGuj(dateStr) {
