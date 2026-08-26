@@ -102,7 +102,6 @@
     .text-green { color: #27ae60; font-weight: bold; }
     .text-blue { color: #1a73e8; font-weight: bold; }
 
-    /* Modal for Image Preview & Easy Saving in Apps */
     .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); overflow-y: auto; }
     .modal-content { background: white; margin: 5% auto; padding: 15px; max-width: 95%; width: 480px; border-radius: 10px; text-align: center; }
   </style>
@@ -468,11 +467,11 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-        <a id="downloadImgBtn" href="#" onclick="downloadReceiptAsImage()" target="_blank" class="btn btn-img-download" style="text-decoration:none; display:inline-block; text-align:center;">🖼️ પહોંચ ઈમેજ ડાઉનલોડ / ઓપન કરો</a>
-<button class="btn btn-wa-img" onclick="window.open(shareReceiptToWhatsApp('image'), '_blank')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
-<button class="btn btn-wa-pdf" onclick="window.open(shareReceiptToWhatsApp('pdf'), '_blank')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
-<button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ / ઓપન કરો</button>
-<button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
+          <button onclick="downloadReceiptAsImage()" class="btn btn-img-download">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો</button>
+          <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
+          <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
+          <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ કરો</button>
+          <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
       </div>
 
@@ -516,11 +515,10 @@
     </div>
   </div>
 
-  <!-- App Safe Universal Image Modal Popup -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
       <h3 style="color:#1a73e8; margin-bottom: 8px;">🖼️ પહોંચ ઈમેજ તૈયાર છે</h3>
-      <p style="font-size:12px; color:#555; margin-bottom:10px;">એપમાં સેવ કરવા માટે ઈમેજ પર થોડી સેકન્ડ દબાવી રાખો (Long Press) અને <b>Save Image</b> પસંદ કરો.</p>
+      <p style="font-size:12px; color:#555; margin-bottom:10px;">Chrome બ્રાઉઝરમાં સેવ કરવા માટે ડાઉનલોડ બટન દબાવો.</p>
       <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px; margin-bottom: 12px;">
       <div style="display:flex; gap:10px; justify-content:center;">
         <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ કરો</a>
@@ -1459,7 +1457,7 @@
           document.body.removeChild(link);
         }
       } catch(e) {
-        alert("PDF ખોલવામાં સમસ્યા આવી: " + e.message);
+        alert("PDF ડાઉનલોડ કરવામાં સમસ્યા આવી: " + e.message);
       }
     }
 
@@ -1504,7 +1502,7 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* 100% App-Safe Image Download & View Solution */
+    /* 100% Chrome Browser Direct Download Solution for Image */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1517,24 +1515,24 @@
 
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        let imageData = canvas.toDataURL("image/png");
+        
+        canvas.toBlob(function(blob) {
+          let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
+          let link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        }, 'image/png');
 
-        // Open Modal Popup (App safe download & long press save)
-        openModalWithImage(imageData, `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`);
-
-        // Also trigger direct anchor download standard fallback
-        let link = document.createElement('a');
-        link.href = imageData;
-        link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
       } catch (err) {
-        alert("ઈમેજ બનાવવામાં સમસ્યા આવી: " + err.message);
+        alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
       }
     }
 
-    /* 100% App-Safe PDF Download & View Solution */
+    /* 100% Chrome Browser Direct Download Solution for PDF */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1555,15 +1553,17 @@
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
-        // Native app friendly PDF data URL open & download fallback
-        const pdfUri = pdf.output('datauristring');
-        
+        let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+        // Direct Chrome Download Trigger
+        const pdfBlob = pdf.output('blob');
         let link = document.createElement('a');
-        link.href = pdfUri;
-        link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`;
+        link.href = URL.createObjectURL(pdfBlob);
+        link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
 
       } catch (err) {
         alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err.message);
