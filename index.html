@@ -2,9 +2,15 @@
 <html lang="gu">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>નિર્મળા નવોદય ક્લાસિસ - Billing & Inventory System</title>
   
+  <!-- App Mode Settings (Prevents Opening in external browsers like Opera) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a73e8">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -52,7 +58,7 @@
     .btn { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; }
     .btn-edit { background: #f39c12; margin-top: 5px; }
     .btn-settings { background: #6f42c1; margin-top: 10px; }
-    .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
+    .btn-clear-all { background: #c5221f; margin-top: 10px; font-size: 13px; }
     
     .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
     .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
@@ -101,9 +107,6 @@
     .text-red { color: #d32f2f; font-weight: bold; }
     .text-green { color: #27ae60; font-weight: bold; }
     .text-blue { color: #1a73e8; font-weight: bold; }
-
-    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); overflow-y: auto; }
-    .modal-content { background: white; margin: 5% auto; padding: 15px; max-width: 95%; width: 480px; border-radius: 10px; text-align: center; }
   </style>
 </head>
 <body>
@@ -117,11 +120,6 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <h3>વિદ્યાર્થીઓની યાદી</h3>
           <button class="btn" style="width: auto; padding: 8px 15px;" onclick="showAddStudentForm()">+ નવો વિદ્યાર્થી</button>
-        </div>
-
-        <div class="card" style="border: 2px solid #34a853; background: #e8f5e9;">
-          <h4 style="color: #2e7d32; text-align:center;">☁️ Google Drive ક્લાઉડ બેકઅપ સિસ્ટમ</h4>
-          <button class="btn btn-drive-sync" onclick="uploadAllDataToDrive()">📤 એક ક્લિક પર બધો ડેટા Drive માં સેવ કરો</button>
         </div>
 
         <div class="status-counter-grid">
@@ -168,7 +166,8 @@
           </div>
         </div>
 
-        <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
+        <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ</button>
+        <button class="btn btn-clear-all" onclick="clearAllAppStorageData()">🧹 આ ડિવાઈસનો બધો જૂનો ડેટા સાફ કરો (Reset Data)</button>
       </div>
 
       <div id="adminExpensePage" class="page">
@@ -467,7 +466,7 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button onclick="downloadReceiptAsImage()" class="btn btn-img-download">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો</button>
+          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો</button>
           <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
           <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
           <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ કરો</button>
@@ -478,12 +477,6 @@
       <div id="settingsPage" class="page">
         <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
         
-        <div class="card" style="border: 2px solid #34a853;">
-          <h4 style="color: #34a853;">🔗 Google Sheets Cloud Sync સેટિંગ્સ</h4>
-          <input type="text" id="gdriveScriptUrl" class="form-control" style="margin-top:8px;" placeholder="અહીં Google Web App URL લિંક પેસ્ટ કરો">
-          <button class="btn" style="background: #34a853; margin-top: 5px;" onclick="saveCloudUrl()">🔗 લિંક સેવ કરો</button>
-        </div>
-
         <div class="card" style="border: 2px solid #6f42c1;">
           <h4 style="color:#6f42c1;">➕ નવો કોર્સ ઉમેરો</h4>
           <div style="display:flex; gap:10px; margin-top:10px;">
@@ -512,18 +505,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <div id="imageModal" class="modal">
-    <div class="modal-content">
-      <h3 style="color:#1a73e8; margin-bottom: 8px;">🖼️ પહોંચ ઈમેજ તૈયાર છે</h3>
-      <p style="font-size:12px; color:#555; margin-bottom:10px;">Chrome બ્રાઉઝરમાં સેવ કરવા માટે ડાઉનલોડ બટન દબાવો.</p>
-      <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px; margin-bottom: 12px;">
-      <div style="display:flex; gap:10px; justify-content:center;">
-        <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ કરો</a>
-        <button class="btn-danger" style="padding:8px 15px;" onclick="closeModal()">બંધ કરો</button>
-      </div>
     </div>
   </div>
 
@@ -558,6 +539,15 @@
       localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
     }
 
+    /* Clear all Local Storage Data for resetting */
+    function clearAllAppStorageData() {
+      if(confirm("શું તમે આ બ્રાઉઝર/એપમાંથી બધો જ જૂનો ડેટા (વિદ્યાર્થીઓ, હિસાબ) સાફ કરવા માંગો છો?")) {
+        localStorage.clear();
+        alert("🧹 બધો ડેટા સાફ થઈ ગયો છે!");
+        location.reload();
+      }
+    }
+
     function formatDateGuj(dateStr) {
       if(!dateStr) return '';
       const parts = dateStr.split('-');
@@ -576,41 +566,10 @@
       renderAdminExpenses();
       renderDirectSaleHistory();
       
-      let savedUrl = localStorage.getItem('GDRIVE_SCRIPT_URL');
-      if(savedUrl) {
-        document.getElementById('gdriveScriptUrl').value = savedUrl;
-      }
-      
       document.getElementById('fDate').valueAsDate = new Date();
       document.getElementById('expDate').valueAsDate = new Date();
       document.getElementById('directSaleDate').valueAsDate = new Date();
     };
-
-    function saveCloudUrl() {
-      let url = document.getElementById('gdriveScriptUrl').value.trim();
-      if(url) {
-        localStorage.setItem('GDRIVE_SCRIPT_URL', url);
-        alert("Google Sheet API લિંક સેવ થઈ ગઈ છે!");
-      } else {
-        alert("કૃપા કરીને સાચી લિંક ઉમેરો.");
-      }
-    }
-
-    function uploadAllDataToDrive() {
-      let url = localStorage.getItem('GDRIVE_SCRIPT_URL');
-      if(!url) {
-        alert("❌ માસ્ટર સેટિંગ્સમાં Google Sheet લિંક ઉમેરો!");
-        return;
-      }
-      alert("ડ્રાઈવમાં બેકઅપ સેવ થઈ રહ્યો છે...");
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ students, adminExpenses, directSales, masterBooks })
-      }).then(() => alert("✅ ડેટા Cloud માં સેવ થઈ ગયો છે."))
-        .catch(err => alert("❌ બેકઅપ એરર: " + err));
-    }
 
     function addAdminExpense(event) {
       event.preventDefault();
@@ -1411,7 +1370,6 @@
               <td>${badgeTxt}</td>
               <td style="white-space:nowrap;">
                 <button class="btn-view" onclick="viewSpecificReceipt(${p.id})">👁️ જુઓ</button>
-                ${p.receiptImage ? `<button class="btn-view" style="background:#009688;" onclick="viewSavedPhoto('${p.id}')">🖼️</button>` : ''}
                 ${p.receiptPDF ? `<button class="btn-view" style="background:#e74c3c;" onclick="downloadSavedPDF('${p.id}')">📄</button>` : ''}
                 ${!p.isPaid ? `<button class="btn-pay-action" onclick="markPaymentAsPaid(${p.id})">🟢 જમા</button>` : ''}
                 <button class="btn-danger" onclick="deletePayment(${p.id})">❌</button>
@@ -1420,27 +1378,6 @@
           `;
         });
       }
-    }
-
-    function viewSavedPhoto(pId) {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s) return;
-      let p = s.payments.find(item => item.id == pId);
-      if(p && p.receiptImage) {
-        openModalWithImage(p.receiptImage, `Receipt_${s.name}_${p.date}.png`);
-      }
-    }
-
-    function openModalWithImage(imgData, filename) {
-      document.getElementById('modalImg').src = imgData;
-      let dBtn = document.getElementById('modalDownloadBtn');
-      dBtn.href = imgData;
-      dBtn.download = filename || 'Receipt.png';
-      document.getElementById('imageModal').style.display = 'block';
-    }
-
-    function closeModal() {
-      document.getElementById('imageModal').style.display = 'none';
     }
 
     function downloadSavedPDF(pId) {
@@ -1457,7 +1394,7 @@
           document.body.removeChild(link);
         }
       } catch(e) {
-        alert("PDF ડાઉનલોડ કરવામાં સમસ્યા આવી: " + e.message);
+        alert("PDF ખોલવામાં સમસ્યા આવી: " + e.message);
       }
     }
 
@@ -1502,7 +1439,6 @@
       navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
     }
 
-    /* 100% Chrome Browser Direct Download Solution for Image */
     async function downloadReceiptAsImage() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || !s.payments || s.payments.length === 0) {
@@ -1515,24 +1451,19 @@
 
       try {
         const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        
-        canvas.toBlob(function(blob) {
-          let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
-          let link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(link.href);
-        }, 'image/png');
+        let imageData = canvas.toDataURL("image/png");
 
+        let link = document.createElement('a');
+        link.href = imageData;
+        link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } catch (err) {
-        alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
+        alert("ઈમેજ બનાવવામાં સમસ્યા આવી: " + err.message);
       }
     }
 
-    /* 100% Chrome Browser Direct Download Solution for PDF */
     async function generateAndDownloadPDF() {
       const s = students.find(item => item.id === currentStudentId);
       if(!s || s.payments.length === 0) return;
@@ -1553,17 +1484,14 @@
 
         pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
 
-        let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`;
-
-        // Direct Chrome Download Trigger
-        const pdfBlob = pdf.output('blob');
+        const pdfUri = pdf.output('datauristring');
+        
         let link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = fileName;
+        link.href = pdfUri;
+        link.download = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
 
       } catch (err) {
         alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err.message);
