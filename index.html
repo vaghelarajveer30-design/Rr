@@ -573,17 +573,14 @@
       localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
 
       // Sync to Firebase
-      db.ref('nirmala_data').set({
-        masterCourses,
-        masterBooks,
-        students,
-        adminExpenses,
-        directSales
-      }).then(() => {
-        document.getElementById('firebaseStatusText').innerText = "🟢 રિયલ ટાઈમ ડેટા સિન્ક થયો (Live)";
-      }).catch(err => {
-        document.getElementById('firebaseStatusText').innerText = "🔴 Firebase એરર: " + err.message;
-      });
+      // Sync to Firebase Realtime Database
+db.ref('students').set(students)
+.then(() => {
+    document.getElementById('firebaseStatusText').innerText = "🟢 ડેટા ઓનલાઈન સિંક થઈ ગયો છે (Live)";
+})
+.catch((err) => {
+    document.getElementById('firebaseStatusText').innerText = "🔴 Firebase એરર: " + err.message;
+});
     }
 
     // Realtime Listener from Firebase Database
