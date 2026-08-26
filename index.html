@@ -468,13 +468,11 @@
           <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
           <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
           
-          <button class="btn btn-img-download" onclick="downloadReceiptAsImage()">🖼️ પહોંચ ઈમેજ ડાઉનલોડ / ઓપન કરો</button>
-          
-          <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટસએપ પર Photo શેર કરો</button>
-          <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટસએપ પર PDF શેર કરો</button>
-          
-          <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ / ઓપન કરો</button>
-          <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
+        <a id="downloadImgBtn" href="#" onclick="downloadReceiptAsImage()" target="_blank" class="btn btn-img-download" style="text-decoration:none; display:inline-block; text-align:center;">🖼️ પહોંચ ઈમેજ ડાઉનલોડ / ઓપન કરો</a>
+<button class="btn btn-wa-img" onclick="window.open(shareReceiptToWhatsApp('image'), '_blank')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
+<button class="btn btn-wa-pdf" onclick="window.open(shareReceiptToWhatsApp('pdf'), '_blank')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
+<button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ / ઓપન કરો</button>
+<button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
         </div>
       </div>
 
