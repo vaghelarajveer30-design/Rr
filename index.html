@@ -201,7 +201,7 @@ window.OneSignalDeferred.push(async function(OneSignal){
 <section id="studentHome" class="hidden">
 <div class="card"><h2>👨‍🎓 Student Dashboard</h2><span id="studentWelcome" class="badge"></span>
 <span id="connectionStatus" class="offline-badge">📡 તપાસી રહ્યું છે...</span>
-<button class="secondary" style="float:right" onclick="studentLogout()">Logout</button></div>
+<div style="float:right;display:flex;gap:6px;align-items:center"><button class="secondary" type="button" onclick="studentLogout()">Logout</button><button type="button" style="background:#b91c1c;color:#fff" onclick="exitNirmalaApp()">🚪 Exit</button></div></div>
 
 <div class="section-buttons">
 <button onclick="studentSection('noticesSection')">📢 Notice Board <span id="noticeCountBadge"></span></button>
@@ -242,7 +242,7 @@ window.OneSignalDeferred.push(async function(OneSignal){
 <section id="teacherHome" class="hidden">
 
 <div class="card"><h2>👨‍🏫 Teacher Dashboard</h2><span id="teacherWelcome" class="badge"></span>
-<button class="secondary" style="float:right" onclick="teacherLogout()">Logout</button></div>
+<div style="float:right;display:flex;gap:6px;align-items:center"><button class="secondary" type="button" onclick="teacherLogout()">Logout</button><button type="button" style="background:#b91c1c;color:#fff" onclick="exitNirmalaApp()">🚪 Exit</button></div></div>
 
 <div class="section-buttons teacher-nav">
 <button onclick="teacherSection('studentsSection')">👨‍🎓 Students</button>
@@ -383,14 +383,8 @@ Student Registration અને Login માટે એપમાં જ 4 અં�
 <button onclick="saveTeacherCredentials()">💾 ID / Password Save કરો</button>
 <div id="credentialMsg"></div>
 <hr style="border:0;border-top:1px solid #e5e7eb;margin:16px 0">
-<div id="teacherBiometricSettings" class="card" style="margin:14px 0;padding:16px;border:1px solid #dbe3ef;background:#f8fbff">
-<h3 style="margin-top:0">🖐️ Teacher Fingerprint / Face</h3>
-<p class="muted">Teacher માટે ફોનનું Fingerprint અથવા Face Unlock વાપરી શકાય છે. Student Login પર તેનો કોઈ અસર નહીં થાય.</p>
-<button type="button" onclick="window.nirmalaTeacherBiometricLogin && window.nirmalaTeacherBiometricLogin()">🖐️ Fingerprint / Face ચેક કરો</button>
-<div id="teacherBiometricStatus" class="sync-status" style="margin-top:8px"></div>
-</div>
 <h3>🔔 Notifications</h3>
-<p class="setting-note">Teacher અહીંથી notification મોકલી શકે છે. Firebaseમાં notification record સાચવાશે અને વિદ્યાર્થી એપ ખોલે/foregroundમાં આવે ત્યારે બતાવાશે. <b>એપ સંપૂર્ણ બંધ હોય ત્યારે સાચી push notification માટે Android APKમાં FCM native integration જરૂરી રહેશે.</b></p>
+<p class="setting-note">Teacher અહીંથી notification મોકલી શકે છે. Firebaseમાં notification record સાચવાશે અને વિદ્યાર્થી એપ ખોલે/foregroundમાં આવે ત્યારે બતાવાશે. <b>OneSignal Push ON હોય તો notification OneSignal દ્વારા મોકલાશે.</b></p>
 <div class="grid">
 <input id="notifyTitle" placeholder="Notification Title">
 <input id="notifyBody" placeholder="Notification Message">
@@ -616,7 +610,7 @@ async function testNativeNotification(){
   await ensureNativeNotificationPermission();
 
   const title='🔔 NIRMLA STUDY ZON Test';
-  const body='Fingerprint + AppMint Notification ટેસ્ટ સફળ થયો.';
+  const body='NIRMLA STUDY ZON AppMint Notification ટેસ્ટ સફળ થયો.';
   const api=window.WebToApk;
 
   if(api && typeof api.notify==='function'){
@@ -2116,7 +2110,6 @@ installPWAHelpers(); registerOfflineWorker(); initFirebase();
   <input id="nsl-teacher-pass" type="password" placeholder="Password" autocomplete="current-password">
   <div class="nsl-row">
    <button type="button" class="nsl-main" id="nsl-teacher-submit">🔐 Password Login</button>
-   <button type="button" class="nsl-main" id="nsl-teacher-bio" style="margin-top:8px;background:#2e7d32">🖐️ Fingerprint / Face Unlock</button>
    <button type="button" class="nsl-cancel" id="nsl-teacher-cancel">બંધ કરો</button>
   </div>
  </div>
@@ -2124,105 +2117,13 @@ installPWAHelpers(); registerOfflineWorker(); initFirebase();
 </div>
 
 
-<script id="nirmala-teacher-biometric-js">
-(function(){
-  const API=()=>window.WebToApk;
-
-  function nativeReady(){
-    return !!(API() && typeof API().authenticateBiometricEx==='function');
-  }
-
-  function availabilityMessage(status){
-    const m={
-      no_hardware:'આ ફોનમાં Fingerprint/Face biometric hardware નથી.',
-      not_enrolled:'ફોનમાં Fingerprint/Face સેટ થયેલ નથી. પહેલા ફોનની Android Settings માં biometric ઉમેરો.',
-      none_enrolled:'ફોનમાં Fingerprint/Face સેટ થયેલ નથી. પહેલા ફોનની Android Settings માં biometric ઉમેરો.',
-      unavailable:'આ APKમાં Native biometric હાલમાં ઉપલબ્ધ નથી. નવી APK AppMintમાંથી Build કરો.',
-      hw_unavailable:'Biometric hardware હાલમાં ઉપલબ્ધ નથી.',
-      lockout:'Fingerprint/Face ઘણી વાર ખોટું હોવાથી biometric થોડા સમય માટે lock છે.',
-      lockout_permanent:'Biometric permanently lock છે. ફોનનું screen lock/password ઉપયોગ કરીને ફરી biometric સેટ કરો.',
-      permission_missing:'આ APKમાં biometric permission ઉપલબ્ધ નથી.'
-    };
-    return m[status] || ('Biometric ઉપલબ્ધ નથી. Status: '+status);
-  }
-
-  function checkAvailable(cb){
-    if(!API() || typeof API().isBiometricAvailable!=='function'){
-      cb(false,'unavailable'); return;
-    }
-    try{
-      const status=API().isBiometricAvailable();
-      cb(status==='available',status);
-    }catch(e){ cb(false,'unavailable'); }
-  }
-
-  function openTeacherDashboard(){
-    try{
-      var sl=document.getElementById('studentLogin');
-      if(sl) sl.classList.add('hidden');
-      var th=document.getElementById('teacherHome');
-      if(th){ th.classList.remove('hidden'); th.style.display='block'; }
-      var hu=document.getElementById('headerUser');
-      if(hu) hu.textContent='👨‍🏫 Teacher';
-      try{closeTeacherLogin();}catch(e){}
-      try{if(typeof teacherSection==='function') teacherSection('studentsSection');}catch(e){}
-      try{if(typeof renderTeacher==='function') renderTeacher();}catch(e){}
-    }catch(e){ console.error(e); }
-  }
-
-  function biometricLogin(){
-    if(!nativeReady()){
-      alert('આ APKમાં Native Fingerprint/Face support નથી. AppMintમાં biometric support ધરાવતી નવી APK Build કરો. Password Login ચાલુ રહેશે.');
-      return;
-    }
-    checkAvailable(function(ok,status){
-      if(!ok){ alert(availabilityMessage(status)); return; }
-
-      window.__webToApkAuth=window.__webToApkAuth||{};
-      window.__webToApkAuth['teacherUnlock']=function(json){
-        try{
-          var r=JSON.parse(json);
-          if(r.ok){
-            openTeacherDashboard();
-          }else{
-            var err=r.error||'user_cancel';
-            if(err!=='user_cancel'){
-              alert('Fingerprint/Face verification પૂર્ણ થયું નથી.\nકારણ: '+err+'\n\nPassword Login ચાલુ રહેશે.');
-            }
-          }
-        }catch(e){
-          alert('Biometric response સમજાઈ નથી. Password Login ચાલુ રહેશે.');
-        }
-      };
-
-      try{
-        API().authenticateBiometricEx('teacherUnlock', JSON.stringify({
-          title:'Teacher Login',
-          subtitle:'NIRMLA STUDY ZON',
-          description:'Fingerprint / Face થી Teacher Dashboard ખોલો',
-          negativeButtonText:'Password Login',
-          allowDeviceCredential:false,
-          strong:false
-        }));
-      }catch(e){
-        alert('Biometric શરૂ થઈ શક્યું નથી. Password Login ચાલુ રહેશે.');
-      }
-    });
-  }
-
-  window.nirmalaTeacherBiometricLogin=biometricLogin;
-
-  function wire(){
-    var b=document.getElementById('nsl-teacher-bio');
-    if(b) b.onclick=biometricLogin;
-
-    // જૂનું Fingerprint/Face Setup button દૂર કરો — હવે setup કરવાની જરૂર નથી.
-    var old=document.getElementById('teacherBiometricSetup');
-    if(old) old.remove();
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire();
-})();
+<script id="nirmala-exit-js">
+function exitNirmalaApp(){
+  try{
+    if(window.WebToApk && typeof window.WebToApk.closeWindow==='function'){ window.WebToApk.closeWindow(); return; }
+  }catch(e){}
+  try{ window.close(); }catch(e){}
+}
 </script>
 <script id="nirmala-login-fix-js">
 (function(){
