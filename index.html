@@ -1,1636 +1,2337 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="gu">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>નિર્મળા નવોદય ક્લાસિસ - Billing & Inventory System</title>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIRMLA STUDY ZON</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:#173b72;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+button{border:0;border-radius:9px;padding:10px 14px;background:#173b72;color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#e9eef7;color:#173b72}button.danger{background:#c62828}
+.wrap{max-width:900px;margin:auto;padding:16px}.card{background:white;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 10px #0001}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ccd5e2;border-radius:8px;margin:5px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.section-buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0}
+.section-buttons button{min-height:48px;font-size:15px}
+.teacher-nav button{background:#173b72}
+.app-section,.teacher-section{margin-top:12px}
+.pdf-title{font-weight:700;margin-bottom:4px}
 
-  <style>
-    * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
-    body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
-    .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 15px; font-size: 20px; font-weight: bold; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .container { padding: 15px; max-width: 650px; margin: auto; }
+.hidden{display:none!important}.muted{color:#667085;font-size:13px}.item{border:1px solid #e1e7ef;border-radius:10px;padding:12px;margin:8px 0}
+.top-actions{display:flex;gap:8px;align-items:center}.teacher-icon{position:fixed;right:10px;top:8px;z-index:1000;width:36px;height:36px;padding:0;border-radius:50%;background:#fff;color:#173b72;font-size:18px}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;background:#eaf1ff;color:#173b72;font-size:12px;font-weight:700}
+@media(max-width:600px){header{padding-right:55px}}
 
-    .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    
-    .status-counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-    .counter-box { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; user-select: none; }
-    .counter-box:active { transform: scale(0.96); }
-    .counter-active { background: #27ae60; }
-    .counter-inactive { background: #e74c3c; }
-    .counter-num { font-size: 20px; margin-top: 2px; }
+.section-buttons button.active{outline:3px solid #8fb3ff;transform:translateY(-1px)}
+.search-box{position:relative;margin:10px 0}
+.search-box input{padding-left:40px;margin:0}
+.search-icon{position:absolute;left:13px;top:11px;font-size:18px}
+.subject-grid,.marks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-top:10px}
+.subject-grid button,.marks-grid button{min-height:48px}
+.notice-new{border-left:5px solid #e67e22}
+.favorite-btn{float:right;background:#fff;color:#173b72;border:1px solid #ccd5e2;padding:5px 8px}
+.progress-wrap{background:#e8edf5;border-radius:20px;height:12px;overflow:hidden;margin:7px 0}
+.progress-bar{height:100%;width:0%;background:#173b72}
+.progress-text{font-size:12px;color:#667085}
+.photo-preview{max-width:100%;border-radius:10px;margin-top:8px}
+.pdf-file-name{font-size:12px;color:#667085}
+.setting-note{font-size:12px;color:#667085;line-height:1.5}
 
-    .student-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; background: #fff; margin-bottom: 8px; border-radius: 6px; border-left: 4px solid #1a73e8; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .student-item:hover { background: #eef5ff; }
-    .student-main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .student-name-text { font-size: 16px; font-weight: bold; color: #1a73e8; }
+.offline-badge{display:inline-block;padding:5px 9px;border-radius:14px;font-size:12px;background:#eef7ee;margin-left:5px}
+.backup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}
+.sync-status{font-size:13px;margin-top:8px}
 
-    .filter-box { background: #e8f0fe; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #1a73e8; }
-    .filter-box label { font-size: 13px; font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; }
+#teacherLoginModal:not(.hidden),#teacherModal:not(.hidden){display:flex!important}
+#studentLogin:not(.hidden){display:block!important}
 
-    .fee-3boxes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; margin-bottom: 12px; }
-    .fee-box { text-align: center; padding: 12px 6px; border-radius: 8px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s, opacity 0.2s; user-select: none; }
-    .fee-box:active { transform: scale(0.96); }
-    .fee-box-total { background: #1a73e8; }
-    .fee-box-paid { background: #27ae60; }
-    .fee-box-due { background: #d32f2f; }
-    .fee-box-title { font-size: 12px; font-weight: bold; opacity: 0.9; }
-    .fee-box-value { font-size: 18px; font-weight: bold; margin-top: 4px; }
-    .fee-box.selected-filter { outline: 3px solid #ffeb3b; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+.personal-card{border-left:5px solid #173b72}
+.personal-list .item{margin-bottom:9px}
+.read-badge{font-size:11px;padding:3px 7px;border-radius:10px;background:#eaf7ea}
+.unread-badge{font-size:11px;padding:3px 7px;border-radius:10px;background:#fff2cc}
+</style></style>
 
-    .grand-summary { background: #2e7d32; color: white; border-radius: 10px; padding: 15px; margin-top: 15px; }
+<style id="teacher-reset-visibility-fix">
+#nsl-forgot{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background:rgba(0,0,0,.62)!important;
+  z-index:1000001!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px!important;
+  box-sizing:border-box!important;
+}
+#nsl-forgot.show{display:flex!important}
+#nsl-teacher-login #nsl-forgot{display:none!important}
+</style>
 
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
-    .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
-    .radio-group { display: flex; gap: 15px; margin-top: 5px; }
-    .radio-option { display: flex; align-items: center; gap: 5px; font-size: 14px; cursor: pointer; }
-    
-    .btn { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; }
-    .btn-edit { background: #f39c12; margin-top: 5px; }
-    .btn-settings { background: #6f42c1; margin-top: 10px; }
-    .btn-drive-sync { background: #34a853; font-size: 16px; margin-top: 10px; border: 2px solid #ffffff; }
-    
-    .btn-wa-img { background: #25D366; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 12px; }
-    .btn-wa-pdf { background: #075E54; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
-    .btn-img-download { background: #8e44ad; color: white; font-size: 14px; border: none; box-shadow: 0 3px 6px rgba(0,0,0,0.15); margin-top: 8px; }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* NIRMLA STUDY ZON - Student PDF -> Chrome */
+function openInChromePDF(url){
+    if(!url){ alert('PDF ઉપલબ્ધ નથી.'); return; }
+    url=String(url);
 
-    .btn-copy { background: #17a2b8; color: white; margin-top: 8px; }
-    .btn-pdf { background: #e74c3c; color: white; margin-top: 8px; }
-    .btn-danger { background: #d32f2f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
-    .btn-view { background: #1a73e8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
-    .btn-pay-action { background: #27ae60; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 2px; }
+    // WebView/Webinato: પહેલા external browser માટે normal URL ખોલો.
+    try{
+        const a=document.createElement('a');
+        a.href=url;
+        a.target='_blank';
+        a.rel='noopener noreferrer external';
+        a.style.display='none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(()=>{try{a.remove();}catch(e){}},800);
+        return;
+    }catch(e){ console.warn('External link failed',e); }
 
-    .half-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    // WebViewમાં target=_blank support હોય તો.
+    try{
+        const w=window.open(url,'_blank');
+        if(w) return;
+    }catch(e){ console.warn('window.open failed',e); }
 
-    .page { display: none; }
-    .page.active { display: block; }
-    .back-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #1a73e8; font-weight: bold; margin-bottom: 10px; }
+    // છેલ્લો fallback: Chrome scheme.
+    try{
+        window.location.href='googlechrome://navigate?url='+encodeURIComponent(url);
+        return;
+    }catch(e){ console.warn('Chrome scheme failed',e); }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
-    th { background-color: #f2f2f2; font-weight: bold; }
+    try{ window.location.href=url; }
+    catch(e){ alert('PDF ખોલી શકાયું નથી. Webinatoમાં External Browser/Download ચાલુ કરવું જરૂરી છે.'); }
+}
 
-    .info-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
-    .info-table td { border: none; padding: 6px 0; font-size: 14px; }
-    .info-table td.label-col { width: 45%; color: #333; font-weight: bold; }
-    .info-table td.val-col { width: 55%; color: #444; }
+// Student PDF માટે સીધો download. WebView download block કરે તો external browser fallback.
+async function downloadPDFExternal(url,fileName='NIRMLA_STUDY_ZON.pdf'){
+    if(!url){ alert('PDF ઉપલબ્ધ નથી.'); return; }
+    url=String(url);
+    try{
+        const response=await fetch(url,{mode:'cors',credentials:'omit'});
+        if(response.ok){
+            const blob=await response.blob();
+            const blobUrl=URL.createObjectURL(blob);
+            const a=document.createElement('a');
+            a.href=blobUrl;
+            a.download=fileName || 'NIRMLA_STUDY_ZON.pdf';
+            a.style.display='none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(()=>{try{a.remove();URL.revokeObjectURL(blobUrl);}catch(e){}},2000);
+            return;
+        }
+    }catch(e){ console.warn('WebView direct PDF download failed',e); }
+    openInChromePDF(url);
+}
+</script>
 
-    .status-badge-green { background: #27ae60; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-    .status-badge-red { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-
-    .stationery-box { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 6px; margin-top: 15px; }
-    .checkbox-list { max-height: 140px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; border-radius: 6px; }
-    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid #eee; }
-
-    .receipt-excel-box { width: 100%; max-width: 500px; margin: auto; border: 2px solid #1a73e8; background: #fff; color: #000; font-family: Arial, sans-serif; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .receipt-excel-table { width: 100%; border-collapse: collapse; }
-    .receipt-excel-table td, .receipt-excel-table th { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
-    
-    .receipt-title { font-size: 20px; font-weight: bold; text-align: center; background: linear-gradient(135deg, #0d47a1, #1a73e8); color: #ffffff !important; padding: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    .sub-header-row { background-color: #f4f8ff; font-weight: bold; }
-    .table-head-row { background-color: #e8f0fe; color: #1a73e8; }
-    
-    .txt-center { text-align: center; }
-    .txt-right { text-align: right; }
-    .txt-bold { font-weight: bold; }
-    .text-red { color: #d32f2f; font-weight: bold; }
-    .text-green { color: #27ae60; font-weight: bold; }
-    .text-blue { color: #1a73e8; font-weight: bold; }
-
-    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); overflow-y: auto; }
-    .modal-content { background: white; margin: 5% auto; padding: 15px; max-width: 95%; width: 480px; border-radius: 10px; text-align: center; }
-  </style>
+<!-- OneSignal compatibility (browser/web fallback). AppMint native OneSignal handles APK push. -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+window.OneSignalDeferred.push(async function(OneSignal){
+  try{
+    const appId = localStorage.getItem('nirmala_onesignal_app_id') || '3327926e-5056-47f4-8c6e-b1b17f41e34e';
+    if(!appId) return;
+    await OneSignal.init({appId:appId, notifyButton:{enable:false}});
+    window.nirmalaOneSignalReady=true;
+    if(typeof currentStudent!=='undefined' && currentStudent && OneSignal.login){
+      await OneSignal.login(String(currentStudent.id||''));
+    }
+  }catch(e){ console.warn('OneSignal web compatibility init:',e); }
+});
+</script>
 </head>
 <body>
+<header><div><b>📚 NIRMLA STUDY ZON</b></div><div id="headerUser"></div></header>
 
-  <div id="mainAppContent">
-    <div class="header">નિર્મળા નવોદય ક્લાસિસ</div>
+<button class="teacher-icon" title="Teacher Login" onclick="openTeacherLogin()">👨‍🏫</button>
 
-    <div class="container">
-      
-      <div id="listPage" class="page active">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h3>વિદ્યાર્થીઓની યાદી</h3>
-          <button class="btn" style="width: auto; padding: 8px 15px;" onclick="showAddStudentForm()">+ નવો વિદ્યાર્થી</button>
-        </div>
+<main class="wrap">
 
-        <div class="card" style="border: 2px solid #34a853; background: #e8f5e9;">
-          <h4 style="color: #2e7d32; text-align:center;">☁️ Google Drive ક્લાઉડ બેકઅપ સિસ્ટમ</h4>
-          <button class="btn btn-drive-sync" onclick="uploadAllDataToDrive()">📤 એક ક્લિક પર બધો ડેટા Drive માં સેવ કરો</button>
-        </div>
+<section id="studentLogin" class="card">
+<h2>👨‍🎓 Student Login</h2>
+<p class="muted">મોબાઇલ નંબર અને એપમાં દેખાતા 4 અંકના OTP દ્વારા Login કરો.</p>
 
-        <div class="status-counter-grid">
-          <div class="counter-box counter-active" onclick="switchStatusTab('Active')">
-            🟢 એક્ટિવ વિદ્યાર્થી
-            <div class="counter-num" id="totalActiveCount">0</div>
-          </div>
-          <div class="counter-box counter-inactive" onclick="switchStatusTab('Inactive')">
-            🔴 ઇન-એક્ટિવ વિદ્યાર્થી
-            <div class="counter-num" id="totalInactiveCount">0</div>
-          </div>
-        </div>
+<div id="studentLoginBox">
+  <label>મોબાઇલ નંબર</label>
+  <input id="studentMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10 અંકનો મોબાઇલ નંબર">
+  <div id="studentRecaptcha"></div>
+  <button type="button" onclick="sendStudentOTP()">📱 OTP મોકલો</button>
+</div>
 
-        <div class="filter-box">
-          <label for="courseFilter">🔍 કોર્સ પ્રમાણે વિભાજન:</label>
-          <select id="courseFilter" class="form-control" onchange="renderStudentList()">
-            <option value="ALL">બધા જ કોર્સ (All Courses)</option>
-          </select>
-        </div>
+<div id="studentOtpArea" style="display:none;margin-top:12px">
+  <div id="studentDemoOtp" class="badge" style="font-size:20px;margin:8px 0"></div>
+  <label>4 અંકનો OTP</label>
+  <input id="studentOTP" type="tel" inputmode="numeric" maxlength="4" placeholder="ઉપર દેખાતો 4 અંકનો OTP">
+  <button type="button" onclick="verifyStudentOTP()">✅ OTP Verify કરીને Login</button>
+</div>
 
-        <div id="studentListContainer"></div>
+<div id="studentMsg"></div>
+<hr>
+<button type="button" class="secondary" onclick="openStudentRegistration()">📝 Student Registration</button>
+</section>
 
-        <div class="half-btn-grid">
-          <button class="btn" style="background:#ffb300; color:#333; font-size:13px; margin:0;" onclick="showPage('stationeryReportPage')">📖 સ્ટેશનરી રિપોર્ટ & સ્ટોક</button>
-          <button class="btn" style="background:#e67e22; color:#fff; font-size:13px; margin:0;" onclick="showPage('adminExpensePage')">💸 Admin ખર્ચ વિગત</button>
-        </div>
+<div id="studentRegistration" class="card hidden" style="max-width:520px;margin:15px auto">
+<h2>📝 Student Registration</h2>
+<p class="muted">વિદ્યાર્થીની માહિતી ભરો. Registration OTP એપમાં જ 4 અંકમાં દેખાશે.</p>
+<label>વિદ્યાર્થીનું નામ</label>
+<input id="regStudentName" placeholder="વિદ્યાર્થીનું નામ">
+<label>પપ્પાનું નામ</label>
+<input id="regFatherName" placeholder="પપ્પાનું નામ">
+<label>શાળાનું નામ</label>
+<input id="regSchoolName" placeholder="શાળાનું નામ">
+<label>એડ્રેસ</label>
+<textarea id="regAddress" rows="3" placeholder="રહેઠાણનું સરનામું"></textarea>
+<label>મોબાઇલ નંબર</label>
+<input id="regStudentMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10 અંકનો મોબાઇલ નંબર">
+<button type="button" onclick="sendRegistrationOTP()">📱 Registration OTP મોકલો</button>
+<div id="regOtpArea" style="display:none;margin-top:12px">
+  <div id="regDemoOtp" class="badge" style="font-size:20px;margin:8px 0"></div>
+  <label>4 અંકનો OTP</label>
+  <input id="regStudentOTP" type="tel" inputmode="numeric" maxlength="4" placeholder="ઉપર દેખાતો 4 અંકનો OTP">
+  <button type="button" onclick="verifyRegistrationOTP()">✅ OTP Verify & Register</button>
+</div>
+<div id="regMsg"></div>
+<button type="button" class="secondary" onclick="closeStudentRegistration()">⬅️ પાછા Login પર</button>
+</div>
 
-        <div class="grand-summary">
-          <h4 style="text-align: center;">📊 બધા વિદ્યાર્થીઓની ફી નું સરવૈયું</h4>
-          <p style="text-align: center; font-size: 11px; margin-top: 2px; opacity: 0.9;">(નીચેના બટન પર ક્લિક કરીને ફિલ્ટર કરો)</p>
-          <div class="fee-3boxes-grid" style="margin-bottom:0;">
-            <div class="fee-box fee-box-total" id="btnFilterAll" onclick="setFeeFilter('ALL')">
-              <div class="fee-box-title">કુલ ગણેલ ફી</div>
-              <div class="fee-box-value" id="grandTotal">₹0</div>
-            </div>
-            <div class="fee-box fee-box-paid" id="btnFilterPaid" onclick="setFeeFilter('PAID')">
-              <div class="fee-box-title">કુલ જમા ફી</div>
-              <div class="fee-box-value" id="grandPaid">₹0</div>
-            </div>
-            <div class="fee-box fee-box-due" id="btnFilterDue" onclick="setFeeFilter('DUE')">
-              <div class="fee-box-title">કુલ બાકી ફી</div>
-              <div class="fee-box-value" id="grandDue">₹0</div>
-            </div>
-          </div>
-        </div>
+<section id="studentHome" class="hidden">
+<div class="card"><h2>👨‍🎓 Student Dashboard</h2><span id="studentWelcome" class="badge"></span>
+<span id="connectionStatus" class="offline-badge">📡 તપાસી રહ્યું છે...</span>
+<button class="secondary" style="float:right" onclick="studentLogout()">Logout</button></div>
 
-        <button class="btn btn-settings" onclick="showPage('settingsPage')">⚙️ માસ્ટર સેટિંગ્સ & Cloud API</button>
-      </div>
+<div class="section-buttons">
+<button onclick="studentSection('noticesSection')">📢 Notice Board <span id="noticeCountBadge"></span></button>
+<button onclick="studentSection('lessonsSection')">📚 Lessons <span id="lessonCountBadge"></span></button>
+<button onclick="studentSection('questionStudentSection')">📝 વિષયવાર પ્રશ્નો</button>
+<button onclick="studentSection('personalStudentSection')">💬 My Messages <span id="personalCountBadge"></span></button>
+<button onclick="studentSection('profileSection')">👤 My Profile</button>
+<button onclick="studentSection('progressSection')">📈 My Progress</button>
+</div>
 
-      <div id="adminExpensePage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
-        <div class="card" style="border-left: 4px solid #e67e22;">
-          <h3 style="color:#e67e22; margin-bottom:10px;">💸 Admin દ્વારા થતો ખર્ચ</h3>
-          
-          <form onsubmit="addAdminExpense(event)">
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>તારીખ</label>
-                <input type="date" id="expDate" class="form-control" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>ખર્ચની રકમ (₹)</label>
-                <input type="number" id="expAmount" class="form-control" placeholder="0" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>વિગત</label>
-              <input type="text" id="expTitle" class="form-control" placeholder="દા.ત. સ્ટેશનરી, ચા-નાસ્તો" required>
-            </div>
-            <button type="submit" class="btn" style="background:#e67e22;">+ ઉમેરો</button>
-          </form>
+<div id="noticesSection" class="card app-section hidden">
+<h3>📢 Notice Board</h3><div id="studentNotices">લોડ થઈ રહ્યું છે...</div>
+</div>
 
-          <table style="margin-top:15px;">
-            <thead>
-              <tr><th>તારીખ</th><th>વિગત</th><th>રકમ</th><th>એક્શન</th></tr>
-            </thead>
-            <tbody id="adminExpenseTableBody"></tbody>
-          </table>
+<div id="lessonsSection" class="card app-section hidden">
+<h3>📚 Course-wise Lessons</h3>
+<p class="muted">પહેલા Course → પછી વિષય → પછી Topic પસંદ કરો. Teacher જે Topic નામ લખશે તેનું બટન આપમેળે બનશે.</p>
+<div id="lessonCourseButtons" class="subject-grid"></div>
+<div id="lessonSubjects" class="subject-grid" style="margin-top:10px"></div>
+<div id="lessonChapters" class="subject-grid" style="margin-top:10px"></div>
+<div class="search-box"><span class="search-icon">🔍</span><input id="lessonSearch" oninput="renderStudentLessons()" placeholder="Course, વિષય અથવા Topic શોધો..."></div>
+<div id="studentLessons">પહેલા Course પસંદ કરો.</div>
+</div>
 
-          <div style="background:#fbe9e7; border:1px solid #ffccbc; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
-            <h4 style="color:#d84315;">કુલ Admin ખર્ચ: ₹<span id="grandExpenseTotal">0</span></h4>
-          </div>
-        </div>
-      </div>
 
-      <div id="stationeryReportPage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
-        
-        <div class="card" style="border-left: 4px solid #8e44ad; background: #fbf5ff;">
-          <h3 style="color:#8e44ad; margin-bottom:10px;">🛒 સેપરેટ રોકડ સ્ટેશનરી વેચાણ (ફી પહોંચ વગર)</h3>
-          <form onsubmit="addDirectStationerySale(event)">
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>ગ્રાહક / બાળકનું નામ</label>
-                <input type="text" id="directSaleCustomer" class="form-control" placeholder="નામ લખો" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>ચોપડી / આઇટમ</label>
-                <select id="directSaleBookSelect" class="form-control" required></select>
-              </div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>જથ્થો (Qty)</label>
-                <input type="number" id="directSaleQty" class="form-control" value="1" min="1" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>તારીખ</label>
-                <input type="date" id="directSaleDate" class="form-control" required>
-              </div>
-            </div>
-            <button type="submit" class="btn" style="background:#8e44ad;">🛍️ રોકડેથી વેચો (સ્ટોક ઓછો થશે)</button>
-          </form>
 
-          <h4 style="margin-top:15px; color:#6f42c1;">📜 સેપરેટ સ્ટેશનરી વેચાણ હિસ્ટ્રી</h4>
-          <table>
-            <thead>
-              <tr><th>તારીખ</th><th>ગ્રાહક</th><th>આઇટમ (Qty)</th><th>કુલ રકમ</th><th>એક્શન</th></tr>
-            </thead>
-            <tbody id="directSaleHistoryBody"></tbody>
-          </table>
-        </div>
+<div id="questionStudentSection" class="card app-section hidden">
+<h3>📝 Course → વિષય → Topic પ્રશ્નો</h3>
+<p class="muted">પહેલા Course પસંદ કરો → પછી વિષય → પછી Topic પસંદ કરો. પસંદ કરેલા Topicની બધી માહિતી અહીં ખુલશે.</p>
+<div id="studentQuestionCourses" class="subject-grid"></div>
+<div id="studentQuestionSubjects" class="subject-grid" style="margin-top:10px"></div>
+<div id="studentQuestionTopics" class="subject-grid" style="margin-top:10px"></div>
+<div id="studentQuestionResults" style="margin-top:12px"></div>
+</div>
 
-        <div class="card" style="border-left: 4px solid #ffb300;">
-          <h3 style="color:#b78103; margin-bottom:10px;">📖 વિદ્યાર્થીઓ વાઈઝ સ્ટેશનરી રિપોર્ટ</h3>
-          <div id="stationeryReportContainer"></div>
-          <div style="background:#fff8e1; border:1px solid #ffe082; padding:12px; border-radius:6px; margin-top:15px; text-align:center;">
-            <h4 style="color:#b78103;">વિદ્યાર્થીઓની સ્ટેશનરીની કુલ રકમ: ₹<span id="grandStationeryTotal">0</span></h4>
-          </div>
-        </div>
-      </div>
+</section>
 
-      <div id="addStudentPage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
-        <div class="card">
-          <h3 id="formTitle">વિદ્યાર્થીની માહિતી ઉમેરો</h3>
-          <form id="studentForm" onsubmit="saveStudent(event)">
-            <input type="hidden" id="sEditId">
-            <div class="form-group">
-              <label>વિદ્યાર્થીનું નામ</label>
-              <input type="text" id="sName" class="form-control" required placeholder="રવિ વાઘેલા">
-            </div>
-            <div class="form-group">
-              <label>મોબાઈલ ૧ (મુખ્ય)</label>
-              <input type="tel" id="sMobile1" class="form-control" required placeholder="9033197515">
-            </div>
+<section id="teacherHome" class="hidden">
 
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>ધોરણ</label>
-                <input type="text" id="sStd" class="form-control" required placeholder="5">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>કોર્સ</label>
-                <select id="sCourseSelect" class="form-control" onchange="assignCourseFee()"></select>
-              </div>
-            </div>
+<div class="card"><h2>👨‍🏫 Teacher Dashboard</h2><span id="teacherWelcome" class="badge"></span>
+<button class="secondary" style="float:right" onclick="teacherLogout()">Logout</button></div>
 
-            <div class="form-group">
-              <label>ફી નો પ્રકાર</label>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="feeType" value="Monthly" checked onchange="updateFeeLabel()"> માસિક
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="feeType" value="Yearly" onchange="updateFeeLabel()"> વાર્ષિક
-                </label>
-              </div>
-            </div>
+<div class="section-buttons teacher-nav">
+<button onclick="teacherSection('studentsSection')">👨‍🎓 Students</button>
+<button onclick="teacherSection('noticesTeacherSection')">📢 Notices</button>
+<button onclick="teacherSection('lessonsTeacherSection')">📚 Lessons</button>
+<button onclick="teacherSection('questionTeacherSection')">📝 પ્રશ્ન બેંક</button>
+<button onclick="teacherSection('personalTeacherSection')">💬 Personal</button>
+<button onclick="teacherSection('settingsTeacherSection')">⚙️ Settings</button>
+</div>
 
-            <div class="form-group">
-              <label id="feeLabel">નક્કી કરેલ માસિક ફી (₹/મહિનો)</label>
-              <input type="number" id="sTotalFee" class="form-control" required placeholder="350">
-            </div>
+<div id="studentsSection" class="card teacher-section">
+<h3>👨‍🎓 Students</h3>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+<button type="button" onclick="showRegisteredStudents()">🟢 Registered Students</button>
+<button type="button" class="secondary" onclick="showAllStudents()">👥 બધા Students</button>
+<button type="button" onclick="showTeacherAddStudent()">➕ New Student</button>
+<span id="studentTotalBadge" class="badge">કુલ: 0</span>
+</div>
+<div id="studentViewTitle" class="badge" style="margin-bottom:8px">🟢 Registered Students</div>
+<div id="teacherAddStudentBox" class="card" style="display:none;margin:10px 0;padding:15px">
+<h4>➕ નવો વિદ્યાર્થી ઉમેરો</h4>
+<div class="grid">
+<input id="newStudentName" placeholder="વિદ્યાર્થીનું નામ">
+<input id="newStudentFather" placeholder="પપ્પાનું નામ">
+<input id="newStudentSchool" placeholder="શાળાનું નામ">
+<input id="newStudentMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="મોબાઇલ નંબર (10 અંક)">
+</div>
+<textarea id="newStudentAddress" rows="2" placeholder="એડ્રેસ"></textarea>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" onclick="addStudent()">💾 Student Save</button>
+<button type="button" class="secondary" onclick="hideTeacherAddStudent()">✖️ બંધ</button>
+</div></div>
+<div class="muted" style="margin:8px 0">🟢 Registered = વિદ્યાર્થીએ પોતે Registration કર્યું છે. 🟡 Pending = Approval બાકી. 🟢 Approved = Login કરી શકે. 🔴 Rejected = Login નહીં કરી શકે. 👥 બધા = Registered + Teacher દ્વારા ઉમેરેલા બધા વિદ્યાર્થીઓ.</div>
+<div id="teacherStudents"></div>
+</div>
 
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label>દાખલ તારીખ</label>
-                <input type="date" id="sAdmissionDate" class="form-control" required>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label>જન્મ તારીખ</label>
-                <input type="date" id="sDob" class="form-control">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>સ્ટેટસ</label>
-              <select id="sStatus" class="form-control">
-                <option value="Active">Active (ચાલુ છે)</option>
-                <option value="Inactive">Inactive (બંધ કરેલ છે)</option>
-              </select>
-            </div>
-            <button type="submit" class="btn">સેવ કરો</button>
-          </form>
-        </div>
-      </div>
+<div id="noticesTeacherSection" class="card teacher-section hidden">
+<h3>📢 Notice Board</h3>
+<textarea id="noticeText" placeholder="બધા વિદ્યાર્થીઓ માટે Notice"></textarea>
+<button onclick="addNotice()">📢 Notice Publish</button>
+<div id="teacherNotices"></div>
+</div>
 
-      <div id="detailPage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← લિસ્ટ પર પાછા જાઓ</button>
+<div id="lessonsTeacherSection" class="card teacher-section hidden">
+<h3>📚 Lesson ઉમેરો</h3>
+<div class="grid">
+<input id="lessonTitle" placeholder="Lesson Title">
+<input id="lessonSubject" placeholder="વિષય (જેમ કે ગણિત)">
+<input id="lessonChapter" placeholder="પ્રકરણ / Chapter (જેમ કે પ્રકરણ 1)">
+<select id="lessonCourse">
+<option value="">Course પસંદ કરો</option>
+<option value="નવોદય">🎯 નવોદય</option>
+<option value="CET">🎓 CET</option>
+<option value="જ્ઞાન સાધના">📘 જ્ઞાન સાધના</option>
+<option value="સામાન્ય">📚 સામાન્ય</option>
+</select>
+</div>
+<select id="lessonType" onchange="toggleLessonUpload()">
+<option value="text">Text</option>
+<option value="photo">Photo Upload</option>
+<option value="pdf">PDF Upload</option>
+</select>
+<select id="lessonCategory">
+<option value="lesson">📚 સામાન્ય Lesson</option>
+<option value="swadhyay">📝 સ્વાધ્યાય</option>
+</select>
+<textarea id="lessonContent" placeholder="Lesson content"></textarea>
+<div id="lessonFileWrap" style="display:none;margin-top:10px">
+<label style="display:block;margin-bottom:6px;font-weight:600">📁 Photo અથવા PDF પસંદ કરો</label>
+<input id="lessonFile" type="file" accept="image/*,application/pdf" style="padding:12px;border:1px dashed #9aa7b8;border-radius:10px;width:100%;box-sizing:border-box">
+<div id="lessonUploadStatus" class="muted" style="margin-top:8px">કોઈ ફાઇલ પસંદ કરેલ નથી.</div>
+</div>
+<label><input type="checkbox" id="lessonAll" checked> આ Courseના બધા વિદ્યાર્થીઓ માટે</label><br>
+<label style="display:block;margin-top:10px"><input type="checkbox" id="lessonHidden"> 👁️ હમણાં વિદ્યાર્થીઓથી Hide રાખો</label>
+<label style="display:block;margin-top:8px">⏰ વિદ્યાર્થીઓને દેખાવાનો સમય (Optional)</label>
+<input id="lessonReleaseAt" type="datetime-local" style="width:100%;padding:12px;border:1px solid #ccd3df;border-radius:10px;box-sizing:border-box;margin-top:5px">
+<div class="muted" style="margin-top:5px">Hide ચાલુ હોય અને સમય આપ્યો હોય તો તે સમય આવ્યા પછી Lesson આપમેળે દેખાશે.</div>
+<button onclick="addLesson()">📚 Lesson Publish</button>
+<div id="teacherLessons"></div>
+</div>
 
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 id="viewName" style="font-size: 20px; font-weight: bold; color: #222;"></h2>
-            <span id="viewStatusBadge"></span>
-          </div>
-          
-          <table class="info-table">
-            <tr><td class="label-col">મોબાઈલ નં:</td><td class="val-col" id="viewMobile"></td></tr>
-            <tr><td class="label-col">કોર્સનું નામ:</td><td class="val-col" id="infoCourseName"></td></tr>
-            <tr><td class="label-col">ફી નો પ્રકાર:</td><td class="val-col" id="infoFeeType"></td></tr>
-            <tr><td class="label-col">દાખલ તારીખ:</td><td class="val-col" id="infoAdmDate"></td></tr>
-            <tr><td class="label-col">ચાલુ સમયગાળો:</td><td class="val-col" id="infoDurationText"></td></tr>
-            <tr><td class="label-col">મહિનાઓ:</td><td class="val-col" id="infoMonthList"></td></tr>
-          </table>
 
-          <div class="fee-3boxes-grid">
-            <div class="fee-box fee-box-total">
-              <div class="fee-box-title">કુલ ઓટો ફી + બુક</div>
-              <div class="fee-box-value" id="infoYearlyTotalFee">₹0</div>
-            </div>
-            <div class="fee-box fee-box-paid">
-              <div class="fee-box-title">કુલ જમા ફી</div>
-              <div class="fee-box-value" id="infoTotalPaid">₹0</div>
-            </div>
-            <div class="fee-box fee-box-due">
-              <div class="fee-box-title">બાકી રહેલી ફી</div>
-              <div class="fee-box-value" id="infoTotalDue">₹0</div>
-            </div>
-          </div>
-          <div style="text-align:right; font-size:12px; color:#e67e22; font-weight:bold; margin-top:-5px; margin-bottom: 10px;">
-            🎁 કુલ આપેલ ડિસ્કાઉન્ટ: ₹<span id="infoTotalDiscount">0</span>
-          </div>
+<div id="questionTeacherSection" class="card teacher-section hidden">
+<h3>📝 Course → વિષય → Topic પ્રશ્ન બેંક</h3>
+<p class="muted">પહેલા Course પસંદ કરો → પછી વિષય → પછી Topic આપો → પછી પ્રશ્નો Copy-Paste કરો. વિદ્યાર્થીઓને પણ આ જ ક્રમમાં પ્રશ્નો દેખાશે.</p>
+<div class="grid">
+<select id="questionCourse">
+<option value="">Course પસંદ કરો</option>
+<option value="નવોદય">🎯 નવોદય</option>
+<option value="CET">🎓 CET</option>
+<option value="જ્ઞાન સાધના">📘 જ્ઞાન સાધના</option>
+<option value="સામાન્ય">📚 સામાન્ય</option>
+<option value="આકૃતિ">📖 આકૃતિ</option>
+<option value="Ganit">📖 Ganit</option>
+</select>
+<input id="questionSubject" placeholder="વિષય (જેમ કે ગણિત)">
+<input id="questionTitle" placeholder="Topic / પ્રકરણનું નામ">
+</div>
+<textarea id="questionText" rows="12" placeholder="અહીં પ્રશ્નો Copy-Paste કરો...&#10;&#10;1. 25 + 35 = ?&#10;A) 50&#10;B) 60&#10;C) 70&#10;D) 80"></textarea>
+<button onclick="saveQuestionBank()">📝 પ્રશ્નો Save / Publish</button>
+<div id="questionMsg" class="sync-status"></div>
+<hr style="border:0;border-top:1px solid #e5e7eb;margin:15px 0">
+<h4>📚 સેવ થયેલા વિષયો</h4>
+<div id="teacherQuestionBanks"></div>
+</div>
 
-          <div class="stationery-box">
-            <h4 style="color: #333; margin-bottom:8px; font-size: 15px;">📖 ખરીદેલ સ્ટેશનરી / ચોપડીઓ</h4>
-            <table>
-              <thead>
-                <tr><th style="text-align:center;">તારીખ</th><th>વસ્તુ / બુકનું નામ</th><th style="text-align:center;">કિંમત</th><th style="text-align:center;">એક્શન</th></tr>
-              </thead>
-              <tbody id="assignedStationeryTableBody"></tbody>
-            </table>
-            <div style="border-top:1px dashed #ccc; padding-top:10px; margin-top:10px;">
-              <label style="font-weight:bold; font-size:12px; color:#555;">➕ નવી ચોપડી આપો (સ્ટોકમાંથી ઓછું થશે):</label>
-              <div style="display:flex; gap:8px; margin-top:5px;">
-                <select id="directBookSelect" class="form-control" style="flex:2;"></select>
-                <button type="button" class="btn" style="flex:1; margin-top:0; background:#ffb300; color:#333; padding:8px;" onclick="addStationeryToStudent()">+ આપો</button>
-              </div>
-            </div>
-          </div>
+  <div id="personalTeacherSection" class="card teacher-section hidden personal-card">
+<h3>💬 Personal Message / Document</h3>
+<p class="muted">કોઈ એક વિદ્યાર્થીને વ્યક્તિગત રીતે Message, Fee Receipt, PDF અથવા કોઈ Link મોકલી શકો.</p>
+<div class="grid">
+<select id="personalStudent"></select>
+<input id="personalTitle" placeholder="શીર્ષક — જેમ કે Fee Receipt September">
+</div>
+<textarea id="personalMessage" placeholder="વિદ્યાર્થી માટે વ્યક્તિગત Message"></textarea>
+<div class="grid">
+<input id="personalLink" placeholder="Optional Link (જેમ કે Fee Receipt / Google Drive)">
+<input id="personalFile" type="file" accept=".pdf,image/*" >
+</div>
+<button id="personalSendBtn" onclick="sendPersonalMessage()">📤 Personal મોકલો</button>
+<div id="personalMsg" class="sync-status"></div>
+<hr style="border:0;border-top:1px solid #e5e7eb;margin:15px 0">
+<h4>📨 મોકલેલા Personal Messages</h4>
+<div id="teacherPersonalList" class="personal-list"></div>
+</div>
+<div id="settingsTeacherSection" class="card teacher-section hidden">
+<div class="card" style="margin-bottom:12px">
+<b>📱 Student OTP Login</b>
+<div class="muted" style="margin-top:6px">
+Student Registration અને Login માટે એપમાં જ 4 અંકનો Free OTP દેખાશે. SMSની જરૂર નથી.
+</div>
+</div>
+<h3>⚙️ Teacher Login ID / Password</h3>
+<p class="muted">Login થયા પછી જ અહીંથી ID અને Password બદલી શકાશે.</p>
+<div class="grid">
+<input id="setTeacherId" placeholder="નવું Teacher ID">
+<input id="setTeacherPass" type="password" placeholder="નવો Password">
+</div>
+<button onclick="saveTeacherCredentials()">💾 ID / Password Save કરો</button>
+<div id="credentialMsg"></div>
+<hr style="border:0;border-top:1px solid #e5e7eb;margin:16px 0">
+<div id="teacherBiometricSettings" class="card" style="margin:14px 0;padding:16px;border:1px solid #dbe3ef;background:#f8fbff">
+<h3 style="margin-top:0">🖐️ Teacher Fingerprint / Face</h3>
+<p class="muted">Teacher માટે ફોનનું Fingerprint અથવા Face Unlock વાપરી શકાય છે. Student Login પર તેનો કોઈ અસર નહીં થાય.</p>
+<button type="button" onclick="window.nirmalaTeacherBiometricLogin && window.nirmalaTeacherBiometricLogin()">🖐️ Fingerprint / Face ચેક કરો</button>
+<div id="teacherBiometricStatus" class="sync-status" style="margin-top:8px"></div>
+</div>
+<h3>🔔 Notifications</h3>
+<p class="setting-note">Teacher અહીંથી notification મોકલી શકે છે. Firebaseમાં notification record સાચવાશે અને વિદ્યાર્થી એપ ખોલે/foregroundમાં આવે ત્યારે બતાવાશે. <b>એપ સંપૂર્ણ બંધ હોય ત્યારે સાચી push notification માટે Android APKમાં FCM native integration જરૂરી રહેશે.</b></p>
+<div class="grid">
+<input id="notifyTitle" placeholder="Notification Title">
+<input id="notifyBody" placeholder="Notification Message">
+<select id="notifyTarget"><option value="all">👥 બધા વિદ્યાર્થીઓ</option></select>
+</div>
+<button type="button" onclick="sendTeacherNotification()">📢 Notification મોકલો</button>
+<button type="button" class="secondary" onclick="testNativeNotification()">🧪 Native Test</button>
+<div id="notifyMsg"></div>
+<div class="card" style="margin-top:12px;border:1px solid #dbe3ef;background:#f8fbff">
+<h4 style="margin-top:0">🔔 OneSignal Push</h4>
+<p class="setting-note">OneSignal App ID APKમાં OneSignal integration સાથે match હોવો જોઈએ. REST/API Key HTMLમાં ન નાખશો.</p>
+<input id="oneSignalAppId" placeholder="OneSignal App ID">
+<button type="button" onclick="saveOneSignalSettings()">💾 OneSignal Save</button>
+<button type="button" class="secondary" onclick="requestOneSignalPermission()">🔔 Student Notification ON</button>
+<div id="oneSignalMsg" class="sync-status"></div>
+</div>
+<hr style="border:0;border-top:1px solid #e5e7eb;margin:16px 0">
+<h3>☁️ Firebase Cloud Setup</h3><p class="setting-note"><b>✅ NIRMLA STUDY ZON Firebase Project 3: study-zon</b><br>આ એપમાં Firebase configuration પહેલેથી સેટ છે.</p>
+<p class="setting-note">Project 3 ની Firebase Web App configuration અહીં એક વખત નાખો. ત્યારબાદ Students, Notices, Lessons અને પ્રશ્ન બેંકની માહિતી બધા devices પર cloudમાં sync થઈ શકશે.</p>
+<div class="grid">
+<input id="fbApiKey" placeholder="apiKey">
+<input id="fbAuthDomain" placeholder="authDomain">
+<input id="fbDatabaseURL" placeholder="databaseURL">
+<input id="fbProjectId" placeholder="projectId">
+<input id="fbStorageBucket" placeholder="storageBucket">
+<input id="fbMessagingSenderId" placeholder="messagingSenderId">
+<input id="fbAppId" placeholder="appId">
+</div>
+<button onclick="saveFirebaseConfig()">☁️ Firebase Config Save & Reload</button>
+<div id="firebaseMsg"></div>
 
-          <div style="display:flex; gap:10px; margin-top:15px; justify-content: space-between; align-items: center;">
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-edit" style="font-size:12px; padding:6px 12px; margin:0;" onclick="editCurrentStudent()">✏️ સુધારો</button>
-              <button class="btn" style="background:#5f6368; font-size:12px; padding:6px 12px; margin:0;" onclick="toggleStudentStatus()">સ્ટેટસ બદલો</button>
-            </div>
-            <button class="btn-danger" style="padding: 6px 12px; background: #c5221f;" onclick="deleteStudentProfile()">🗑️ ડિલીટ</button>
-          </div>
-        </div>
+<hr style="border:0;border-top:1px solid #e5e7eb;margin:16px 0">
+<h3>💾 Backup & Restore</h3>
+<p class="setting-note">Appના Students, Notices, Lessons અને વિષયવાર પ્રશ્નોની માહિતીનો backup તમારા મોબાઇલમાં JSON ફાઇલ તરીકે સાચવી શકાય છે. જરૂર પડે ત્યારે એ જ ફાઇલથી Restore કરી શકાય છે.</p>
+<div class="backup-grid">
+<button onclick="downloadBackup()">💾 Backup Download</button>
+<button onclick="document.getElementById('restoreFile').click()">♻️ Restore Backup</button>
+<button class="secondary" onclick="exportOfflineContent()">📦 Offline Data Export</button>
+</div>
+<input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreBackup(this.files[0])">
+<div id="backupMsg" class="sync-status"></div><p class="setting-note">નોંધ: PDF Offline Save માટે PDF download browser દ્વારા મંજૂર હોવું જરૂરી છે. Firebase Storage પરથી મળેલી PDF સામાન્ય રીતે સારી રીતે cache થઈ શકે છે.</p>
 
-        <div class="card" style="background: #eaf2f8; border-left: 4px solid #2980b9;">
-          <h4>💳 નવી ફી / સ્ટેશનરીની પહોંચ બનાવો</h4>
-          <form onsubmit="addNewPayment(event)">
-            <div style="display: flex; gap: 10px; margin-top: 8px;">
-              <div class="form-group" style="flex: 1;">
-                <label>પહોંચ તારીખ</label>
-                <input type="date" id="fDate" class="form-control" required>
-              </div>
-            </div>
+</div>
 
-            <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px dashed #2980b9; margin-bottom:12px;">
-              <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1; margin-bottom:5px;">
-                  <label style="color:#1a73e8; font-weight:bold;">🗓️ કઈ તારીખથી?</label>
-                  <input type="date" id="fFromDate" class="form-control" required onchange="autoCalculateReceiptFeeByDates()">
-                </div>
-                <div class="form-group" style="flex: 1; margin-bottom:5px;">
-                  <label style="color:#d32f2f; font-weight:bold;">📅 કઈ તારીખ સુધી?</label>
-                  <input type="date" id="fToDate" class="form-control" required onchange="autoCalculateReceiptFeeByDates()">
-                </div>
-              </div>
-              <div style="text-align:center; font-size:12px; color:#27ae60; font-weight:bold; margin-top:3px;">
-                💡 પસંદ કરેલ સમયગાળો: <span id="lblCalculatedMonths">0</span>
-              </div>
-            </div>
+</section>
+</main>
 
-            <div class="form-group">
-              <label><b>ઓટો ગણેલ ટ્યુશન ફી રકમ (₹)</b></label>
-              <input type="number" id="fFeeAmount" class="form-control" placeholder="0" value="0" required oninput="calculateReceiptTotal()">
-            </div>
+<div id="teacherModal" class="hidden" style="position:fixed;inset:0;background:#0008;z-index:2000;align-items:center;justify-content:center;padding:16px">
+<div class="card" style="width:min(400px,100%)">
+<h3>👨‍🏫 Teacher Login</h3>
+<label>Teacher ID</label><input id="teacherId">
+<label>Password</label><input id="teacherPass" type="password">
+<button onclick="teacherLogin()">🔐 Login</button>
+<button class="secondary" onclick="closeTeacherLogin()">બંધ કરો</button>
+<div id="teacherMsg"></div>
+</div></div>
 
-            <div class="form-group">
-              <label style="color:#b78103; font-weight:bold;">📚 પહોંચ માટે સ્ટેશનરી પસંદ કરો:</label>
-              <div id="paymentStationeryCheckboxes" class="checkbox-list"></div>
-            </div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
+document.addEventListener('DOMContentLoaded',function(){
+ const b=document.getElementById('teacherBtn');
+ if(b){b.type='button';b.onclick=openTeacherLogin;}
+ const m=document.getElementById('teacherLoginModal')||document.getElementById('teacherModal');
+ if(m){
+   m.addEventListener('click',function(e){if(e.target===m){m.classList.add('hidden');m.style.display='none';}});
+ }
+});
 
-            <div style="display: flex; gap: 10px;">
-              <div class="form-group" style="flex: 1;">
-                <label><b>જમા કરાવેલ રકમ (₹)</b></label>
-                <input type="number" id="fPaidAmount" class="form-control" required placeholder="0" value="0" oninput="calculateReceiptTotal()">
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label style="color:#e67e22; font-weight:bold;"><b>ડિસ્કાઉન્ટ રકમ (₹)</b></label>
-                <input type="number" id="fDiscountAmount" class="form-control" placeholder="0" value="0" oninput="calculateReceiptTotal()">
-              </div>
-            </div>
 
-            <div style="background:#fff3e0; border:1px solid #ffe0b2; margin-bottom:12px; padding: 10px; border-radius: 6px; font-size: 13px;">
-              <b>📊 લાઈવ હિસાબ:</b><br>
-              • પસંદ કરેલ ફી: <b>₹<span id="lblCalcTotal">0</span></b> | 
-              જમા: <b style="color:#27ae60;">₹<span id="lblCalcPaid">0</span></b> | 
-              બાકી: <b style="color:#d32f2f;">₹<span id="lblCalcDue">0</span></b>
-            </div>
+document.addEventListener('DOMContentLoaded',function(){
+ try{
+  const tb=document.getElementById('teacherBtn');
+  if(tb){tb.type='button';tb.onclick=function(e){e.preventDefault();openTeacherLogin();};}
+  const sb=document.getElementById('studentLoginBtn');
+  if(sb){sb.type='button';sb.onclick=function(e){e.preventDefault();showStudentLogin();};}
+  // Also wire any button whose visible text is Student Login / Teacher Login.
+  document.querySelectorAll('button').forEach(function(b){
+    const t=(b.textContent||'').trim().toLowerCase();
+    if(t.includes('teacher login')){b.type='button';b.onclick=function(e){e.preventDefault();openTeacherLogin();};}
+    if(t.includes('student login')){b.type='button';b.onclick=function(e){e.preventDefault();showStudentLogin();};}
+  });
+ }catch(e){console.error(e);}
+});
 
-            <div class="form-group">
-              <label>પેમેન્ટ મોડ</label>
-              <select id="fMode" class="form-control">
-                <option value="રોકડા/ઓન લાઈન">રોકડા/ઓન લાઈન</option>
-                <option value="રોકડા">રોકડા (Cash)</option>
-                <option value="ઓન લાઈન">ઓન લાઈન (UPI)</option>
-              </select>
-            </div>
+</script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script>
+const defaultFirebaseConfig = {
+  apiKey: "AIzaSyAh2BrF_EhZ7bjJ5DZurf5kzBygo7bVOPc",
+  authDomain: "study-zon.firebaseapp.com",
+  databaseURL: "https://study-zon-default-rtdb.firebaseio.com",
+  projectId: "study-zon",
+  storageBucket: "study-zon.firebasestorage.app",
+  messagingSenderId: "419936963635",
+  appId: "1:419936963635:web:7bfbc258bce9c3507bee36"
+};
+let firebaseConfig = JSON.parse(localStorage.getItem('nirmala_firebase_config') || 'null') || defaultFirebaseConfig;
+let db=null, storage=null, students={}, notices={}, lessons={}, tests={}, personalMessages={}, questionBanks={};
+let cloudMode=false;
+window.firebaseConfig=firebaseConfig;
+window.NIRMLA_FIREBASE_PROJECT='study-zon';
+let currentStudent=null;
+let notificationStartedAt=Date.now();
+let notificationListenerReady=false;
 
-            <div class="form-group">
-              <label>ફી ભરનાર નું નામ</label>
-              <input type="text" id="fPaidBy" class="form-control" placeholder="દા.ત. રવિભાઈ" required>
-            </div>
-            
-            <button type="submit" class="btn" style="background:#e67e22;">🧾 પહોંચ બનાવો અને સેવ કરો</button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h4>📊 ફી હિસ્ટ્રી</h4>
-          <table>
-            <thead>
-              <tr><th>તારીખ</th><th>રકમ</th><th>સ્ટેટસ</th><th>એક્શન</th></tr>
-            </thead>
-            <tbody id="paymentHistoryBody"></tbody>
-          </table>
-        </div>
-
-        <div class="card" id="receiptCardArea" style="border: 1px solid #ccc; background: #fff;">
-          <h4 style="text-align:center; color:#1a73e8; margin-bottom:10px;">📄 રસીદ / પહોંચ પ્રીવ્યૂ</h4>
-          <div id="receiptPreviewArea" style="background:white; padding:5px;"></div>
-          
-          <button onclick="downloadReceiptAsImage()" class="btn btn-img-download">🖼️ પહોંચ ઈમેજ ડાઉનલોડ કરો</button>
-          <button class="btn btn-wa-img" onclick="shareReceiptToWhatsApp('image')">📲 🖼️ વ્હોટ્સએપ પર Photo શેર કરો</button>
-          <button class="btn btn-wa-pdf" onclick="shareReceiptToWhatsApp('pdf')">📲 📄 વ્હોટ્સએપ પર PDF શેર કરો</button>
-          <button class="btn btn-pdf" onclick="generateAndDownloadPDF()">📥 Local PDF ડાઉનલોડ કરો</button>
-          <button class="btn btn-copy" onclick="copyReceiptText()">📋 ટેક્સ્ટ લખાણ કોપી કરો</button>
-        </div>
-      </div>
-
-      <div id="settingsPage" class="page">
-        <button class="back-btn" onclick="showPage('listPage')">← પાછા જાઓ</button>
-        
-        <div class="card" style="border: 2px solid #34a853;">
-          <h4 style="color: #34a853;">🔗 Google Sheets Cloud Sync સેટિંગ્સ</h4>
-          <input type="text" id="gdriveScriptUrl" class="form-control" style="margin-top:8px;" placeholder="અહીં Google Web App URL લિંક પેસ્ટ કરો">
-          <button class="btn" style="background: #34a853; margin-top: 5px;" onclick="saveCloudUrl()">🔗 લિંક સેવ કરો</button>
-        </div>
-
-        <div class="card" style="border: 2px solid #6f42c1;">
-          <h4 style="color:#6f42c1;">➕ નવો કોર્સ ઉમેરો</h4>
-          <div style="display:flex; gap:10px; margin-top:10px;">
-            <input type="text" id="newCourseName" class="form-control" placeholder="કોર્સનું નામ">
-            <input type="number" id="newCourseFee" class="form-control" placeholder="ફી રકમ (₹)">
-            <button class="btn" style="margin-top:0; width:auto; background:#6f42c1;" onclick="addMasterCourse()">+ ઉમેરો</button>
-          </div>
-          <table style="margin-top:15px;">
-            <thead><tr><th>કોર્સનું નામ</th><th>ડિફોલ્ટ ફી</th><th>એક્શન</th></tr></thead>
-            <tbody id="masterCourseTable"></tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h4>📦 ચોપડી સ્ટોક અને કિંમત સેટિંગ્સ</h4>
-          <div style="display:flex; gap:8px; margin-top:10px;">
-            <input type="text" id="newBookName" class="form-control" placeholder="ચોપડીનું નામ" style="flex:2;">
-            <input type="number" id="newBookPrice" class="form-control" placeholder="કિંમત ₹" style="flex:1;">
-            <input type="number" id="newBookStock" class="form-control" placeholder="સ્ટોક (Qty)" style="flex:1;">
-            <button class="btn" style="margin-top:0; width:auto;" onclick="addMasterBook()">+ ઉમેરો</button>
-          </div>
-          <table style="margin-top:10px;">
-            <thead><tr><th>બુકનું નામ</th><th>કિંમત</th><th>સ્ટોક જથ્થો</th><th>એક્શન</th></tr></thead>
-            <tbody id="masterBookTable"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <div id="imageModal" class="modal">
-    <div class="modal-content">
-      <h3 style="color:#1a73e8; margin-bottom: 8px;">🖼️ પહોંચ ઈમેજ તૈયાર છે</h3>
-      <p style="font-size:12px; color:#555; margin-bottom:10px;">Chrome બ્રાઉઝરમાં સેવ કરવા માટે ડાઉનલોડ બટન દબાવો.</p>
-      <img id="modalImg" src="" style="width:100%; max-width:450px; border:1px solid #ccc; border-radius:6px; margin-bottom: 12px;">
-      <div style="display:flex; gap:10px; justify-content:center;">
-        <a id="modalDownloadBtn" download="Receipt.png" href="" class="btn" style="width:auto; padding:8px 15px; text-decoration:none; background:#27ae60;">📥 ડાઉનલોડ કરો</a>
-        <button class="btn-danger" style="padding:8px 15px;" onclick="closeModal()">બંધ કરો</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let currentTab = 'Active'; 
-    let currentFeeFilter = 'ALL';
-    let currentStudentId = null;
-    let selectedPaymentId = null;
-
-    let defaultCourses = [
-      { id: 1, name: "Navoday", fee: 350 },
-      { id: 2, name: "Gyan Sadhana", fee: 350 },
-      { id: 3, name: "સામાન્ય ટ્યુશન", fee: 800 }
-    ];
-
-    let defaultBooks = [
-      { id: 1, name: "નવોદય બુક", price: 300, stock: 50 },
-      { id: 2, name: "Exam ped", price: 120, stock: 30 }
-    ];
-
-    let masterCourses = JSON.parse(localStorage.getItem('NIRMALA_COURSES')) || defaultCourses;
-    let masterBooks = JSON.parse(localStorage.getItem('NIRMALA_BOOKS')) || defaultBooks;
-    let students = JSON.parse(localStorage.getItem('NIRMALA_STUDENTS')) || [];
-    let adminExpenses = JSON.parse(localStorage.getItem('NIRMALA_ADMIN_EXPENSES')) || [];
-    let directSales = JSON.parse(localStorage.getItem('NIRMALA_DIRECT_SALES')) || [];
-
-    function saveDataLocally() {
-      localStorage.setItem('NIRMALA_COURSES', JSON.stringify(masterCourses));
-      localStorage.setItem('NIRMALA_BOOKS', JSON.stringify(masterBooks));
-      localStorage.setItem('NIRMALA_STUDENTS', JSON.stringify(students));
-      localStorage.setItem('NIRMALA_ADMIN_EXPENSES', JSON.stringify(adminExpenses));
-      localStorage.setItem('NIRMALA_DIRECT_SALES', JSON.stringify(directSales));
+async function enableStudentNotifications(){
+  try{
+    if(typeof Notification!=='undefined' && Notification.permission==='default'){
+      await Notification.requestPermission();
     }
+  }catch(e){console.warn('Notification permission unavailable',e);}
+}
+function studentCanReceiveNotification(n){
+  if(!currentStudent||!n)return false;
+  const sid=String(currentStudent.id||'');
+  const target=String(n.targetStudentId||'all');
+  return target==='all'||target===sid;
+}
+function showStudentNotification(title,body){
+  const safeTitle=String(title||'NIRMLA STUDY ZON');
+  const safeBody=String(body||'');
 
-    function formatDateGuj(dateStr) {
-      if(!dateStr) return '';
-      const parts = dateStr.split('-');
-      if(parts.length !== 3) return dateStr;
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  // AppMint/FreeWebToApk: notify() takes ONE JSON string.
+  try{
+    const api=window.WebToApk;
+    if(api && typeof api.notify==='function'){
+      const result=api.notify(JSON.stringify({
+        title:safeTitle,
+        body:safeBody,
+        channel:'urgent',
+        tag:'nirmala-'+Date.now(),
+        bigText:safeBody,
+        sound:'default'
+      }));
+      if(result!==false) return;
     }
+  }catch(e){ console.warn('WebToApk.notify failed:',e); }
 
-    function getDaysInMonth(year, month) {
-      return new Date(year, month + 1, 0).getDate();
+  // Older APK compatibility.
+  try{
+    const api=window.AndroidNotification;
+    if(api && typeof api.notify==='function'){
+      try{ api.notify(safeTitle,safeBody); }
+      catch(e){ api.notify(JSON.stringify({title:safeTitle,body:safeBody,channel:'urgent'})); }
+      return;
     }
+  }catch(e){ console.warn('AndroidNotification.notify failed:',e); }
 
-    window.onload = function() {
-      refreshCourseUI(); 
-      renderSettingsTables();
-      renderStudentList();
-      renderAdminExpenses();
-      renderDirectSaleHistory();
-      
-      let savedUrl = localStorage.getItem('GDRIVE_SCRIPT_URL');
-      if(savedUrl) {
-        document.getElementById('gdriveScriptUrl').value = savedUrl;
-      }
-      
-      document.getElementById('fDate').valueAsDate = new Date();
-      document.getElementById('expDate').valueAsDate = new Date();
-      document.getElementById('directSaleDate').valueAsDate = new Date();
-    };
-
-    function saveCloudUrl() {
-      let url = document.getElementById('gdriveScriptUrl').value.trim();
-      if(url) {
-        localStorage.setItem('GDRIVE_SCRIPT_URL', url);
-        alert("Google Sheet API લિંક સેવ થઈ ગઈ છે!");
-      } else {
-        alert("કૃપા કરીને સાચી લિંક ઉમેરો.");
-      }
+  // Browser fallback.
+  try{
+    if(typeof Notification!=='undefined' && Notification.permission==='granted'){
+      const n=new Notification(safeTitle,{body:safeBody});
+      setTimeout(()=>{try{n.close()}catch(e){}},7000);
     }
+  }catch(e){console.warn('Student notification failed',e);}
+}
 
-    function uploadAllDataToDrive() {
-      let url = localStorage.getItem('GDRIVE_SCRIPT_URL');
-      if(!url) {
-        alert("❌ માસ્ટર સેટિંગ્સમાં Google Sheet લિંક ઉમેરો!");
-        return;
-      }
-      alert("ડ્રાઈવમાં બેકઅપ સેવ થઈ રહ્યો છે...");
-      fetch(url, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ students, adminExpenses, directSales, masterBooks })
-      }).then(() => alert("✅ ડેટા Cloud માં સેવ થઈ ગયો છે."))
-        .catch(err => alert("❌ બેકઅપ એરર: " + err));
+async function ensureNativeNotificationPermission(){
+  try{
+    const api=window.WebToApk;
+    if(api && typeof api.requestNotificationPermission==='function'){
+      return api.requestNotificationPermission();
     }
-
-    function addAdminExpense(event) {
-      event.preventDefault();
-      const date = document.getElementById('expDate').value;
-      const title = document.getElementById('expTitle').value.trim();
-      const amount = parseFloat(document.getElementById('expAmount').value) || 0;
-
-      if(!title || amount <= 0) return;
-      adminExpenses.push({ id: Date.now(), date, title, amount });
-      saveDataLocally();
-      renderAdminExpenses();
-      document.getElementById('expTitle').value = '';
-      document.getElementById('expAmount').value = '';
+  }catch(e){console.warn('AppMint notification permission failed:',e);}
+  try{
+    if(typeof Notification!=='undefined' && Notification.permission==='default'){
+      return await Notification.requestPermission();
     }
+  }catch(e){}
+  return null;
+}
+function getOneSignalAppId(){ return localStorage.getItem('nirmala_onesignal_app_id') || '3327926e-5056-47f4-8c6e-b1b17f41e34e'; }
+function loadOneSignalConfigForm(){ const el=document.getElementById('oneSignalAppId'); if(el) el.value=getOneSignalAppId(); }
+function saveOneSignalSettings(){ const id=(document.getElementById('oneSignalAppId')?.value||'').trim(); if(!id){msg('oneSignalMsg','❌ OneSignal App ID જરૂરી છે.');return;} localStorage.setItem('nirmala_onesignal_app_id',id); msg('oneSignalMsg','✅ OneSignal App ID સેવ થઈ. APKમાં OneSignal ON રાખીને ફરી build કરો.'); }
+async function requestOneSignalPermission(){
+  try{
+    if(window.WebToApk && typeof window.WebToApk.requestNotificationPermission==='function') window.WebToApk.requestNotificationPermission();
+    if(window.OneSignalDeferred){ window.OneSignalDeferred.push(async function(OneSignal){ try{ if(OneSignal.Notifications?.requestPermission) await OneSignal.Notifications.requestPermission(); if(currentStudent && OneSignal.login) await OneSignal.login(String(currentStudent.id||'')); msg('oneSignalMsg','✅ Notification permission ચાલુ કરવામાં આવી.'); }catch(e){msg('oneSignalMsg','❌ OneSignal: '+(e?.message||e));} }); }
+  }catch(e){msg('oneSignalMsg','❌ OneSignal error.');}
+}
 
-    function deleteAdminExpense(id) {
-      if(confirm("ડિલીટ કરવું છે?")) {
-        adminExpenses = adminExpenses.filter(e => e.id !== id);
-        saveDataLocally();
-        renderAdminExpenses();
-      }
+async function createStudentNotification(type,title,body,targetStudentId='all'){
+  const safeTitle=String(title||'NIRMLA STUDY ZON');
+  const safeBody=String(body||'');
+  const target=String(targetStudentId||'all');
+  const id='push_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  const record={type,title:safeTitle,body:safeBody,targetStudentId:target,createdAt:Date.now()};
+
+  // 1) Save the notification record so students can receive it from Firebase
+  //    when they open/return to the app.
+  try{
+    if(cloudMode&&db){
+      await db.ref('notifications/'+id).set(record);
+    }else{
+      const d=localData('notifications');
+      d[id]=record;
+      saveLocalData('notifications',d);
     }
+  }catch(e){
+    console.warn('Notification record save failed',e);
+  }
 
-    function renderAdminExpenses() {
-      const tbody = document.getElementById('adminExpenseTableBody');
-      tbody.innerHTML = '';
-      let total = 0;
-      if(adminExpenses.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">કોઈ ખર્ચ નોંધાયેલ નથી.</td></tr>`;
-      } else {
-        adminExpenses.forEach(exp => {
-          total += exp.amount;
-          tbody.innerHTML += `
-            <tr>
-              <td>${formatDateGuj(exp.date)}</td>
-              <td><b>${exp.title}</b></td>
-              <td style="color:#d32f2f; font-weight:bold;">₹${exp.amount}</td>
-              <td><button class="btn-danger" onclick="deleteAdminExpense(${exp.id})">❌</button></td>
-            </tr>
-          `;
-        });
-      }
-      document.getElementById('grandExpenseTotal').innerText = total;
+  // 2) Remote push is handled by AppMint Push / OneSignal native service.
+  // Do NOT call an undocumented remote push bridge from HTML.
+  // The WebToApk bridge supports local device notifications only.
+
+  return record;
+}
+// Native notification diagnostic/test.
+// It supports both the old AndroidNotification bridge and the newer WebToApk bridge.
+function getNativeNotificationBridgeStatus(){
+  const a=window.AndroidNotification;
+  const w=window.WebToApk;
+  return {
+    AndroidNotification:!!a,
+    AndroidNotificationNotify:!!(a&&typeof a.notify==='function'),
+    WebToApk:!!w,
+    WebToApkNotify:!!(w&&typeof w.notify==='function'),
+    WebToApkPermission:!!(w&&typeof w.getNotificationPermission==='function')
+  };
+}
+
+
+async function testNativeNotification(){
+  await ensureNativeNotificationPermission();
+
+  const title='🔔 NIRMLA STUDY ZON Test';
+  const body='Fingerprint + AppMint Notification ટેસ્ટ સફળ થયો.';
+  const api=window.WebToApk;
+
+  if(api && typeof api.notify==='function'){
+    try{
+      const result=api.notify(JSON.stringify({
+        title:title,
+        body:body,
+        channel:'urgent',
+        tag:'nirmala-test-'+Date.now(),
+        bigText:body,
+        sound:'default'
+      }));
+      alert('✅ AppMint native notification call થયો.\\nResult: '+String(result));
+      return;
+    }catch(e){
+      alert('❌ WebToApk.notify error:\\n'+(e?.message||e));
+      return;
     }
+  }
 
-    function refreshCourseUI() {
-      const filterSelect = document.getElementById('courseFilter');
-      const currentFilterVal = filterSelect.value || "ALL";
-      filterSelect.innerHTML = `<option value="ALL">બધા જ કોર્સ (All Courses)</option>`;
-      masterCourses.forEach(c => {
-        filterSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-      });
-      filterSelect.value = currentFilterVal;
-      document.getElementById('sCourseSelect').innerHTML = masterCourses.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  if(window.AndroidNotification && typeof window.AndroidNotification.notify==='function'){
+    try{
+      window.AndroidNotification.notify(title,body);
+      alert('✅ AndroidNotification.notify bridge મળ્યો.');
+      return;
+    }catch(e){}
+  }
+
+  alert('❌ APKમાં native notification bridge મળ્યો નથી.\\n\\nAppMintમાં Notification Permission ON કરીને APK ફરી Build કરો.');
+}
+
+function pollStudentNotifications(){
+  if(!cloudMode||!db||!currentStudent)return;
+  const lastKey='nirmala_last_notification_'+String(currentStudent.id||'');
+  const last=Number(localStorage.getItem(lastKey)||0);
+  db.ref('notifications').orderByChild('createdAt').startAt(last+1).once('value').then(snap=>{
+    let newest=last;
+    snap.forEach(ch=>{
+      const n=ch.val()||{}; const created=Number(n.createdAt||0);
+      if(created>newest)newest=created;
+      if(created>last && studentCanReceiveNotification(n))showStudentNotification(n.title,n.body);
+    });
+    if(newest>last)localStorage.setItem(lastKey,String(newest));
+  }).catch(e=>console.warn('Notification poll failed',e));
+}
+
+function initStudentNotifications(){
+  if(notificationListenerReady||!cloudMode||!db)return;
+  notificationListenerReady=true;
+  notificationStartedAt=Date.now();
+  db.ref('notifications').on('child_added',snap=>{
+    const n=snap.val()||{};
+    if(Number(n.createdAt||0)<=notificationStartedAt)return;
+    if(studentCanReceiveNotification(n)){showStudentNotification(n.title,n.body); try{localStorage.setItem('nirmala_last_notification_'+String(currentStudent.id||''),String(Number(n.createdAt||Date.now())))}catch(e){}}
+  });
+}
+
+
+
+
+const OFFLINE_CACHE_KEY='nirmala_offline_cache_v1';
+function updateConnectionStatus(){
+ const el=document.getElementById('connectionStatus');
+ if(!el)return;
+ if(navigator.onLine) el.textContent='🟢 Online';
+ else el.textContent='🔴 Offline';
+}
+window.addEventListener('online',()=>{updateConnectionStatus(); if(typeof initFirebase==='function') installPWAHelpers(); registerOfflineWorker(); initFirebase();});
+window.addEventListener('offline',updateConnectionStatus);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pollStudentNotifications();});
+window.addEventListener('focus',()=>pollStudentNotifications());
+
+function snapshotAppData(){
+ return {
+  version:1,
+  app:'NIRMLA STUDY ZON',
+  savedAt:new Date().toISOString(),
+  students:window.students||{},
+  notices:window.notices||{},
+  lessons:window.lessons||{},
+  tests:window.tests||{},
+  personalMessages:window.personalMessages||{},
+  viewed:currentStudent?getViewed():null
+ };
+}
+function downloadBackup(){
+ const data=snapshotAppData();
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='NIRMLA_STUDY_ZON_BACKUP_'+new Date().toISOString().slice(0,10)+'.json';
+ document.body.appendChild(a);a.click();a.remove();
+ msg('backupMsg','✅ Backup ફાઇલ Download થઈ ગઈ.');
+}
+async function restoreBackup(file){
+ if(!file)return;
+ try{
+  const data=JSON.parse(await file.text());
+  if(data.app!=='NIRMLA STUDY ZON' || !data.version){
+   throw new Error('invalid');
+  }
+  const keys=['students','notices','lessons','tests','personalMessages','questionBanks'];
+  for(const k of keys){
+   const value=data[k]||{};
+   if(cloudMode && db){
+    await db.ref(k).set(value);
+   }else{
+    saveLocalData(k,value); window[k]=value;
+   }
+  }
+  window.students=data.students||{};students=window.students; window.questionBanks=data.questionBanks||{};questionBanks=window.questionBanks;
+  window.notices=data.notices||{};notices=window.notices;
+  window.lessons=data.lessons||{};lessons=window.lessons;
+  window.tests=data.tests||{};tests=window.tests;
+  if(data.viewed && currentStudent)saveViewed(data.viewed);
+  renderTeacher(); if(currentStudent)renderStudent();
+  msg('backupMsg','✅ Backup Restore સફળ થયું.');
+ }catch(e){
+  console.error(e); msg('backupMsg','❌ Backup ફાઇલ યોગ્ય નથી અથવા Restore નિષ્ફળ ગયું.');
+ }
+}
+function cacheCurrentData(){
+ try{
+  const data=snapshotAppData();
+  localStorage.setItem(OFFLINE_CACHE_KEY,JSON.stringify(data));
+ }catch(e){}
+}
+function restoreOfflineCache(){
+ try{
+  const raw=localStorage.getItem(OFFLINE_CACHE_KEY);
+  if(!raw)return;
+  const d=JSON.parse(raw);
+  if(d.students){window.students=d.students;students=d.students}
+  if(d.notices){window.notices=d.notices;notices=d.notices}
+  if(d.lessons){window.lessons=d.lessons;lessons=d.lessons}
+  if(d.tests){window.tests=d.tests;tests=d.tests}
+ }catch(e){}
+}
+function exportOfflineContent(){
+ cacheCurrentData();
+ const raw=localStorage.getItem(OFFLINE_CACHE_KEY);
+ if(!raw){msg('backupMsg','❌ Offline data તૈયાર થઈ શક્યું નથી.');return}
+ const blob=new Blob([raw],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+ a.download='NIRMLA_STUDY_ZON_OFFLINE_DATA.json';document.body.appendChild(a);a.click();a.remove();
+ msg('backupMsg','✅ Offline data export થઈ ગયું.');
+}
+async function savePDFOffline(id){
+ const t=tests[id]; if(!t || !(t.url||t.pdfUrl)){alert('PDF ઉપલબ્ધ નથી.');return}
+ try{
+  if(!('caches' in window)){alert('આ browserમાં Offline PDF Save સપોર્ટ નથી.');return}
+  const url=t.url||t.pdfUrl;
+  const cache=await caches.open('nirmala-pdfs-v1');
+  const response=await fetch(url,{mode:'cors'});
+  if(!response.ok)throw new Error('download failed');
+  await cache.put(url,response.clone());
+  localStorage.setItem('nirmala_pdf_offline_'+id,'1');
+  alert('✅ PDF Offline માટે Save થઈ ગઈ છે. હવે નેટ વગર પણ ખોલી શકાશે.');
+ }catch(e){
+  console.error(e);
+  alert('❌ PDF Offline Save થઈ નથી. Firebase Storage/CORS અથવા browser permissionને કારણે થઈ શકે છે.');
+ }
+}
+
+async function openPdfInApp(url,title='PDF'){
+  if(!url){alert('PDF ઉપલબ્ધ નથી.');return;}
+  let modal=document.getElementById('nirmalaPdfViewer');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='nirmalaPdfViewer';
+    modal.style.cssText='position:fixed;inset:0;background:#eef2f7;z-index:999999;display:flex;flex-direction:column;';
+    modal.innerHTML=
+      '<div style="height:54px;min-height:54px;background:#173b72;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 10px;gap:8px;">'+
+      '<b id="nirmalaPdfViewerTitle" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📄 PDF</b>'+
+      '<button type="button" onclick="closeLessonPDFInApp()" style="background:#fff;color:#173b72;padding:7px 12px;border-radius:8px;flex:none;">✕ બંધ</button>'+
+      '</div>'+
+      '<div id="nirmalaPdfStatus" style="padding:8px 12px;background:#fff;color:#667085;font-size:13px;">⏳ PDF ખોલાઈ રહ્યું છે...</div>'+
+      '<div id="nirmalaPdfPages" style="flex:1;overflow:auto;padding:8px;text-align:center;-webkit-overflow-scrolling:touch;"></div>';
+    document.body.appendChild(modal);
+  }
+  const titleEl=document.getElementById('nirmalaPdfViewerTitle');
+  const status=document.getElementById('nirmalaPdfStatus');
+  const pages=document.getElementById('nirmalaPdfPages');
+  if(titleEl)titleEl.textContent='📄 '+(title||'PDF');
+  if(status)status.textContent='⏳ PDF ખોલાઈ રહ્યું છે...';
+  if(pages)pages.innerHTML='';
+  modal.style.display='flex';
+
+  try{
+    if(!window.pdfjsLib) throw new Error('PDF Viewer લાઇબ્રેરી લોડ થઈ નથી.');
+    // Render the PDF directly inside this app. No Chrome, no Android PDF app,
+    // and no download/open chooser is used.
+    const loadingTask=window.pdfjsLib.getDocument({url:String(url),disableAutoFetch:false,disableStream:false});
+    const pdf=await loadingTask.promise;
+    if(status)status.textContent='📄 '+pdf.numPages+' પેજ • એપમાં જ દેખાય છે';
+    for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+      const page=await pdf.getPage(pageNo);
+      const base=page.getViewport({scale:1});
+      const maxWidth=Math.max(280,Math.min((window.innerWidth||900)-20,900));
+      const scale=Math.max(1,Math.min(2.2,maxWidth/base.width));
+      const viewport=page.getViewport({scale});
+      const wrap=document.createElement('div');
+      wrap.style.cssText='background:#fff;margin:0 auto 10px;box-shadow:0 1px 5px #0002;max-width:100%;';
+      const canvas=document.createElement('canvas');
+      canvas.style.cssText='display:block;width:100%;height:auto;';
+      canvas.width=Math.ceil(viewport.width);
+      canvas.height=Math.ceil(viewport.height);
+      wrap.appendChild(canvas);
+      pages.appendChild(wrap);
+      await page.render({canvasContext:canvas.getContext('2d',{alpha:false}),viewport}).promise;
     }
+  }catch(e){
+    console.error(e);
+    if(status)status.textContent='❌ PDF એપમાં દેખાડી શકાયું નથી.';
+    if(pages)pages.innerHTML='<div style="background:#fff;border-radius:12px;padding:18px;margin:10px;color:#b42318;text-align:left;">PDF એપમાં ખોલવામાં સમસ્યા આવી.<br><br><small>'+String(e?.message||e)+'</small></div>';
+  }
+}
 
-    function updateLiveStatusCounters() {
-      document.getElementById('totalActiveCount').innerText = students.filter(s => s.status === 'Active').length;
-      document.getElementById('totalInactiveCount').innerText = students.filter(s => s.status === 'Inactive').length;
+function openLessonPDFInApp(id){
+  const l=(lessons||{})[id];
+  if(!l || l.type!=='pdf' || !l.content){
+    alert('PDF ઉપલબ્ધ નથી.');
+    return;
+  }
+  markViewed('lessons',id);
+  openPdfInApp(String(l.content),l.title||'PDF');
+}
+function closeLessonPDFInApp(){
+  const modal=document.getElementById('nirmalaPdfViewer');
+  const pages=document.getElementById('nirmalaPdfPages');
+  if(pages)pages.innerHTML='';
+  if(modal)modal.style.display='none';
+}
+
+function openOfflineOrOnlinePDF(id){
+ const t=tests[id];
+ if(!t){alert('PDF ઉપલબ્ધ નથી.');return;}
+ const url=t.url||t.pdfUrl;
+ if(!url){alert('PDF URL ઉપલબ્ધ નથી.');return;}
+ openPdfInApp(String(url),t.title||t.name||'PDF');
+}
+async function saveLessonOffline(id, silent=false){
+ const l=lessons[id]; if(!l || !l.content){if(!silent)alert('Lesson ફાઇલ ઉપલબ્ધ નથી.');return false}
+ if(l.type==='text'){ localStorage.setItem('nirmala_lesson_offline_'+id,'1'); if(!silent)alert('✅ Text Lesson Offline માટે Save થઈ ગયું છે.'); return true; }
+ const url=l.content;
+ try{
+  if(!('caches' in window))throw new Error('cache unsupported');
+  const cache=await caches.open('nirmala-lessons-v1');
+  const cached=await cache.match(url);
+  if(!cached){
+    const response=await fetch(url,{mode:'cors'});
+    if(!response.ok)throw new Error('download failed');
+    await cache.put(url,response.clone());
+  }
+  localStorage.setItem('nirmala_lesson_offline_'+id,'1');
+  if(!silent)alert('✅ Lesson Offline માટે Save થઈ ગયું છે.');
+  return true;
+ }catch(e){
+  console.error(e);
+  if(!silent)alert('❌ Lesson Offline Save થઈ નથી. Internet/CORS અથવા Firebase Storage permission તપાસો.');
+  return false;
+ }
+}
+function openOfflineOrOnlineLesson(id){
+ const l=lessons[id];
+ if(!l)return;
+ if(l.type==='text'){markViewed('lessons',id);return;}
+ if(l.type==='pdf'){openLessonPDFInApp(id);return;}
+ const url=l.content;
+ if(!url){alert('આ Lesson માટે ફાઇલ ઉપલબ્ધ નથી.');return;}
+ markViewed('lessons',id);
+ openInChromePDF(url);
+}
+async function downloadLessonFile(id){
+ const l=lessons[id];
+ if(!l || l.type!=='pdf' || !l.content){
+   alert('આ Lesson માટે PDF ઉપલબ્ધ નથી.');
+   return;
+ }
+ markViewed('lessons',id);
+ // Legacy function kept for compatibility, but it NEVER downloads/open Chrome.
+ openLessonPDFInApp(id);
+}
+async function saveAllLessonsOffline(){
+ const list=Object.entries(lessons||{}).filter(([id,l])=>l && l.content && l.type!=='text');
+ const status=document.getElementById('bulkLessonStatus');
+ if(!list.length){if(status)status.textContent='હાલ Offline Save કરવા માટે Photo/PDF Lesson નથી.';return}
+ if(status)status.textContent='⏳ 0%';
+ let done=0;
+ for(const [id,l] of list){
+   await saveLessonOffline(id,true);
+   done++;
+   if(status)status.textContent='⏳ '+Math.round(done*100/list.length)+'%';
+ }
+ if(status)status.textContent='✅ બધા ઉપલબ્ધ Photo/PDF Lessons Offline Save થઈ ગયા.';
+}
+function installPWAHelpers(){
+ updateConnectionStatus(); cacheCurrentData();
+}
+
+function hasFirebaseConfig(){
+ return !!(firebaseConfig.apiKey && firebaseConfig.databaseURL && firebaseConfig.projectId);
+}
+function localData(key){
+ try{return JSON.parse(localStorage.getItem('nirmala_'+key)||'{}')||{};}catch(e){return {};}
+}
+function saveLocalData(key,data){localStorage.setItem('nirmala_'+key,JSON.stringify(data||{}));}
+function dataSet(key,id,value){
+ if(cloudMode && db) return db.ref(key+'/'+id).set(value);
+ const d=localData(key); d[id]=value; saveLocalData(key,d); window[key]=d; if(key==='personalMessages')personalMessages=d; if(key==='questionBanks')questionBanks=d; if(key==='students')students=d; if(key==='notices')notices=d; if(key==='lessons')lessons=d; if(key==='tests')tests=d; if(currentStudent)renderStudent(); renderTeacher(); cacheCurrentData();
+ return Promise.resolve();
+}
+function dataRemove(key,id){
+ if(cloudMode && db) return db.ref(key+'/'+id).remove();
+ const d=localData(key); delete d[id]; saveLocalData(key,d); window[key]=d; if(key==='personalMessages')personalMessages=d; if(key==='questionBanks')questionBanks=d; if(key==='students')students=d; if(key==='notices')notices=d; if(key==='lessons')lessons=d; if(key==='tests')tests=d; if(currentStudent)renderStudent(); renderTeacher(); cacheCurrentData();
+ return Promise.resolve();
+}
+
+// Teacher can permanently remove any item from the Teacher Panel.
+// For Lesson/Test/Personal files, also try to remove the linked Firebase Storage file.
+async function deleteTeacherItem(key,id){
+ const labels={students:'વિદ્યાર્થી',notices:'Notice',lessons:'Lesson',questionBanks:'પ્રશ્નો',personalMessages:'Personal Message'};
+ const label=labels[key]||'આ વસ્તુ';
+ if(!confirm('શું તમે '+label+' ને કાયમ માટે Delete કરવા માંગો છો?\n\nઆ ક્રિયા પાછી Undo કરી શકાશે નહીં.')) return;
+ try{
+   let item=null;
+   if(cloudMode && db){
+     const snap=await db.ref(key+'/'+id).once('value');
+     item=snap.val();
+   }else{
+     item=(window[key]||{})[id]||null;
+   }
+   await dataRemove(key,id);
+   // Remove the associated Storage object when the record contains a Firebase Storage URL.
+   const fileUrl=item?.content || item?.url || item?.pdfUrl || item?.fileUrl || '';
+   if(storage && cloudMode && /^https?:/i.test(String(fileUrl)) && String(fileUrl).includes('firebasestorage.googleapis.com')){
+     try{ await storage.refFromURL(fileUrl).delete(); }catch(storageErr){ console.warn('Storage file could not be deleted:',storageErr); }
+   }
+   alert('✅ '+label+' Delete થઈ ગયું.');
+   if(typeof renderTeacher==='function')renderTeacher();
+   if(typeof renderStudent==='function' && currentStudent)renderStudent();
+ }catch(e){
+   console.error(e);
+   alert('❌ Delete થઈ શક્યું નથી.\n'+(e?.message||e));
+ }
+}
+function viewedKey(){return currentStudent ? 'nirmala_viewed_'+String(currentStudent.name).toLowerCase() : 'nirmala_viewed_guest';}
+function getViewed(){try{return JSON.parse(localStorage.getItem(viewedKey())||'{"lessons":{},"pdfs":{}}')}catch(e){return {lessons:{},pdfs:{}}}}
+function saveViewed(v){localStorage.setItem(viewedKey(),JSON.stringify(v))}
+function markViewed(type,id){
+ const v=getViewed(); v[type]=v[type]||{}; v[type][id]=Date.now(); saveViewed(v); renderProgress();
+ renderStudentQuestions();
+}
+function toggleFavorite(type,id){
+ const key='nirmala_favorites_'+String(currentStudent?.name||'').toLowerCase();
+ let f={lessons:{},pdfs:{}}; try{f=JSON.parse(localStorage.getItem(key)||'{"lessons":{},"pdfs":{}}')}catch(e){}
+ f[type]=f[type]||{}; if(f[type][id]) delete f[type][id]; else f[type][id]=true;
+ localStorage.setItem(key,JSON.stringify(f)); renderStudent();
+}
+function isFavorite(type,id){
+ const key='nirmala_favorites_'+String(currentStudent?.name||'').toLowerCase();
+ try{const f=JSON.parse(localStorage.getItem(key)||'{}');return !!(f[type]&&f[type][id])}catch(e){return false}
+}
+function saveFirebaseConfig(){
+ const c={
+  apiKey:document.getElementById('fbApiKey').value.trim(),
+  authDomain:document.getElementById('fbAuthDomain').value.trim(),
+  databaseURL:document.getElementById('fbDatabaseURL').value.trim(),
+  projectId:document.getElementById('fbProjectId').value.trim(),
+  storageBucket:document.getElementById('fbStorageBucket').value.trim(),
+  messagingSenderId:document.getElementById('fbMessagingSenderId').value.trim(),
+  appId:document.getElementById('fbAppId').value.trim()
+ };
+ if(!c.apiKey||!c.databaseURL||!c.projectId){msg('firebaseMsg','❌ apiKey, databaseURL અને projectId જરૂરી છે.');return}
+ localStorage.setItem('nirmala_firebase_config',JSON.stringify(c));
+ msg('firebaseMsg','✅ Config સેવ થઈ. App reload થશે...');
+ setTimeout(()=>location.reload(),800);
+}
+function loadFirebaseConfigForm(){
+ const c=firebaseConfig;
+ ['apiKey','authDomain','databaseURL','projectId','storageBucket','messagingSenderId','appId'].forEach(k=>{
+   const el=document.getElementById('fb'+k.charAt(0).toUpperCase()+k.slice(1)); if(el) el.value=c[k]||'';
+ });
+}
+
+function creds(){return{id:localStorage.getItem('teacher_id')||'teacher',pass:localStorage.getItem('teacher_pass')||'1234'}}
+function openTeacherLogin(){
+ const modal=document.getElementById('teacherLoginModal') || document.getElementById('teacherModal');
+ if(modal){modal.classList.remove('hidden');modal.style.display='flex';}
+ const id=document.getElementById('teacherId'); const pass=document.getElementById('teacherPass');
+ if(id){id.value='';setTimeout(()=>id.focus(),100);} if(pass)pass.value='';
+}
+function teacherLogin(){
+ const id=(document.getElementById('teacherId')?.value||'').trim();
+ const pass=document.getElementById('teacherPass')?.value||'';
+ const c=creds();
+ if(id===c.id && pass===c.pass){
+   closeTeacherLogin();
+   document.getElementById('studentLogin')?.classList.add('hidden');
+   document.getElementById('teacherHome')?.classList.remove('hidden');
+   if(document.getElementById('teacherHome')) document.getElementById('teacherHome').style.display='block';
+   const hu=document.getElementById('headerUser'); if(hu)hu.textContent='👨‍🏫 Teacher';
+   if(typeof teacherSection==='function')teacherSection('studentsSection');
+   if(typeof renderTeacher==='function')renderTeacher();
+ }else{
+   alert('Teacher ID અથવા Password ખોટો છે.');
+ }
+}
+function teacherLogout(){document.getElementById('teacherHome').classList.add('hidden');document.getElementById('studentLogin').classList.remove('hidden');document.getElementById('headerUser').textContent='';}
+let studentOtpConfirmation=null;
+let studentOtpVerifier=null;
+let registrationOtpConfirmation=null;
+let registrationOtpVerifier=null;
+let studentDemoOtp='';
+let registrationDemoOtp='';
+let studentOtpExpiresAt=0;
+let registrationOtpExpiresAt=0;
+
+function digits10(id){
+ return String(document.getElementById(id)?.value||'').replace(/\D/g,'').slice(0,10);
+}
+function findStudentByMobile(mobile){
+ const digits=String(mobile||'').replace(/\D/g,'');
+ return Object.entries(students||{}).find(([id,s])=>{
+   const sm=String(s.mobile||'').replace(/\D/g,'');
+   return sm===digits && s.active!==false;
+ });
+}
+function make4DigitOtp(){
+ return String(Math.floor(1000 + Math.random()*9000));
+}
+function otpStillValid(expiresAt){
+ return Date.now() < Number(expiresAt||0);
+}
+function showDemoOtp(elementId, otp){
+ const el=document.getElementById(elementId);
+ if(el)el.textContent='🔐 તમારો 4 અંકનો OTP: '+otp;
+}
+
+function sendStudentOTP(){
+ const mobile=digits10('studentMobile');
+ const msgEl=document.getElementById('studentMsg');
+ if(mobile.length!==10){if(msgEl)msgEl.textContent='❌ 10 અંકનો મોબાઇલ નંબર નાખો.';return;}
+ const found=findStudentByMobile(mobile);
+ if(!found){
+   if(msgEl)msgEl.textContent='❌ આ નંબરથી Student Registration થયેલ નથી. પહેલા Registration કરો.';
+   return;
+ }
+ const foundStudent=found[1];
+ if(String(foundStudent.source||'registration')!=='teacher' && foundStudent.approved!==true && foundStudent.approvalStatus!=='approved'){
+   if(msgEl)msgEl.textContent=foundStudent.approvalStatus==='rejected'?'❌ Teacherએ તમારી Registration Reject કરી છે.':'⏳ Registration થઈ ગઈ છે, પરંતુ Teacher Approval હજી બાકી છે.';
+   return;
+ }
+ studentDemoOtp=make4DigitOtp();
+ studentOtpExpiresAt=Date.now()+5*60*60*1000;
+ showDemoOtp('studentDemoOtp',studentDemoOtp);
+ document.getElementById('studentOtpArea').style.display='block';
+ if(msgEl)msgEl.textContent='✅ OTP તૈયાર છે. 5 કલાક સુધી માન્ય રહેશે.';
+}
+
+function verifyStudentOTP(){
+ const mobile=digits10('studentMobile');
+ const otp=String(document.getElementById('studentOTP')?.value||'').replace(/\D/g,'');
+ const msgEl=document.getElementById('studentMsg');
+ if(!studentDemoOtp||!otpStillValid(studentOtpExpiresAt)||otp.length!==4){
+   if(msgEl)msgEl.textContent='❌ પહેલા 4 અંકનો OTP મેળવો અને સમયસર દાખલ કરો.';
+   return;
+ }
+ if(otp!==studentDemoOtp){
+   if(msgEl)msgEl.textContent='❌ OTP ખોટો છે.';
+   return;
+ }
+ const pair=findStudentByMobile(mobile);
+ if(!pair){
+   if(msgEl)msgEl.textContent='❌ Student મળ્યો નથી.';
+   return;
+ }
+ const sid=pair[0],s={...pair[1],id:sid};
+ if(String(s.source||'registration')!=='teacher' && s.approved!==true && s.approvalStatus!=='approved'){
+  if(msgEl)msgEl.textContent=s.approvalStatus==='rejected'?'❌ Teacherએ તમારી Registration Reject કરી છે.':'⏳ Registration થઈ ગઈ છે, પરંતુ Teacher Approval હજી બાકી છે.';
+  return;
+ }
+ currentStudent=s;
+ localStorage.setItem('nirmala_current_student',sid);
+ saveStudentSession(s);
+ studentDemoOtp='';
+ studentOtpExpiresAt=0;
+ document.getElementById('studentLogin')?.classList.add('hidden');
+ document.getElementById('studentHome')?.classList.remove('hidden');
+ if(document.getElementById('studentHome'))document.getElementById('studentHome').style.display='block';
+ const hu=document.getElementById('headerUser');if(hu)hu.textContent='👨‍🎓 '+s.name;
+ if(typeof studentSection==='function')studentSection('noticesSection');
+ if(typeof renderStudent==='function')renderStudent();
+ enableStudentNotifications();
+ if(msgEl)msgEl.textContent='';
+}
+
+function openStudentRegistration(){
+ document.getElementById('studentLogin')?.classList.add('hidden');
+ document.getElementById('studentRegistration')?.classList.remove('hidden');
+}
+function closeStudentRegistration(){
+ document.getElementById('studentRegistration')?.classList.add('hidden');
+ document.getElementById('studentLogin')?.classList.remove('hidden');
+}
+
+function sendRegistrationOTP(){
+ const name=(document.getElementById('regStudentName')?.value||'').trim();
+ const fatherName=(document.getElementById('regFatherName')?.value||'').trim();
+ const schoolName=(document.getElementById('regSchoolName')?.value||'').trim();
+ const address=(document.getElementById('regAddress')?.value||'').trim();
+ const mobile=digits10('regStudentMobile');
+ const msgEl=document.getElementById('regMsg');
+ if(!name){if(msgEl)msgEl.textContent='❌ વિદ્યાર્થીનું નામ નાખો.';return;}
+ if(!fatherName){if(msgEl)msgEl.textContent='❌ પપ્પાનું નામ નાખો.';return;}
+ if(!schoolName){if(msgEl)msgEl.textContent='❌ શાળાનું નામ નાખો.';return;}
+ if(!address){if(msgEl)msgEl.textContent='❌ એડ્રેસ નાખો.';return;}
+ if(mobile.length!==10){if(msgEl)msgEl.textContent='❌ 10 અંકનો મોબાઇલ નંબર નાખો.';return;}
+ if(findStudentByMobile(mobile)){if(msgEl)msgEl.textContent='❌ આ મોબાઇલ નંબર પહેલેથી Registered છે. Student Login કરો.';return;}
+
+ registrationDemoOtp=make4DigitOtp();
+ registrationOtpExpiresAt=Date.now()+5*60*60*1000;
+ showDemoOtp('regDemoOtp',registrationDemoOtp);
+ document.getElementById('regOtpArea').style.display='block';
+ if(msgEl)msgEl.textContent='✅ 4 અંકનો Registration OTP તૈયાર છે. 5 કલાક સુધી માન્ય રહેશે.';
+}
+
+async function verifyRegistrationOTP(){
+ const name=(document.getElementById('regStudentName')?.value||'').trim();
+ const fatherName=(document.getElementById('regFatherName')?.value||'').trim();
+ const schoolName=(document.getElementById('regSchoolName')?.value||'').trim();
+ const address=(document.getElementById('regAddress')?.value||'').trim();
+ const mobile=digits10('regStudentMobile');
+ const otp=String(document.getElementById('regStudentOTP')?.value||'').replace(/\D/g,'');
+ const msgEl=document.getElementById('regMsg');
+ if(!registrationDemoOtp||!otpStillValid(registrationOtpExpiresAt)||otp.length!==4){
+   if(msgEl)msgEl.textContent='❌ પહેલા 4 અંકનો OTP મેળવો અને સમયસર દાખલ કરો.';
+   return;
+ }
+ if(otp!==registrationDemoOtp){
+   if(msgEl)msgEl.textContent='❌ OTP ખોટો છે.';
+   return;
+ }
+ try{
+   if(findStudentByMobile(mobile)){if(msgEl)msgEl.textContent='❌ આ નંબર પહેલેથી Registered છે.';return;}
+   const id='s_'+Date.now();
+   const student={
+     name,
+     fatherName,
+     schoolName,
+     address,
+     mobile,
+     active:true,
+     approved:false,
+     approvalStatus:'pending',
+     source:'registration',
+     registeredAt:new Date().toISOString()
+   };
+   await dataSet('students',id,student);
+   registrationDemoOtp='';
+   registrationOtpExpiresAt=0;
+   document.getElementById('studentRegistration')?.classList.add('hidden');
+   document.getElementById('studentLogin')?.classList.remove('hidden');
+   if(msgEl)msgEl.textContent='✅ Registration સફળ થઈ ગઈ. હવે Teacher Approval આપશે. Approval મળ્યા પછી જ Student Login કરી શકશે.';
+   const sm=document.getElementById('studentMobile');if(sm)sm.value=mobile;
+ }catch(e){
+   console.error(e);
+   if(msgEl)msgEl.textContent='❌ Registration સેવ થવામાં સમસ્યા આવી.';
+ }
+}
+
+function studentLogout(){
+ clearStudentSession();
+ try{ if(window.firebase && firebase.auth) firebase.auth().signOut(); }catch(e){}
+ studentOtpConfirmation=null;
+ studentDemoOtp='';
+ studentOtpExpiresAt=0;
+ registrationDemoOtp='';
+ registrationOtpExpiresAt=0;
+ currentStudent=null;
+ localStorage.removeItem('nirmala_current_student');
+ document.getElementById('studentHome')?.classList.add('hidden');
+ document.getElementById('studentLogin')?.classList.remove('hidden');
+ document.getElementById('headerUser').textContent='';
+ const area=document.getElementById('studentOtpArea');if(area)area.style.display='none';
+ const otp=document.getElementById('studentOTP');if(otp)otp.value='';
+}
+function msg(id,t){document.getElementById(id).innerHTML=t}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+
+const STUDENT_SESSION_TTL = 5*60*60*1000;
+function saveStudentSession(student){
+  try{
+    localStorage.setItem('nirmala_student_session', JSON.stringify({
+      id: student?.id || '',
+      verifiedAt: Date.now()
+    }));
+  }catch(e){}
+}
+function clearStudentSession(){
+  localStorage.removeItem('nirmala_student_session');
+}
+function restoreStudentSession(){
+  try{
+    const raw=localStorage.getItem('nirmala_student_session');
+    if(!raw)return false;
+    const sdata=JSON.parse(raw);
+    if(!sdata || !sdata.id || !sdata.verifiedAt || Date.now()-Number(sdata.verifiedAt)>=STUDENT_SESSION_TTL){
+      clearStudentSession();
+      return false;
     }
-
-    function calculateExactFeeAndDuration(startDateStr, endDateStr, monthlyFee) {
-      if (!startDateStr || !endDateStr) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ", monthNamesText: "", monthListDetails: [] };
-      let d1 = new Date(startDateStr);
-      let d2 = new Date(endDateStr);
-      if (d2 < d1) return { months: 0, days: 0, totalFee: 0, durationText: "0 દિવસ", monthNamesText: "", monthListDetails: [] };
-
-      let diffTime = Math.abs(d2 - d1);
-      let totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-      
-      let daysInCurMonth = getDaysInMonth(d1.getFullYear(), d1.getMonth());
-      let months = Math.floor(totalDays / daysInCurMonth);
-      let remainingDays = totalDays % daysInCurMonth;
-
-      let dailyFee = monthlyFee / daysInCurMonth;
-      let calculatedFee = Math.round((months * monthlyFee) + (remainingDays * dailyFee));
-
-      let durationText = `${months > 0 ? months + ' મહિનો ' : ''}${remainingDays > 0 ? remainingDays + ' દિવસ' : ''}`.trim();
-
-      let startM = d1.getMonth();
-      let startY = d1.getFullYear();
-      let endM = d2.getMonth();
-      let endY = d2.getFullYear();
-
-      let monthListDetails = [];
-      let cur = new Date(startY, startM, 1);
-      let limit = new Date(endY, endM, 1);
-
-      let standardMonths = ["જાન્યુઆરી", "ફેબ્રુઆરી", "માર્ચ", "એપ્રિલ", "મે", "જૂન", "જુલાઈ", "ઓગસ્ટ", "સપ્ટેમ્બર", "ઓક્ટોબર", "નવેમ્બર", "ડિસેમ્બર"];
-
-      while (cur <= limit) {
-        monthListDetails.push({ name: standardMonths[cur.getMonth()], fee: monthlyFee });
-        cur.setMonth(cur.getMonth() + 1);
-      }
-
-      return { months, days: remainingDays, totalDays, totalFee: calculatedFee, durationText, monthNamesText: monthListDetails.map(m => m.name).join(", "), monthListDetails };
+    const pair=students && students[sdata.id] ? [sdata.id, students[sdata.id]] : null;
+    if(!pair || pair[1]?.active===false){
+      clearStudentSession();
+      return false;
     }
+    const restored={...pair[1],id:pair[0]};
+    if(String(restored.source||'registration')!=='teacher' && (restored.active===false || (restored.approved!==true && restored.approvalStatus!=='approved'))){clearStudentSession();return false;}
+    currentStudent=restored;
+    localStorage.setItem('nirmala_current_student',pair[0]);
+    document.getElementById('studentLogin')?.classList.add('hidden');
+    document.getElementById('studentRegistration')?.classList.add('hidden');
+    document.getElementById('studentHome')?.classList.remove('hidden');
+    if(document.getElementById('studentHome'))document.getElementById('studentHome').style.display='block';
+    const hu=document.getElementById('headerUser');
+    if(hu)hu.textContent='👨‍🎓 '+(currentStudent.name||'');
+    if(typeof studentSection==='function')studentSection('noticesSection');
+    if(typeof renderStudent==='function')renderStudent();
+    ensureNativeNotificationPermission();
+  enableStudentNotifications();
+    return true;
+  }catch(e){
+    clearStudentSession();
+    return false;
+  }
+}
 
-    function autoCalculateReceiptFeeByDates() {
-      const s = students.find(item => item.id === currentStudentId);
-      if (!s) return;
-      let fromD = document.getElementById('fFromDate').value;
-      let toD = document.getElementById('fToDate').value;
-      let calc = calculateExactFeeAndDuration(fromD, toD, s.courseFee || 0);
-      document.getElementById('lblCalculatedMonths').innerText = calc.durationText || '0 દિવસ';
-      document.getElementById('fFeeAmount').value = s.feeType === 'Monthly' ? calc.totalFee : (s.courseFee || 0);
-      calculateReceiptTotal();
-    }
+function studentSection(id){
+ document.querySelectorAll('#studentHome .app-section').forEach(x=>x.classList.add('hidden'));
+ const el=document.getElementById(id); if(el) el.classList.remove('hidden');
+ if(id==='questionStudentSection')renderStudentQuestions();
+ if(id==='lessonsSection')localStorage.setItem('nirmala_content_seen_'+String(currentStudent?.name||'').toLowerCase(),String(Date.now())); if(id==='lessonsSection'){window.lessonCourseFilter='';window.lessonSubjectFilter='';window.lessonChapterFilter='';setTimeout(renderStudentLessons,0);}
+ if(id==='profileSection')renderProfile();
+ if(id==='personalStudentSection')renderStudentPersonal();
+}
+function teacherSection(id){
+ document.querySelectorAll('#teacherHome .teacher-section').forEach(x=>x.classList.add('hidden'));
+ const el=document.getElementById(id); if(el) el.classList.remove('hidden');
+}
 
-    function renderSettingsTables() {
-      let bookOptionsHtml = masterBooks.map(b => `<option value="${b.name}" ${b.stock <= 0 ? 'disabled' : ''}>${b.name} - ₹${b.price} (સ્ટોક: ${b.stock || 0})</option>`).join('');
-      document.getElementById('directBookSelect').innerHTML = bookOptionsHtml;
-      document.getElementById('directSaleBookSelect').innerHTML = bookOptionsHtml;
-      
-      document.getElementById('masterCourseTable').innerHTML = masterCourses.map(c => `<tr><td><b>${c.name}</b></td><td>₹${c.fee}</td><td><button class="btn-danger" onclick="deleteMasterCourse(${c.id})">❌</button></td></tr>`).join('');
-      
-      document.getElementById('masterBookTable').innerHTML = masterBooks.map(b => `
-        <tr>
-          <td><b>${b.name}</b></td>
-          <td>₹${b.price}</td>
-          <td style="font-weight:bold; color:${(b.stock || 0) > 5 ? '#27ae60' : '#d32f2f'};">${b.stock || 0}</td>
-          <td><button class="btn-danger" onclick="deleteMasterBook(${b.id})">❌</button></td>
-        </tr>
-      `).join('');
-    }
+function registerOfflineWorker(){
+ if(!('serviceWorker' in navigator))return;
+ const sw=`const CACHE='nirmala-shell-v1';
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll([location.href])).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch',e=>{
+ if(e.request.method!=='GET')return;
+ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+  const copy=res.clone(); caches.open(CACHE).then(c=>c.put(e.request,copy)).catch(()=>{}); return res;
+ }).catch(()=>caches.match(location.href))));
+});`;
+ try{
+  const blob=new Blob([sw],{type:'text/javascript'});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+ }catch(e){}
+}
 
-    function addMasterCourse() {
-      const name = document.getElementById('newCourseName').value.trim();
-      const fee = parseFloat(document.getElementById('newCourseFee').value) || 0;
-      if(!name) return;
-      masterCourses.push({ id: Date.now(), name, fee }); 
-      saveDataLocally(); refreshCourseUI(); renderSettingsTables(); renderStudentList();
-      document.getElementById('newCourseName').value = ''; document.getElementById('newCourseFee').value = '';
-    }
+function showStudentLogin(){
+ const s=document.getElementById('studentLogin');
+ const h=document.getElementById('studentHome');
+ if(s){s.classList.remove('hidden');s.style.display='block';}
+ if(h){h.classList.add('hidden');h.style.display='none';}
+ const n=document.getElementById('studentName'); if(n){n.focus();}
+}
+function initFirebase(){
+ restoreOfflineCache();
+ const localKeys=['students','notices','lessons','tests','personalMessages','questionBanks'];
+ localKeys.forEach(k=>window[k]=localData(k));
+ students=window.students; notices=window.notices; lessons=window.lessons; tests=window.tests; personalMessages=window.personalMessages||{}; questionBanks=window.questionBanks||{};
+ loadFirebaseConfigForm();
+ loadOneSignalConfigForm();
+ if(!hasFirebaseConfig()){cloudMode=false; if(currentStudent)renderStudent(); renderTeacher(); cacheCurrentData(); setTimeout(()=>{ if(!currentStudent) restoreStudentSession(); },350); return;}
+ try{
+  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+  db=firebase.database(); storage=firebase.storage(); cloudMode=true;
+  initStudentNotifications();
+  localKeys.forEach(k=>db.ref(k).on('value',s=>{
+    window[k]=s.val()||{}; if(k==='students')students=window[k];
+    if(k==='notices')notices=window[k]; if(k==='lessons')lessons=window[k]; if(k==='tests')tests=window[k]; if(k==='personalMessages')personalMessages=window[k]; if(k==='questionBanks')questionBanks=window[k];
+    if(currentStudent)renderStudent(); renderTeacher(); cacheCurrentData();
+  }));
+  setTimeout(()=>{ if(!currentStudent) restoreStudentSession(); pollStudentNotifications(); }, 350);
+ }catch(e){cloudMode=false;console.log(e); setTimeout(()=>{ if(!currentStudent) restoreStudentSession(); },350);}
+}
+let teacherStudentView='registered';
+function showRegisteredStudents(){teacherStudentView='registered';const b=document.getElementById('teacherAddStudentBox');if(b)b.style.display='none';const t=document.getElementById('studentViewTitle');if(t)t.textContent='🟢 Registered Students';renderTeacherStudents();}
+function showAllStudents(){teacherStudentView='all';const b=document.getElementById('teacherAddStudentBox');if(b)b.style.display='none';const t=document.getElementById('studentViewTitle');if(t)t.textContent='👥 બધા Students';renderTeacherStudents();}
+function showTeacherAddStudent(){teacherStudentView='all';const b=document.getElementById('teacherAddStudentBox');if(b)b.style.display='block';const t=document.getElementById('studentViewTitle');if(t)t.textContent='➕ New Student';renderTeacherStudents();}
+function hideTeacherAddStudent(){const b=document.getElementById('teacherAddStudentBox');if(b)b.style.display='none';}
+async function setStudentApproval(id,status){
+ const s=(window.students||{})[id];if(!s)return;
+ const normalized=status==='approved'?'approved':(status==='rejected'?'rejected':'pending');
+ const updated={...s,approved:normalized==='approved',approvalStatus:normalized,active:true,approvalUpdatedAt:new Date().toISOString()};
+ try{
+  await dataSet('students',id,updated);
+  if(normalized==='approved') await createStudentNotification('approval','✅ Registration Approved','Teacherએ તમારી Student Registration approve કરી છે. હવે તમે Login કરી શકો છો.',id);
+  else if(normalized==='rejected') await createStudentNotification('approval','❌ Registration Rejected','Teacherએ તમારી Student Registration reject કરી છે.',id);
+  if(currentStudent&&String(currentStudent.id)===String(id)&&normalized!=='approved')studentLogout();
+  alert(normalized==='approved'?'✅ Student Approval આપી દીધી.':normalized==='rejected'?'❌ Student Approval Reject કરી દીધી.':'⏳ Approval Pending રાખી.');
+  renderTeacherStudents();renderTeacher();
+ }catch(e){console.error(e);alert('❌ Approval status બદલાઈ શક્યો નથી.\n'+(e?.message||e));}
+}
+function studentApprovalStatus(s){
+ if(String(s?.source||'registration')==='teacher')return 'teacher';
+ if(s?.approvalStatus==='rejected')return 'rejected';
+ if(s?.approved===true||s?.approvalStatus==='approved')return 'approved';
+ return 'pending';
+}
 
-    function deleteMasterCourse(id) { 
-      if(confirm("ડિલીટ કરવું છે?")) { 
-        masterCourses = masterCourses.filter(c => c.id !== id); 
-        saveDataLocally(); refreshCourseUI(); renderSettingsTables(); renderStudentList(); 
-      } 
-    }
+function renderTeacherStudents(){
+ const box=document.getElementById('teacherStudents');if(!box)return;
+ const all=Object.entries(students||{}).reverse();
+ const arr=teacherStudentView==='registered'?all.filter(([id,s])=>String(s.source||'registration')!=='teacher'):all;
+ const total=document.getElementById('studentTotalBadge');if(total)total.textContent='કુલ: '+all.length;
+ box.innerHTML=arr.map(([id,s])=>{
+  const type=String(s.source||'registration')==='teacher'?'teacher':studentApprovalStatus(s);
+  let badge='',actions='';
+  if(type==='teacher'){
+   badge='<span class="badge">👨‍🏫 Teacher Added</span>';
+  }else if(type==='approved'){
+   badge='<span class="badge" style="background:#eaf7ea;color:#18733a">🟢 Approved</span>';
+   actions=`<button type="button" class="danger" onclick="setStudentApproval('${esc(id)}','rejected')">❌ Reject Approval</button>`;
+  }else if(type==='rejected'){
+   badge='<span class="badge" style="background:#ffeaea;color:#b42318">🔴 Rejected</span>';
+   actions=`<button type="button" onclick="setStudentApproval('${esc(id)}','approved')">✅ Approve</button>`;
+  }else{
+   badge='<span class="badge" style="background:#fff4d6;color:#8a5a00">🟡 Pending Approval</span>';
+   actions=`<button type="button" onclick="setStudentApproval('${esc(id)}','approved')">✅ Approve</button> <button type="button" class="danger" onclick="setStudentApproval('${esc(id)}','rejected')">❌ Reject</button>`;
+  }
+  return `<div class="item"><b>👨‍🎓 ${esc(s.name||'')}</b> ${badge}<br>👨 ${esc(s.fatherName||'')}<br>🏫 ${esc(s.schoolName||'')}<br>🏠 ${esc(s.address||'')}<br>📱 ${esc(s.mobile||'')}<br><div style="margin-top:8px">${actions}${actions?'<br>':''}<button class="danger" type="button" onclick="deleteTeacherItem('students','${esc(id)}')">🗑️ Delete</button></div></div>`;
+ }).join('')||'<p class="muted">આ વિભાગમાં કોઈ Student નથી.</p>';
+}
 
-    function deleteMasterBook(id) { 
-      if(confirm("ડિલીટ કરવું છે?")) { 
-        masterBooks = masterBooks.filter(b => b.id !== id); 
-        saveDataLocally(); renderSettingsTables(); 
-      } 
-    }
+async function addStudent(){
+ const name=document.getElementById('newStudentName').value.trim();
+ const fatherName=document.getElementById('newStudentFather')?.value.trim()||'';
+ const schoolName=document.getElementById('newStudentSchool')?.value.trim()||'';
+ const address=document.getElementById('newStudentAddress')?.value.trim()||'';
+ const mobile=String(document.getElementById('newStudentMobile')?.value||'').replace(/\D/g,'');
+ if(!name||!fatherName||!schoolName||!address||mobile.length!==10){
+   return alert('વિદ્યાર્થીનું નામ, પપ્પાનું નામ, શાળાનું નામ, એડ્રેસ અને 10 અંકનો મોબાઇલ નંબર નાખો.');
+ }
+ const existing=Object.values(students||{}).some(s=>String(s.mobile||'').replace(/\D/g,'')===mobile);
+ if(existing)return alert('આ મોબાઇલ નંબર પહેલેથી કોઈ Student સાથે જોડાયેલ છે.');
+ const id='s_'+Date.now();
+ try{
+   await dataSet('students',id,{name,fatherName,schoolName,address,mobile,active:true,approved:true,approvalStatus:'approved',source:'teacher',registeredAt:new Date().toISOString()});
+   ['newStudentName','newStudentFather','newStudentSchool','newStudentMobile','newStudentAddress'].forEach(x=>{const e=document.getElementById(x);if(e)e.value='';});
+   alert('✅ Student સફળતાપૂર્વક ઉમેરાયો.');
+   hideTeacherAddStudent();
+   if(typeof renderTeacher==='function')renderTeacher();
+ }catch(e){alert('❌ Student ઉમેરાઈ શક્યો નથી: '+(e?.message||e));}
+}
 
-    function addMasterBook() {
-      const name = document.getElementById('newBookName').value.trim();
-      const price = parseFloat(document.getElementById('newBookPrice').value) || 0;
-      const stock = parseInt(document.getElementById('newBookStock').value) || 0;
-      if(name) { 
-        let existing = masterBooks.find(b => b.name.toLowerCase() === name.toLowerCase());
-        if(existing) {
-          existing.stock = (existing.stock || 0) + stock;
-          existing.price = price;
-        } else {
-          masterBooks.push({ id: Date.now(), name, price, stock }); 
-        }
-        saveDataLocally(); renderSettingsTables(); 
-        document.getElementById('newBookName').value = ''; 
-        document.getElementById('newBookPrice').value = '';
-        document.getElementById('newBookStock').value = '';
-      }
-    }
+async function saveQuestionBank(){
+ const course=(document.getElementById('questionCourse')?.value||'').trim();
+ const subject=(document.getElementById('questionSubject')?.value||'').trim();
+ const title=(document.getElementById('questionTitle')?.value||'').trim();
+ const text=(document.getElementById('questionText')?.value||'').trim();
+ if(!course)return alert('Course પસંદ કરો.');
+ if(!subject)return alert('વિષય નાખો.');
+ if(!title)return alert('Topic / પ્રકરણનું નામ નાખો.');
+ if(!text)return alert('પ્રશ્નો Copy-Paste કરો.');
+ const id='q_'+Date.now();
+ try{
+   await dataSet('questionBanks',id,{
+     course,subject,topic:title,title,text,
+     date:new Date().toLocaleString('gu-IN'),
+     active:true
+   });
+   await createStudentNotification('question','📝 નવા પ્રશ્નો ઉપલબ્ધ છે',course+' → '+subject+' → '+title+' માં નવી માહિતી/પ્રશ્નો મૂકવામાં આવ્યા છે.','all');
+   document.getElementById('questionCourse').value='';
+   document.getElementById('questionSubject').value='';
+   document.getElementById('questionTitle').value='';
+   document.getElementById('questionText').value='';
+   msg('questionMsg','✅ '+course+' → '+subject+' → '+title+' ના પ્રશ્નો Save/Publish થઈ ગયા.');
+   renderQuestionBanks();
+   renderStudentQuestions();
+ }catch(e){
+   msg('questionMsg','❌ પ્રશ્નો Save થઈ શક્યા નથી: '+(e?.message||e));
+ }
+}
 
-    function assignCourseFee() {
-      const selectedCourse = document.getElementById('sCourseSelect').value;
-      const match = masterCourses.find(c => c.name === selectedCourse);
-      if(match) document.getElementById('sTotalFee').value = match.fee;
-    }
+function questionCourseOf(q){
+ const c=String(q?.course||q?.courseName||q?.batchCourse||'').trim();
+ return c || 'સામાન્ય';
+}
+function questionSubjectOf(q){
+ return String(q?.subject||'સામાન્ય').trim() || 'સામાન્ય';
+}
+function questionTopicOf(q){
+ return String(q?.topic||q?.title||'સામાન્ય').trim() || 'સામાન્ય';
+}
 
-    function updateFeeLabel() {
-      const selectedType = document.querySelector('input[name="feeType"]:checked').value;
-      document.getElementById('feeLabel').innerText = selectedType === 'Monthly' ? 'માસિક ફી (Monthly Fee ₹/મહિનો)' : 'વાર્ષિક ફી (Yearly Fee ₹)';
-    }
+function renderQuestionBanks(){
+ const box=document.getElementById('teacherQuestionBanks'); if(!box)return;
+ const arr=Object.entries(questionBanks||{}).reverse();
+ box.innerHTML=arr.map(([id,q])=>{
+   const course=questionCourseOf(q), subject=questionSubjectOf(q), topic=questionTopicOf(q);
+   return '<div class="item"><b>📚 '+esc(course)+'</b> → <b>📖 '+esc(subject)+'</b> → <b>📌 '+esc(topic)+'</b>'+
+   '<br><small>'+esc(q.date||'')+'</small><br><div style="white-space:pre-wrap;margin-top:7px">'+esc(q.text||'')+
+   "</div><button class=\"danger\" type=\"button\" style=\"margin-top:8px\" onclick=\"dataRemove('questionBanks','"+esc(id)+"')\">Delete</button></div>";
+ }).join('')||'<p class="muted">હજી પ્રશ્નો સેવ કર્યા નથી.</p>';
+}
 
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-      if(pageId === 'stationeryReportPage') {
-        renderStationeryReport();
-        renderDirectSaleHistory();
-      }
-      if(pageId === 'adminExpensePage') renderAdminExpenses();
-    }
+function renderStudentQuestions(){
+ const box=document.getElementById('studentQuestionCourses');
+ const subjectsBox=document.getElementById('studentQuestionSubjects');
+ const topicsBox=document.getElementById('studentQuestionTopics');
+ const results=document.getElementById('studentQuestionResults');
+ if(!box||!subjectsBox||!topicsBox||!results)return;
 
-    function switchStatusTab(tab) {
-      currentTab = tab;
-      currentFeeFilter = 'ALL';
-      document.getElementById('btnFilterAll').classList.add('selected-filter');
-      document.getElementById('btnFilterPaid').classList.remove('selected-filter');
-      document.getElementById('btnFilterDue').classList.remove('selected-filter');
-      renderStudentList();
-    }
+ const active=Object.values(questionBanks||{}).filter(q=>q.active!==false);
+ const courses=[...new Set(active.map(questionCourseOf))];
 
-    function setFeeFilter(filterType) {
-      currentFeeFilter = filterType;
-      document.getElementById('btnFilterAll').classList.toggle('selected-filter', filterType === 'ALL');
-      document.getElementById('btnFilterPaid').classList.toggle('selected-filter', filterType === 'PAID');
-      document.getElementById('btnFilterDue').classList.toggle('selected-filter', filterType === 'DUE');
-      renderStudentList();
-    }
+ box.innerHTML=courses.map(c=>
+   '<button type="button" class="question-course-btn" data-course="'+esc(c)+'">📚 '+esc(c)+'</button>'
+ ).join('')||'<p class="muted">હાલ કોઈ પ્રશ્નો ઉપલબ્ધ નથી.</p>';
 
-    function getStudentTotalStats(s) {
-      let todayStr = new Date().toISOString().split('T')[0];
-      let calc = calculateExactFeeAndDuration(s.admissionDate, todayStr, s.courseFee);
+ box.querySelectorAll('.question-course-btn').forEach(function(btn){
+   btn.addEventListener('click',function(){
+     showQuestionCourse(this.getAttribute('data-course')||'');
+   });
+ });
 
-      let tuitionTotal = s.feeType === 'Monthly' ? calc.totalFee : s.courseFee;
-      let stationeryTotal = 0;
-      if (s.stationery) s.stationery.forEach(st => stationeryTotal += st.price);
+ subjectsBox.innerHTML='';
+ topicsBox.innerHTML='';
+ results.innerHTML='<p class="muted">પહેલા Course પસંદ કરો.</p>';
+ window.chosenQuestionCourse='';
+ window.chosenQuestionSubject='';
+ window.chosenQuestionTopic='';
+}
 
-      let grandTotalCost = tuitionTotal + stationeryTotal;
-      let totalPaid = 0, totalDiscount = 0;
+function showQuestionCourse(course){
+ window.chosenQuestionCourse=course;
+ window.chosenQuestionSubject='';
+ window.chosenQuestionTopic='';
+ const subjectsBox=document.getElementById('studentQuestionSubjects');
+ const topicsBox=document.getElementById('studentQuestionTopics');
+ const results=document.getElementById('studentQuestionResults');
+ if(!subjectsBox||!topicsBox||!results)return;
 
-      if (s.payments) {
-        s.payments.forEach(p => {
-          if (p.isPaid) {
-            let pTotal = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-            totalPaid += p.paidAmount > 0 ? p.paidAmount : pTotal;
+ const subjects=[...new Set(
+   Object.values(questionBanks||{})
+   .filter(q=>q.active!==false && questionCourseOf(q)===String(course))
+   .map(questionSubjectOf)
+ )];
+
+ subjectsBox.innerHTML='<div class="item"><b>📚 Course: '+esc(course)+'</b><br><span class="muted">હવે વિષય પસંદ કરો.</span></div>'+
+ subjects.map(s=>
+   '<button type="button" class="question-subject-btn" data-subject="'+esc(s)+'">📖 '+esc(s)+'</button>'
+ ).join('')||'<p class="muted">આ Courseમાં કોઈ વિષય નથી.</p>';
+
+ subjectsBox.querySelectorAll('.question-subject-btn').forEach(function(btn){
+   btn.addEventListener('click',function(){
+     showQuestionSubject(this.getAttribute('data-subject')||'');
+   });
+ });
+
+ topicsBox.innerHTML='';
+ results.innerHTML='<p class="muted">ઉપરથી વિષય પસંદ કરો.</p>';
+}
+
+function showQuestionSubject(subject){
+ window.chosenQuestionSubject=subject;
+ window.chosenQuestionTopic='';
+ const topicsBox=document.getElementById('studentQuestionTopics');
+ const results=document.getElementById('studentQuestionResults');
+ if(!topicsBox||!results)return;
+
+ const course=window.chosenQuestionCourse||'સામાન્ય';
+ const topics=[...new Set(
+   Object.values(questionBanks||{})
+   .filter(q=>q.active!==false &&
+      questionCourseOf(q)===String(course) &&
+      questionSubjectOf(q)===String(subject))
+   .map(questionTopicOf)
+ )];
+
+ topicsBox.innerHTML='<div class="item"><b>📖 '+esc(course)+' → '+esc(subject)+'</b><br><span class="muted">હવે Topic પસંદ કરો.</span></div>'+
+ topics.map(t=>
+   '<button type="button" class="question-topic-btn" data-topic="'+esc(t)+'">📌 '+esc(t)+'</button>'
+ ).join('')||'<p class="muted">આ વિષય માટે કોઈ Topic નથી.</p>';
+
+ topicsBox.querySelectorAll('.question-topic-btn').forEach(function(btn){
+   btn.addEventListener('click',function(){
+     showQuestionTopic(this.getAttribute('data-topic')||'');
+   });
+ });
+
+ results.innerHTML='<p class="muted">ઉપરથી Topic પસંદ કરો.</p>';
+}
+
+function showQuestionTopic(topic){
+ window.chosenQuestionTopic=topic;
+ const results=document.getElementById('studentQuestionResults');
+ if(!results)return;
+
+ const course=window.chosenQuestionCourse||'સામાન્ય';
+ const subject=window.chosenQuestionSubject||'સામાન્ય';
+ const arr=Object.entries(questionBanks||{})
+   .filter(([id,q])=>q.active!==false &&
+      questionCourseOf(q)===String(course) &&
+      questionSubjectOf(q)===String(subject) &&
+      questionTopicOf(q)===String(topic))
+   .reverse();
+
+ results.innerHTML=
+   '<div class="item"><b>📚 Course: '+esc(course)+'</b><br><b>📖 વિષય: '+esc(subject)+'</b><br><b>📌 Topic: '+esc(topic)+'</b></div>'+
+   arr.map(([id,q])=>
+     '<div class="item"><div style="white-space:pre-wrap;font-size:16px;line-height:1.7">'+esc(q.text||'')+
+     '</div><small>'+esc(q.date||'')+'</small></div>'
+   ).join('')||'<p class="muted">આ Topic માટે પ્રશ્નોની માહિતી નથી.</p>';
+}
+
+async function sendTeacherNotification(){
+ const title=(document.getElementById('notifyTitle')?.value||'').trim();
+ const body=(document.getElementById('notifyBody')?.value||'').trim();
+ const target=(document.getElementById('notifyTarget')?.value||'all').trim();
+ if(!title||!body){msg('notifyMsg','❌ Title અને Message બંને લખો.');return;}
+ try{
+   await createStudentNotification('teacher',title,body,target);
+   document.getElementById('notifyTitle').value='';
+   document.getElementById('notifyBody').value='';
+   msg('notifyMsg','✅ Notification સફળતાપૂર્વક મોકલાઈ ગઈ.');
+ }catch(e){console.error(e);msg('notifyMsg','❌ Notification મોકલી શકાઈ નથી.');}
+}
+function populateNotificationTargets(){
+ const el=document.getElementById('notifyTarget'); if(!el)return;
+ const list=Object.values(students||{}).filter(s=>s && (s.status==='approved'||s.createdByTeacher));
+ el.innerHTML='<option value="all">👥 બધા વિદ્યાર્થીઓ</option>'+list.map(s=>'<option value="'+esc(s.id||'')+'">👤 '+esc(s.name||'Student')+'</option>').join('');
+}
+
+async function notifyTeacherUpload(type,title,body,target='all'){
+  try{
+    await createStudentNotification(type,title,body,target);
+  }catch(e){console.warn('Upload notification failed:',e);}
+}
+function addNotice(){const text=document.getElementById('noticeText').value.trim();if(!text)return;const id='n_'+Date.now();dataSet('notices',id,{text,date:new Date().toLocaleString('gu-IN'),important:true}).then(()=>createStudentNotification('notice','📢 નવી માહિતી / Notice',text,'all'));document.getElementById('noticeText').value='';}
+function toggleLessonUpload(){
+ const type=document.getElementById('lessonType')?.value||'text';
+ const wrap=document.getElementById('lessonFileWrap');
+ const content=document.getElementById('lessonContent');
+ if(type==='photo'||type==='pdf'){
+   if(wrap)wrap.style.display='block';
+   if(content){content.style.display='none';content.value='';}
+ }else{
+   if(wrap)wrap.style.display='none';
+   if(content){content.style.display='block';content.placeholder='Lesson content';}
+ }
+ const f=document.getElementById('lessonFile'); if(f)f.accept=type==='photo'?'image/*':'application/pdf';
+}
+async function uploadFileFast(file, storagePath, statusElId, compressImage=false){
+  if(!file) throw new Error('No file selected');
+  const statusEl=document.getElementById(statusElId);
+  const status=t=>{if(statusEl)statusEl.textContent=t;};
+
+  let uploadFile=file;
+  if(compressImage && file.type.startsWith('image/')){
+    status('🖼️ ફોટો size ઘટાડાઈ રહ્યો છે...');
+    uploadFile=await compressLessonImage(file,1200,0.72);
+  }
+
+  /*
+   * પહેલા Firebase Storage try કરીએ છીએ. જો Storage billing/permission/timeout
+   * કારણે ઉપલબ્ધ ન હોય તો Firebase Realtime Databaseમાં file ને Base64 data URL
+   * તરીકે સાચવીએ છીએ. આથી Spark/free projectમાં પણ Photo/PDF upload ચાલુ રહી શકે.
+   */
+  try{
+    if(storage){
+      status('☁️ Firebase Storage Upload શરૂ...');
+      const ref=firebase.storage().ref(storagePath);
+      const task=ref.put(uploadFile,{contentType:uploadFile.type||file.type||'application/octet-stream',cacheControl:'public,max-age=31536000'});
+
+      const uploadPromise=new Promise((resolve,reject)=>{
+        task.on(firebase.storage.TaskEvent.STATE_CHANGED,
+          snap=>{
+            const pct=snap.totalBytes?Math.round(snap.bytesTransferred*100/snap.totalBytes):0;
+            status('⏳ Upload '+pct+'%');
+          },
+          err=>reject(err),
+          async()=>{
+            try{resolve(await ref.getDownloadURL());}
+            catch(e){reject(e);}
           }
-          totalDiscount += p.discountAmount || 0;
-        });
-      }
-
-      let dueAmount = grandTotalCost - (totalPaid + totalDiscount);
-      if (dueAmount < 0) dueAmount = 0;
-
-      return { durationText: calc.durationText, monthNamesText: calc.monthNamesText, grandTotalCost, totalPaid, totalDiscount, dueAmount };
-    }
-
-    function renderStudentList() {
-      updateLiveStatusCounters();
-      const container = document.getElementById('studentListContainer');
-      container.innerHTML = '';
-
-      const selectedCourseFilter = document.getElementById('courseFilter').value;
-      let filtered = students.filter(s => s.status === currentTab);
-
-      if (selectedCourseFilter !== "ALL") {
-        filtered = filtered.filter(s => s.course === selectedCourseFilter);
-      }
-
-      let displayStudents = filtered.filter(s => {
-        let stats = getStudentTotalStats(s);
-        if (currentFeeFilter === 'PAID') return stats.totalPaid > 0;
-        if (currentFeeFilter === 'DUE') return stats.dueAmount > 0;
-        return true;
+        );
       });
 
-      if (displayStudents.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">કોઈ વિદ્યાર્થી મળ્યો નથી.</p>`;
-      } else {
-        displayStudents.forEach(s => {
-          let stats = getStudentTotalStats(s);
-          container.innerHTML += `
-            <div class="student-item" onclick="openStudentDetail(${s.id})">
-              <div class="student-main-header">
-                <span class="student-name-text">👤 ${s.name}</span>
-                <span style="font-size:12px; font-weight:bold; background:#e8f0fe; color:#1a73e8; padding:2px 8px; border-radius:4px;">${s.course}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:6px; background:#f8f9fa; padding:6px; border-radius:4px;">
-                <span style="color:#1a73e8; font-weight:bold;">કુલ ઓટો: ₹${stats.grandTotalCost}</span>
-                <span style="color:#27ae60; font-weight:bold;">જમા: ₹${stats.totalPaid}</span>
-                <span style="color:#d32f2f; font-weight:bold;">બાકી: ₹${stats.dueAmount}</span>
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      let grandTotalSum = 0, grandPaidSum = 0, grandDueSum = 0;
-      filtered.forEach(s => {
-        let stats = getStudentTotalStats(s);
-        grandTotalSum += stats.grandTotalCost;
-        grandPaidSum += stats.totalPaid;
-        grandDueSum += stats.dueAmount;
-      });
-      
-      document.getElementById('grandTotal').innerText = `₹${grandTotalSum}`;
-      document.getElementById('grandPaid').innerText = `₹${grandPaidSum}`;
-      document.getElementById('grandDue').innerText = `₹${grandDueSum}`;
+      const url=await Promise.race([
+        uploadPromise,
+        new Promise((_,reject)=>setTimeout(()=>{
+          try{task.cancel();}catch(e){}
+          const err=new Error('Firebase Storageએ સમયસર જવાબ આપ્યો નથી. Free upload mode ચાલુ કરી રહ્યા છીએ.');
+          err.code='storage/timeout';
+          reject(err);
+        },8000))
+      ]);
+      status('✅ Upload પૂર્ણ થયું.');
+      return url;
     }
+  }catch(storageErr){
+    console.warn('Firebase Storage unavailable; using Realtime Database file mode.',storageErr);
+    status('🔄 Storage ઉપલબ્ધ નથી — Free Upload ચાલુ...');
+  }
 
-    function addDirectStationerySale(e) {
-      e.preventDefault();
-      let customer = document.getElementById('directSaleCustomer').value.trim();
-      let bookName = document.getElementById('directSaleBookSelect').value;
-      let qty = parseInt(document.getElementById('directSaleQty').value) || 1;
-      let date = document.getElementById('directSaleDate').value;
+  // Free fallback: store the selected Photo/PDF as a data URL in Realtime Database.
+  status('📦 ફાઇલ તૈયાર થઈ રહી છે...');
+  const dataUrl=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(new Error('ફાઇલ વાંચી શકાઈ નથી. ફરી પ્રયાસ કરો.'));
+    reader.readAsDataURL(uploadFile);
+  });
+  status('☁️ Free Cloud Upload થઈ રહ્યું છે...');
+  status('⏳ 0%');
+  // dataUrl is returned and saved by the Lesson upload flow through dataSet().
+  status('⏳ 100%');
+  status('✅ Free Upload તૈયાર થયું.');
+  return dataUrl;
+}
+async function uploadLessonFile(file){
+  const safe=(file.name||'lesson_file').replace(/[^a-zA-Z0-9._-]/g,'_');
+  const ext=file.type==='application/pdf'?'.pdf':(file.type.startsWith('image/')?'.jpg':'');
+  const name=safe.replace(/\.[^.]+$/,'')+ext;
+  return uploadFileFast(file,'lessons/'+Date.now()+'_'+name,'lessonUploadStatus',file.type.startsWith('image/'));
+}
 
-      let book = masterBooks.find(b => b.name === bookName);
-      if(!book) return alert("ચોપડી મળી નથી.");
-      if((book.stock || 0) < qty) return alert(`સ્ટોક અપર્યાપ્ત છે! હાલનો સ્ટોક: ${book.stock || 0}`);
+function compressLessonImage(file,maxSide=1000,quality=0.62){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      try{
+        let w=img.naturalWidth,h=img.naturalHeight;
+        const scale=Math.min(1,maxSide/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale));
+        const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+        canvas.getContext('2d',{alpha:false}).drawImage(img,0,0,w,h);
+        canvas.toBlob(blob=>{
+          URL.revokeObjectURL(url); if(!blob)return reject(new Error('Image compression failed'));
+          resolve(new File([blob],(file.name||'photo').replace(/\.[^.]+$/i,'')+'.jpg',{type:'image/jpeg',lastModified:Date.now()}));
+        },'image/jpeg',quality);
+      }catch(e){URL.revokeObjectURL(url);reject(e)}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Invalid image'))}; img.src=url;
+  });
+}
 
-      book.stock -= qty;
-      let total = book.price * qty;
+async function addLesson(){
+ const title=document.getElementById('lessonTitle').value.trim();
+ const subject=document.getElementById('lessonSubject').value.trim();
+ const chapter=document.getElementById('lessonChapter')?.value.trim()||'';
+ const course=document.getElementById('lessonCourse').value.trim();
+ const type=document.getElementById('lessonType').value;
+ const category=document.getElementById('lessonCategory')?.value||'lesson';
+ const hidden=!!document.getElementById('lessonHidden')?.checked;
+ const releaseInput=document.getElementById('lessonReleaseAt')?.value||'';
+ let content=document.getElementById('lessonContent').value.trim();
+ const file=document.getElementById('lessonFile')?.files?.[0]||null;
+ if(!title||!subject)return alert('Lesson Title અને વિષય નાખો.');
+ if(type==='text'&&!content)return alert('Lesson content નાખો.');
+ if((type==='photo'||type==='pdf')&&!file)return alert(type==='photo'?'Photo પસંદ કરો.':'PDF ફાઇલ પસંદ કરો.');
+ if(type==='photo' && !file.type.startsWith('image/'))return alert('માત્ર Photo/Image ફાઇલ અપલોડ કરો.');
+ if(type==='pdf' && file.type!=='application/pdf')return alert('માત્ર PDF ફાઇલ અપલોડ કરો.');
+ const max=type==='pdf'?20*1024*1024:10*1024*1024;
+ if(file&&file.size>max)return alert((type==='pdf'?'PDF':'Photo')+' ફાઇલ '+(type==='pdf'?'20':'10')+' MB કરતાં નાની રાખો.');
+ const id='l_'+Date.now();
+ const status=document.getElementById('lessonUploadStatus');
+ try{
+   if(type==='photo'||type==='pdf'){
+     if(!cloudMode||!storage)throw new Error('Firebase Storage ઉપલબ્ધ નથી.');
+     content=await uploadLessonFile(file);
+   }
+   await dataSet('lessons',id,{title,subject,chapter,course,type,category,content,fileName:file?file.name:'',allStudents:document.getElementById('lessonAll').checked,hidden,releaseAt:releaseInput?new Date(releaseInput).getTime():0,date:new Date().toLocaleString('gu-IN')});
+   if(!hidden){
+     const uploadLabel = type==='pdf' ? 'નવી PDF Lesson' : (type==='photo' ? 'નવો Photo Lesson' : 'નવી Lesson');
+     await createStudentNotification('lesson','📚 '+uploadLabel+': '+title,course+' → '+subject+' માં '+uploadLabel+' ઉપલબ્ધ છે.','all');
+   }
+   document.getElementById('lessonTitle').value='';
+   document.getElementById('lessonSubject').value='';
+   if(document.getElementById('lessonChapter'))document.getElementById('lessonChapter').value='';
+   document.getElementById('lessonContent').value='';
+   document.getElementById('lessonCourse').value='';
+   if(document.getElementById('lessonFile'))document.getElementById('lessonFile').value='';
+   if(document.getElementById('lessonHidden'))document.getElementById('lessonHidden').checked=false;
+   if(document.getElementById('lessonReleaseAt'))document.getElementById('lessonReleaseAt').value='';
+   if(status)status.textContent='કોઈ ફાઇલ પસંદ કરેલ નથી.';
+   document.getElementById('lessonType').value='text';
+   if(document.getElementById('lessonCategory'))document.getElementById('lessonCategory').value='lesson';
+   toggleLessonUpload();
+   alert(hidden?'✅ Lesson Save થયું. હાલ વિદ્યાર્થીઓથી Hide છે.':'✅ Lesson Publish થઈ ગયું.');
+ }catch(e){
+   console.error(e);
+   if(status)status.textContent='❌ Upload નિષ્ફળ ગયું.';
+   const code=e?.code?(' ['+e.code+']'):'';
+   alert('❌ Lesson Upload/Publish થઈ શક્યું નથી.'+code+'\n'+(e?.message||'Firebase Storage Rules અને Internet ચેક કરો.'));
+ }
+}
 
-      directSales.push({
-        id: Date.now(),
-        date,
-        customer,
-        bookName,
-        qty,
-        price: book.price,
-        total
-      });
+async function toggleLessonVisibility(id){
+ const item=(window.lessons||{})[id];
+ if(!item)return;
+ const makeVisible=!!item.hidden;
+ try{
+   await dataSet('lessons',id,{...item,hidden:!makeVisible,releaseAt:makeVisible?0:(item.releaseAt||0)});
+   alert(makeVisible?'✅ Lesson વિદ્યાર્થીઓ માટે Show કરી દીધું.':'✅ Lesson વિદ્યાર્થીઓથી Hide કરી દીધું.');
+   renderTeacher();
+   if(currentStudent)renderStudent();
+ }catch(e){alert('❌ Lessonનું visibility બદલાઈ શક્યું નથી.\n'+(e?.message||e));}
+}
 
-      saveDataLocally();
-      renderSettingsTables();
-      renderDirectSaleHistory();
-      document.getElementById('directSaleCustomer').value = '';
-      alert("✅ સેપરેટ વેચાણ નોંધાઈ ગયું અને સ્ટોકમાંથી ઓછું થયું!");
+async function setLessonRelease(id){
+ const item=(window.lessons||{})[id];
+ if(!item)return;
+ const value=prompt('વિદ્યાર્થીને Lesson કયા સમયે દેખાડવો?\n\nઉદાહરણ: 15/09/2026 10:30\n\nખાલી રાખશો તો સમય આધારિત Publish નહીં થાય.','');
+ if(value===null)return;
+ let ts=0;
+ if(value.trim()){
+   const m=value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
+   if(!m)return alert('સમય આ રીતે લખો: 15/09/2026 10:30');
+   ts=new Date(Number(m[3]),Number(m[2])-1,Number(m[1]),Number(m[4]),Number(m[5])).getTime();
+   if(!isFinite(ts))return alert('સાચી તારીખ/સમય નાખો.');
+ }
+ try{
+   await dataSet('lessons',id,{...item,hidden:ts>0,releaseAt:ts});
+   alert(ts?'✅ Lesson Hide રાખ્યું છે. આપેલા સમય પછી વિદ્યાર્થીને દેખાશે.':'✅ Lessonનો સમય દૂર કર્યો.');
+   renderTeacher();
+   if(currentStudent)renderStudent();
+ }catch(e){alert('❌ સમય Save થઈ શક્યો નથી.\n'+(e?.message||e));}
+}
+async function sendPersonalMessage(){
+ const sid=document.getElementById('personalStudent')?.value||'';
+ const title=(document.getElementById('personalTitle')?.value||'').trim();
+ const message=(document.getElementById('personalMessage')?.value||'').trim();
+ const link=(document.getElementById('personalLink')?.value||'').trim();
+ const file=document.getElementById('personalFile')?.files[0];
+ if(!sid){alert('વિદ્યાર્થી પસંદ કરો.');return}
+ if(!title && !message && !link && !file){alert('Message, Link અથવા Fileમાંથી કંઈક આપો.');return}
+ const id='pm_'+Date.now();
+ let fileUrl='';
+ let fileName='';
+ try{
+   if(file){
+     if(!storage || !cloudMode){alert('File મોકલવા માટે Firebase Cloud Setup જરૂરી છે.');return}
+     if(file.size>10*1024*1024){alert('File 10 MB કરતાં નાની રાખો.');return}
+     const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+     const ref=storage.ref('personal_files/'+sid+'/'+id+'_'+safe);
+     const snap=await ref.put(file);
+     fileUrl=await snap.ref.getDownloadURL(); fileName=file.name;
+   }
+   const record={
+     studentId:sid, title:title||'Personal Message', message, link,
+     fileUrl, fileName, read:false, date:new Date().toLocaleString('gu-IN')
+   };
+   await dataSet('personalMessages',id,record);
+   const personalNotifBody = title || (fileName ? 'તમારા માટે નવી File અપલોડ કરવામાં આવી છે.' : 'તમારા માટે નવી માહિતી છે.');
+   await createStudentNotification('personal','💬 Teacher તરફથી નવી માહિતી',personalNotifBody,sid);
+   document.getElementById('personalTitle').value='';
+   document.getElementById('personalMessage').value='';
+   document.getElementById('personalLink').value='';
+   document.getElementById('personalFile').value='';
+   msg('personalMsg','✅ Personal Message સફળતાપૂર્વક મોકલાઈ ગયું.');
+ }catch(e){
+   console.error(e);msg('personalMsg','❌ Personal Message મોકલી શકાયું નથી.');
+ }
+}
+
+function renderTeacher(){
+ populateNotificationTargets();
+ const box=document.getElementById('teacherStudents');
+ if(box){renderTeacherStudents();}
+ const nb=document.getElementById('teacherNotices');
+ if(nb)nb.innerHTML=Object.entries(notices||{}).reverse().map(([id,n])=>`<div class="item"><b>📢 ${esc(n.text||'')}</b><br><small>${esc(n.date||'')}</small><br><button class="danger" type="button" onclick="deleteTeacherItem('notices','${esc(id)}')">🗑️ Delete Notice</button></div>`).join('')||'<p class="muted">Notice નથી.</p>';
+ const lb=document.getElementById('teacherLessons');
+ if(lb)lb.innerHTML=Object.entries(lessons||{}).reverse().map(([id,l])=>{
+   const hidden=l.hidden===true;
+   const release=Number(l.releaseAt||0);
+   const releaseText=release?new Date(release).toLocaleString('gu-IN'):'';
+   const status=hidden?(release&&release>Date.now()?'⏳ સમય સુધી Hidden':'👁️ Hidden'):'👁️ Visible';
+   return `<div class="item"><b>📚 ${esc(l.title||'')}</b> — ${esc(l.subject||'')} ${l.chapter?`— 📖 ${esc(l.chapter)}`:''} ${l.course?`— 📚 ${esc(l.course)}`:''} ${l.category==='swadhyay'?'<span class="badge">📝 સ્વાધ્યાય</span>':''}<br><small>${esc(l.date||'')}</small><br><span class="badge">${status}</span>${releaseText?` <span class="badge">⏰ ${esc(releaseText)}</span>`:''}<br><button type="button" onclick="toggleLessonVisibility('${esc(id)}')">${hidden?'👁️ Show':'🙈 Hide'}</button> <button type="button" onclick="setLessonRelease('${esc(id)}')">⏰ સમય સેટ</button> <button class="danger" type="button" onclick="deleteTeacherItem('lessons','${esc(id)}')">🗑️ Delete Lesson</button></div>`;
+ }).join('')||'<p class="muted">Lesson નથી.</p>';
+ const qb=document.getElementById('teacherQuestionBanks');
+ if(qb){
+   const arr=Object.entries(questionBanks||{}).reverse();
+   qb.innerHTML=arr.map(([id,q])=>`<div class="item"><b>📖 ${esc(q.subject||'સામાન્ય')}</b>${q.title?' — '+esc(q.title):''}<br><small>${esc(q.date||'')}</small><br><button class="danger" type="button" onclick="deleteTeacherItem('questionBanks','${esc(id)}')">🗑️ Delete પ્રશ્નો</button></div>`).join('')||'<p class="muted">હજી પ્રશ્નો સેવ કર્યા નથી.</p>';
+ }
+ renderPersonalTeacher();
+}
+
+function renderPersonalTeacher(){
+ const sel=document.getElementById('personalStudent');
+ if(sel){
+   const current=sel.value;
+   sel.innerHTML='<option value="">વિદ્યાર્થી પસંદ કરો</option>'+Object.entries(students).map(([id,s])=>'<option value="'+esc(id)+'">'+esc(s.name)+' — '+esc(s.course||'')+'</option>').join('');
+   if(current && students[current])sel.value=current;
+ }
+ const list=Object.entries(personalMessages||{}).reverse();
+ const box=document.getElementById('teacherPersonalList');
+ if(box)box.innerHTML=list.map(([id,p])=>{
+   const s=students[p.studentId];
+   const sid=String(id).replace(/'/g,'');
+   return `<div class="item"><b>💬 ${esc(p.title||'Personal')}</b> — ${esc(s?.name||'વિદ્યાર્થી')}<br>${esc(p.message||'')}${p.link?`<br>🔗 <a href="${esc(p.link)}" target="_blank">Link ખોલો</a>`:''}${p.fileUrl?`<br>📎 <a href="${esc(p.fileUrl)}" target="_blank">${esc(p.fileName||'File')}</a>`:''}<br><small>${esc(p.date||'')}</small> <button class="danger" type="button" onclick="deleteTeacherItem('personalMessages','${sid}')">Delete</button></div>`;
+ }).join('')||'<p class="muted">હજી Personal Message મોકલ્યો નથી.</p>';
+}
+function renderStudentPersonal(){
+ if(!currentStudent)return;
+ const sid=currentStudent.id || Object.entries(students).find(([id,s])=>s===currentStudent)?.[0];
+ const list=Object.entries(personalMessages||{}).filter(([id,p])=>String(p.studentId)===String(sid)||String(p.studentName||'').toLowerCase()===String(currentStudent.name||'').toLowerCase()).reverse();
+ const box=document.getElementById('studentPersonalList');
+ if(!box)return;
+ box.innerHTML=list.map(([id,p])=>{
+   const file=p.fileUrl?'<br>📎 <a href="'+esc(p.fileUrl)+'" target="_blank"><button type="button">📄 '+esc(p.fileName||'File')+'</button></a>':'';
+   const link=p.link?'<br>🔗 <a href="'+esc(p.link)+'" target="_blank"><button type="button">Link ખોલો</button></a>':'';
+   const fresh=!p.read;
+   return '<div class="item '+(fresh?'nsz-new':'')+'"><b>💬 '+esc(p.title||'Personal')+'</b> '+(fresh?'<span class="nsz-notify-dot">NEW</span>':'')+'<br>'+esc(p.message||'')+file+link+'<br><small>'+esc(p.date||'')+'</small></div>';
+ }).join('')||'<p class="muted">તમારા માટે કોઈ Personal Message નથી.</p>';
+ markPersonalMessagesRead();
+}
+function renderProfile(){
+ if(!currentStudent)return;
+ const setVal=(id,val)=>{
+   const e=document.getElementById(id);
+   if(e)e.value=String(val??'');
+ };
+ setVal('profileName',currentStudent.name||'');
+ setVal('profileFather',currentStudent.fatherName||'');
+ setVal('profileSchool',currentStudent.schoolName||'');
+ setVal('profileMobile',currentStudent.mobile||'');
+ setVal('profileAddress',currentStudent.address||'');
+ setVal('profileCourse',currentStudent.course||currentStudent.batch||'');
+ const status=document.getElementById('profileRegistrationStatus');
+ if(status){
+   const st=String(currentStudent.approvalStatus||'').toLowerCase();
+   status.textContent=(currentStudent.source==='teacher' || currentStudent.approved===true || st==='approved')
+     ? '🟢 Registration Status: Approved'
+     : (st==='rejected' ? '🔴 Registration Status: Rejected' : '🟡 Registration Status: Pending Approval');
+ }
+ const dt=document.getElementById('profileRegistrationDate');
+ if(dt){
+   const raw=currentStudent.registeredAt;
+   let text='';
+   if(raw){
+     const d=new Date(raw);
+     if(!isNaN(d.getTime())) text='🗓️ Registration Date: '+d.toLocaleString('gu-IN');
+   }
+   dt.textContent=text;
+ }
+}
+
+function renderStudent(){
+ if(!currentStudent)return;
+ document.getElementById('studentWelcome').textContent='👤 '+currentStudent.name;
+ const noticeArr=Object.entries(notices).reverse();
+ const noticeSeen=Number(localStorage.getItem('nirmala_notice_seen_'+String(currentStudent.name).toLowerCase())||0);
+ const unreadN=noticeArr.filter(([id,n])=>{const ts=Date.parse(n.date||'');return !isNaN(ts)&&ts>noticeSeen}).length;
+ document.getElementById('studentNotices').innerHTML=noticeArr.map(([id,n])=>{
+   const ts=Date.parse(n.date||''); const fresh=!isNaN(ts)&&ts>noticeSeen;
+   return '<div class="item '+(fresh?'nsz-new':'')+'">📢 '+esc(n.text)+' '+(fresh?'<span class="nsz-notify-dot">NEW</span>':'')+'<br><small>'+esc(n.date||'')+'</small></div>';
+ }).join('')||'<p class="muted">Notice નથી.</p>';
+ document.getElementById('noticeCountBadge').textContent=unreadN?' ('+unreadN+')':''; 
+ if(document.getElementById('noticesSection'))document.getElementById('noticesSection').onclick=function(){localStorage.setItem('nirmala_notice_seen_'+String(currentStudent.name).toLowerCase(),String(Date.now()));};
+ renderStudentLessons();
+ 
+ const nowSeen=Number(localStorage.getItem('nirmala_content_seen_'+String(currentStudent.name).toLowerCase())||0);
+ const lc=Object.values(lessons||{}).filter(l=>{const d=Date.parse(l.date||'');return !isNaN(d)&&d>nowSeen}).length;
+ const lb=document.getElementById('lessonCountBadge');if(lb)lb.textContent=lc?' ('+lc+')':'';
+ renderStudentPersonal();
+ const pc=document.getElementById('personalCountBadge'); if(pc){const n=unreadPersonalCount();pc.textContent=n?' ('+n+')':'';}
+ 
+ renderProfile();
+ renderProgress();
+}
+function courseListForLessons(){
+  return ['નવોદય','CET','જ્ઞાન સાધના','સામાન્ય'];
+}
+function courseIcon(c){
+  if(c==='નવોદય')return '🎯';
+  if(c==='CET')return '🎓';
+  if(c==='જ્ઞાન સાધના')return '📘';
+  return '📚';
+}
+function subjectOrderForCourse(course){
+  if(course==='નવોદય')return ['ગણિત','ગુજરાતી','પર્યાવરણ','આકૃતિ','મિક્ષ'];
+  if(course==='CET')return ['ગણિત','પર્યાવરણ','ગુજરાતી','સામાન્ય નોલેજ','તાર્કિક'];
+  return [];
+}
+function lessonMatchesCourse(l,course){
+  const lc=String(l.course||'').trim();
+  if(!course)return false;
+  if(lc===course)return true;
+  // Old records with minor spelling/case differences still work.
+  return lc.toLowerCase()===course.toLowerCase();
+}
+function renderStudentLessons(){
+  if(!currentStudent)return;
+
+  const q=(document.getElementById('lessonSearch')?.value||'').trim().toLowerCase();
+  const courseBox=document.getElementById('lessonCourseButtons');
+  const subjectBox=document.getElementById('lessonSubjects');
+  const topicBox=document.getElementById('lessonChapters');
+  const resultsBox=document.getElementById('studentLessons');
+  if(!courseBox||!subjectBox||!topicBox||!resultsBox)return;
+
+  const course=window.lessonCourseFilter||'';
+  const subject=window.lessonSubjectFilter||'';
+  const topic=window.lessonChapterFilter||'';
+  const now=Date.now();
+
+  const all=Object.entries(lessons||{}).filter(([id,l])=>{
+    if(!l||l.active===false)return false;
+    const okCourse=lessonMatchesCourse(l,course);
+    const released=!l.hidden || (Number(l.releaseAt||0)>0 && Number(l.releaseAt||0)<=now);
+    const hay=(String(l.title||'')+' '+String(l.subject||'')+' '+String(l.chapter||'')+' '+String(l.content||'')).toLowerCase();
+    return okCourse && released && (!q||hay.includes(q));
+  });
+
+  // COURSE buttons
+  const courses=courseListForLessons();
+  courseBox.innerHTML=courses.map(c=>{
+    const count=Object.values(lessons||{}).filter(l=>l&&l.active!==false&&lessonMatchesCourse(l,c)).length;
+    const selected=c===course;
+    return '<button type="button" class="'+(selected?'':'secondary')+'" onclick="selectLessonCourse(this.dataset.course)" data-course="'+esc(c)+'">'+
+      courseIcon(c)+' '+esc(c)+(count?' <span class="badge">'+count+'</span>':'')+'</button>';
+  }).join('');
+
+  if(!course){
+    subjectBox.innerHTML='';
+    topicBox.innerHTML='';
+    resultsBox.innerHTML='<p class="muted">ઉપરથી Course પસંદ કરો.</p>';
+    return;
+  }
+
+  // SUBJECT buttons. Navodaya/CET have the requested fixed subjects.
+  const preferred=subjectOrderForCourse(course);
+  const actual=[...new Set(all.map(([id,l])=>String(l.subject||'').trim()).filter(Boolean))];
+  let subjects=preferred.filter(s=>actual.includes(s));
+  subjects=subjects.concat(actual.filter(s=>!subjects.includes(s)));
+
+  // For Gyan Sadhana / General, subjects come from whatever the teacher entered.
+  subjectBox.innerHTML=subjects.map(s=>{
+    const selected=s===subject;
+    return '<button type="button" class="'+(selected?'':'secondary')+'" onclick="selectLessonSubjectByName(this.dataset.subject)" data-subject="'+esc(s)+'">📖 '+esc(s)+'</button>';
+  }).join('') || '<p class="muted">આ Courseમાં હજી વિષય/માહિતી ઉપલબ્ધ નથી.</p>';
+
+  if(!subject){
+    topicBox.innerHTML='';
+    resultsBox.innerHTML='<p class="muted">હવે '+esc(course)+' માંથી વિષય પસંદ કરો.</p>';
+    return;
+  }
+
+  const subjectItems=all.filter(([id,l])=>String(l.subject||'').trim()===subject);
+
+  // Topic buttons are created automatically from Lesson Title first,
+  // and Chapter is used as a fallback. Thus "અવિભાજ્ય સંખ્યા" becomes a button automatically.
+  const topics=[];
+  subjectItems.forEach(([id,l])=>{
+    const t=String(l.title||l.chapter||'સામાન્ય Topic').trim()||'સામાન્ય Topic';
+    if(!topics.includes(t))topics.push(t);
+  });
+
+  let activeTopic=topic;
+  if(activeTopic && !topics.includes(activeTopic))activeTopic='';
+
+  topicBox.innerHTML=topics.map(t=>{
+    const selected=t===activeTopic;
+    return '<button type="button" class="'+(selected?'':'secondary')+'" onclick="selectLessonTopicByName(this.dataset.topic)" data-topic="'+esc(t)+'">📝 '+esc(t)+'</button>';
+  }).join('') || '<p class="muted">આ વિષયમાં હજી Topic નથી.</p>';
+
+  if(!activeTopic){
+    resultsBox.innerHTML='<p class="muted">હવે Topic પસંદ કરો.</p>';
+    return;
+  }
+
+  const shown=subjectItems.filter(([id,l])=>{
+    const t=String(l.title||l.chapter||'સામાન્ય Topic').trim()||'સામાન્ય Topic';
+    return t===activeTopic;
+  });
+
+  const v=getViewed();
+  resultsBox.innerHTML=shown.slice().reverse().map(([id,l])=>{
+    const fav=isFavorite('lessons',id),seen=!!(v.lessons&&v.lessons[id]);
+    const offline=localStorage.getItem('nirmala_lesson_offline_'+id)==='1';
+    let body='';
+    if(l.type==='photo'){
+      body='<img class="photo-preview" src="'+esc(l.content)+'" alt="Lesson">';
+    }else if(l.type==='pdf'){
+      body='<button type="button" onclick="openLessonPDFInApp(\''+id+'\')">📄 PDF એપમાં ખોલો</button>';
+    }else if(l.type==='link'||l.type==='video'){
+      body='<a href="'+esc(l.content)+'" target="_blank" onclick="markViewed(\'lessons\',\''+id+'\')"><button type="button">🔗 '+(l.type==='video'?'Video જુઓ':'Lesson ખોલો')+'</button></a>';
+    }else{
+      body='<div style="white-space:pre-wrap;line-height:1.7;margin-top:10px">'+esc(l.content)+'</div>';
     }
+    const offlineBtn=(l.type==='photo'||l.type==='pdf')?
+      '<button type="button" class="secondary" style="margin-top:8px" onclick="saveLessonOffline(\''+id+'\')">'+(offline?'✅ Offline Saved':'📥 Offline Save')+'</button>':'';
+    return '<div class="item">'+
+      '<button type="button" class="favorite-btn" onclick="toggleFavorite(\'lessons\',\''+id+'\')">'+(fav?'⭐':'☆')+'</button>'+
+      '<h4>'+esc(l.title||activeTopic)+'</h4>'+
+      '<span class="badge">'+courseIcon(course)+' '+esc(course)+'</span> '+
+      '<span class="badge">📖 '+esc(l.subject||'સામાન્ય')+'</span> '+
+      (l.chapter?'<span class="badge">📝 '+esc(l.chapter)+'</span> ':'')+
+      (seen?'<span class="badge">✓ જોયું</span>':'')+
+      '<br><small>'+esc(l.date||'')+'</small>'+body+'<br>'+offlineBtn+
+      '</div>';
+  }).join('') || '<p class="muted">આ Topicની માહિતી ઉપલબ્ધ નથી.</p>';
 
-    function deleteDirectSale(id) {
-      if(confirm("આ સેપરેટ વેચાણ રદ કરવું છે? (સ્ટોક પાછો ઉમેરાઈ જશે)")) {
-        let sale = directSales.find(d => d.id === id);
-        if(sale) {
-          let book = masterBooks.find(b => b.name === sale.bookName);
-          if(book) book.stock = (book.stock || 0) + sale.qty;
-          directSales = directSales.filter(d => d.id !== id);
-          saveDataLocally();
-          renderSettingsTables();
-          renderDirectSaleHistory();
+  window.lessonCourseFilter=course;
+  window.lessonSubjectFilter=subject;
+  window.lessonChapterFilter=activeTopic;
+}
+function selectLessonCourse(course){
+  window.lessonCourseFilter=String(course||'');
+  window.lessonSubjectFilter='';
+  window.lessonChapterFilter='';
+  renderStudentLessons();
+}
+function selectLessonSubjectByName(subject){
+  window.lessonSubjectFilter=String(subject||'');
+  window.lessonChapterFilter='';
+  renderStudentLessons();
+}
+function selectLessonTopicByName(topic){
+  window.lessonChapterFilter=String(topic||'');
+  renderStudentLessons();
+}
+function selectLessonChapterByName(chapter){
+  selectLessonTopicByName(chapter);
+}
+function clearLessonSubFilter(){
+  window.lessonChapterFilter='';
+  renderStudentLessons();
+}
+function filterLessonSubject(s){selectLessonSubjectByName(s);}
+function filterLessonSwadhyay(id){selectLessonTopicByName(id);}
+function filterLessonChapter(c){selectLessonTopicByName(c);}
+
+function filterLessonSubject(s){selectLessonSubjectByName(s);}
+function filterLessonSwadhyay(id){selectLessonSwadhyayById(id);}
+function filterLessonChapter(c){selectLessonChapterByName(c);}
+function renderProgress(){
+ if(!currentStudent || !document.getElementById('studentProgress'))return;
+ const v=getViewed(), totalL=Object.keys(lessons||{}).length;
+ const seenL=Object.keys(v.lessons||{}).filter(id=>lessons[id]).length;
+ const pct=totalL?Math.round(seenL*100/totalL):0;
+ document.getElementById('studentProgress').innerHTML='<p><b>Lessons:</b> '+seenL+' / '+totalL+'</p><div class="progress-wrap"><div class="progress-bar" style="width:'+pct+'%"></div></div><p><b>કુલ Lesson Progress: '+pct+'%</b></p>';
+ let ach='🎯 અભ્યાસ શરૂ કરો!';
+ if(pct>=100) ach='🏆 અભિનંદન! સંપૂર્ણ Lesson Progress પૂર્ણ!';
+ else if(pct>=75) ach='🥇 Excellent! 75%થી વધુ Progress.';
+ else if(pct>=50) ach='🥈 ખૂબ સારું! 50% Progress પૂર્ણ.';
+ else if(pct>=25) ach='🥉 સરસ શરૂઆત! 25% Progress પૂર્ણ.';
+ const a=document.getElementById('achievementBox');
+ if(a)a.innerHTML='<div class="item"><h3>'+ach+'</h3><p class="muted">તમારી Progress આ device પર સાચવાય છે.</p></div>';
+}
+
+installPWAHelpers(); registerOfflineWorker(); initFirebase();
+</script>
+
+<style id="nirmala-login-fix-css">
+#nsl-student-login,#nsl-teacher-login{
+ position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:999999;
+ display:none;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;
+}
+#nsl-student-login.show,#nsl-teacher-login.show{display:flex!important}
+.nsl-box{width:min(420px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);box-sizing:border-box}
+.nsl-box h2{margin:0 0 15px}.nsl-box input{width:100%;box-sizing:border-box;margin:7px 0;padding:13px;border:1px solid #ccd3df;border-radius:10px;font-size:16px}
+.nsl-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.nsl-row button{min-height:46px;border:0;border-radius:10px;font-size:15px;cursor:pointer}
+.nsl-main{background:#173b72;color:white}.nsl-cancel{background:#eef1f5;color:#222}
+</style>
+
+<div id="nsl-student-login" aria-hidden="true">
+ <div class="nsl-box">
+  <h2>👨‍🎓 Student Login</h2>
+  <input id="nsl-student-name" type="text" placeholder="વિદ્યાર્થીનું નામ" autocomplete="username">
+  <input id="nsl-student-pass" type="password" placeholder="Password" autocomplete="current-password">
+  <div class="nsl-row">
+   <button type="button" class="nsl-main" id="nsl-student-submit">Login</button>
+   <button type="button" class="nsl-cancel" id="nsl-student-cancel">બંધ કરો</button>
+  </div>
+  <button type="button" id="nsl-forgot-password" style="width:100%;margin-top:10px;background:none;border:0;color:#173b72;font-size:14px">🔐 Password ભૂલી ગયા?</button>
+ </div>
+</div>
+
+<div id="nsl-teacher-login" aria-hidden="true">
+ <div class="nsl-box">
+  <h2>👨‍🏫 Teacher Login</h2>
+  <input id="nsl-teacher-id" type="text" placeholder="Teacher ID" autocomplete="username">
+  <input id="nsl-teacher-pass" type="password" placeholder="Password" autocomplete="current-password">
+  <div class="nsl-row">
+   <button type="button" class="nsl-main" id="nsl-teacher-submit">🔐 Password Login</button>
+   <button type="button" class="nsl-main" id="nsl-teacher-bio" style="margin-top:8px;background:#2e7d32">🖐️ Fingerprint / Face Unlock</button>
+   <button type="button" class="nsl-cancel" id="nsl-teacher-cancel">બંધ કરો</button>
+  </div>
+ </div>
+</div>
+</div>
+
+
+<script id="nirmala-teacher-biometric-js">
+(function(){
+  const API=()=>window.WebToApk;
+
+  function nativeReady(){
+    return !!(API() && typeof API().authenticateBiometricEx==='function');
+  }
+
+  function availabilityMessage(status){
+    const m={
+      no_hardware:'આ ફોનમાં Fingerprint/Face biometric hardware નથી.',
+      not_enrolled:'ફોનમાં Fingerprint/Face સેટ થયેલ નથી. પહેલા ફોનની Android Settings માં biometric ઉમેરો.',
+      none_enrolled:'ફોનમાં Fingerprint/Face સેટ થયેલ નથી. પહેલા ફોનની Android Settings માં biometric ઉમેરો.',
+      unavailable:'આ APKમાં Native biometric હાલમાં ઉપલબ્ધ નથી. નવી APK AppMintમાંથી Build કરો.',
+      hw_unavailable:'Biometric hardware હાલમાં ઉપલબ્ધ નથી.',
+      lockout:'Fingerprint/Face ઘણી વાર ખોટું હોવાથી biometric થોડા સમય માટે lock છે.',
+      lockout_permanent:'Biometric permanently lock છે. ફોનનું screen lock/password ઉપયોગ કરીને ફરી biometric સેટ કરો.',
+      permission_missing:'આ APKમાં biometric permission ઉપલબ્ધ નથી.'
+    };
+    return m[status] || ('Biometric ઉપલબ્ધ નથી. Status: '+status);
+  }
+
+  function checkAvailable(cb){
+    if(!API() || typeof API().isBiometricAvailable!=='function'){
+      cb(false,'unavailable'); return;
+    }
+    try{
+      const status=API().isBiometricAvailable();
+      cb(status==='available',status);
+    }catch(e){ cb(false,'unavailable'); }
+  }
+
+  function openTeacherDashboard(){
+    try{
+      var sl=document.getElementById('studentLogin');
+      if(sl) sl.classList.add('hidden');
+      var th=document.getElementById('teacherHome');
+      if(th){ th.classList.remove('hidden'); th.style.display='block'; }
+      var hu=document.getElementById('headerUser');
+      if(hu) hu.textContent='👨‍🏫 Teacher';
+      try{closeTeacherLogin();}catch(e){}
+      try{if(typeof teacherSection==='function') teacherSection('studentsSection');}catch(e){}
+      try{if(typeof renderTeacher==='function') renderTeacher();}catch(e){}
+    }catch(e){ console.error(e); }
+  }
+
+  function biometricLogin(){
+    if(!nativeReady()){
+      alert('આ APKમાં Native Fingerprint/Face support નથી. AppMintમાં biometric support ધરાવતી નવી APK Build કરો. Password Login ચાલુ રહેશે.');
+      return;
+    }
+    checkAvailable(function(ok,status){
+      if(!ok){ alert(availabilityMessage(status)); return; }
+
+      window.__webToApkAuth=window.__webToApkAuth||{};
+      window.__webToApkAuth['teacherUnlock']=function(json){
+        try{
+          var r=JSON.parse(json);
+          if(r.ok){
+            openTeacherDashboard();
+          }else{
+            var err=r.error||'user_cancel';
+            if(err!=='user_cancel'){
+              alert('Fingerprint/Face verification પૂર્ણ થયું નથી.\nકારણ: '+err+'\n\nPassword Login ચાલુ રહેશે.');
+            }
+          }
+        }catch(e){
+          alert('Biometric response સમજાઈ નથી. Password Login ચાલુ રહેશે.');
         }
-      }
-    }
-
-    function renderDirectSaleHistory() {
-      let tbody = document.getElementById('directSaleHistoryBody');
-      if(!tbody) return;
-      tbody.innerHTML = '';
-      if(directSales.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">કોઈ સેપરેટ વેચાણ નોંધાયેલ નથી.</td></tr>`;
-      } else {
-        directSales.forEach(s => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${formatDateGuj(s.date)}</td>
-              <td><b>${s.customer}</b></td>
-              <td>${s.bookName} (x${s.qty})</td>
-              <td style="color:#27ae60; font-weight:bold;">₹${s.total}</td>
-              <td><button class="btn-danger" onclick="deleteDirectSale(${s.id})">❌</button></td>
-            </tr>
-          `;
-        });
-      }
-    }
-
-    function renderStationeryReport() {
-      const container = document.getElementById('stationeryReportContainer');
-      container.innerHTML = '';
-      let grandStationeryTotal = 0;
-
-      students.forEach(s => {
-        if (s.stationery && s.stationery.length > 0) {
-          let studentStTotal = 0;
-          let rows = '';
-          s.stationery.forEach(st => {
-            studentStTotal += st.price;
-            grandStationeryTotal += st.price;
-            rows += `<tr><td>${formatDateGuj(st.date)}</td><td>📖 <b>${st.name}</b></td><td style="color:#d32f2f; font-weight:bold;">₹${st.price}</td></tr>`;
-          });
-          container.innerHTML += `
-            <div style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px; margin-bottom:15px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <h4 style="color:#1a73e8;">👤 ${s.name} - ${s.course}</h4>
-                <span style="font-weight:bold; color:#b78103;">કુલ: ₹${studentStTotal}</span>
-              </div>
-              <table><thead><tr><th>તારીખ</th><th>વસ્તુ / બુકનું નામ</th><th>કિંમત</th></tr></thead><tbody>${rows}</tbody></table>
-            </div>`;
-        }
-      });
-      document.getElementById('grandStationeryTotal').innerText = grandStationeryTotal;
-    }
-
-    function showAddStudentForm() {
-      document.getElementById('studentForm').reset();
-      document.getElementById('sEditId').value = '';
-      document.getElementById('sMobile1').value = '9033197515';
-      document.getElementById('formTitle').innerText = 'વિદ્યાર્થીની માહિતી ઉમેરો';
-      document.getElementById('sAdmissionDate').value = new Date().toISOString().split('T')[0];
-      refreshCourseUI(); assignCourseFee(); updateFeeLabel();
-      showPage('addStudentPage');
-    }
-
-    function editCurrentStudent() {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s) return;
-      refreshCourseUI();
-      document.getElementById('formTitle').innerText = 'વિદ્યાર્થીની માહિતી સુધારો';
-      document.getElementById('sEditId').value = s.id;
-      document.getElementById('sName').value = s.name;
-      document.getElementById('sMobile1').value = s.mobile1 || "9033197515";
-      document.getElementById('sStd').value = s.std;
-      document.getElementById('sCourseSelect').value = s.course;
-      document.getElementById('sTotalFee').value = s.courseFee;
-      document.getElementById('sAdmissionDate').value = s.admissionDate || "";
-      document.getElementById('sDob').value = s.dob || "";
-      document.getElementById('sStatus').value = s.status;
-      showPage('addStudentPage');
-    }
-
-    function saveStudent(event) {
-      event.preventDefault();
-      const editId = document.getElementById('sEditId').value;
-      const selectedCourse = document.getElementById('sCourseSelect').value;
-      const selectedFeeType = document.querySelector('input[name="feeType"]:checked').value;
-      const cFee = parseFloat(document.getElementById('sTotalFee').value) || 0;
-
-      if(editId) {
-        const s = students.find(item => item.id == editId);
-        if(s) {
-          s.name = document.getElementById('sName').value;
-          s.mobile1 = document.getElementById('sMobile1').value;
-          s.std = document.getElementById('sStd').value;
-          s.course = selectedCourse;
-          s.feeType = selectedFeeType;
-          s.courseFee = cFee;
-          s.admissionDate = document.getElementById('sAdmissionDate').value;
-          s.dob = document.getElementById('sDob').value;
-          s.status = document.getElementById('sStatus').value;
-        }
-        saveDataLocally(); renderStudentList(); openStudentDetail(s.id);
-      } else {
-        const newStudent = {
-          id: Date.now(),
-          name: document.getElementById('sName').value,
-          mobile1: document.getElementById('sMobile1').value,
-          std: document.getElementById('sStd').value,
-          course: selectedCourse,
-          feeType: selectedFeeType,
-          courseFee: cFee,
-          admissionDate: document.getElementById('sAdmissionDate').value,
-          dob: document.getElementById('sDob').value,
-          status: document.getElementById('sStatus').value,
-          stationery: [],
-          payments: []
-        };
-        students.push(newStudent); saveDataLocally(); renderStudentList(); openStudentDetail(newStudent.id);
-      }
-    }
-
-    function deleteStudentProfile() {
-      const s = students.find(item => item.id === currentStudentId);
-      if (s && confirm(`શું તમે ખરેખર "${s.name}" ને ડિલીટ કરવા માંગો છો?`)) {
-        students = students.filter(item => item.id !== currentStudentId);
-        saveDataLocally(); alert("વિદ્યાર્થી ડિલીટ થઈ ગયો છે."); showPage('listPage'); renderStudentList();
-      }
-    }
-
-    function openStudentDetail(id) {
-      currentStudentId = id;
-      selectedPaymentId = null;
-
-      const s = students.find(item => item.id === id);
-      if (!s) return;
-
-      document.getElementById('viewName').innerText = s.name;
-      document.getElementById('viewMobile').innerText = s.mobile1;
-      
-      const badge = document.getElementById('viewStatusBadge');
-      badge.innerText = s.status === 'Active' ? 'ચાલુ છે' : 'બંધ છે';
-      badge.className = s.status === 'Active' ? 'status-badge-green' : 'status-badge-red';
-
-      let stats = getStudentTotalStats(s);
-
-      document.getElementById('infoCourseName').innerText = s.course;
-      document.getElementById('infoFeeType').innerText = s.feeType === 'Monthly' ? `માસિક (₹${s.courseFee}/મહિનો)` : `વાર્ષિક (₹${s.courseFee})`;
-      document.getElementById('infoAdmDate').innerText = formatDateGuj(s.admissionDate);
-      document.getElementById('infoDurationText').innerText = s.feeType === 'Monthly' ? `${stats.durationText} (ઓટો ગણેલ)` : 'વાર્ષિક પ્લાન';
-      document.getElementById('infoMonthList').innerText = stats.monthNamesText || '-';
-
-      document.getElementById('fDate').valueAsDate = new Date();
-      
-      let initialFromDate = s.admissionDate || new Date().toISOString().split('T')[0];
-      if (s.payments && s.payments.length > 0) {
-        let lastP = s.payments[s.payments.length - 1];
-        if (lastP.toDate) initialFromDate = lastP.toDate;
-      }
-      
-      document.getElementById('fFromDate').value = initialFromDate;
-      document.getElementById('fToDate').value = new Date().toISOString().split('T')[0];
-
-      autoCalculateReceiptFeeByDates();
-      renderStationeryTable(s);
-      renderPaymentStationeryCheckboxes(s);
-      calculateAndRenderSystem(s);
-      showPage('detailPage');
-    }
-
-    function addStationeryToStudent() {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s) return;
-      const bookVal = document.getElementById('directBookSelect').value;
-      const match = masterBooks.find(b => b.name === bookVal);
-      
-      if(match) {
-        if((match.stock || 0) <= 0) {
-          alert(`❌ "${match.name}" સ્ટોકમાં નથી! સ્ટોક ઉમેરો.`);
-          return;
-        }
-
-        match.stock -= 1;
-
-        if(!s.stationery) s.stationery = [];
-        s.stationery.push({ id: Date.now(), name: match.name, price: match.price, date: new Date().toISOString().split('T')[0] });
-        
-        saveDataLocally(); 
-        renderSettingsTables(); 
-        renderStationeryTable(s); 
-        renderPaymentStationeryCheckboxes(s); 
-        calculateAndRenderSystem(s); 
-        renderStudentList();
-      }
-    }
-
-    function removeStationeryItem(stId) {
-      if(confirm("રદ કરવું છે? (સ્ટોક પાછો ઉમેરાઈ જશે)")) {
-        const s = students.find(item => item.id === currentStudentId);
-        if(!s) return;
-        
-        let removedItem = s.stationery.find(st => st.id === stId);
-        if(removedItem) {
-          let book = masterBooks.find(b => b.name === removedItem.name);
-          if(book) book.stock = (book.stock || 0) + 1;
-        }
-
-        s.stationery = s.stationery.filter(st => st.id !== stId);
-        saveDataLocally(); 
-        renderSettingsTables();
-        renderStationeryTable(s); 
-        renderPaymentStationeryCheckboxes(s); 
-        calculateAndRenderSystem(s); 
-        renderStudentList();
-      }
-    }
-
-    function renderStationeryTable(s) {
-      const tbody = document.getElementById('assignedStationeryTableBody');
-      tbody.innerHTML = '';
-      if(!s.stationery || s.stationery.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">હજી સુધી કોઈ ચોપડી આપેલી નથી.</td></tr>`;
-      } else {
-        s.stationery.forEach(st => {
-          tbody.innerHTML += `<tr><td style="text-align:center;">${formatDateGuj(st.date)}</td><td><b>${st.name}</b></td><td style="color:#d32f2f; font-weight:bold; text-align:center;">₹${st.price}</td><td style="text-align:center;"><button class="btn-danger" onclick="removeStationeryItem(${st.id})">❌</button></td></tr>`;
-        });
-      }
-    }
-
-    function renderPaymentStationeryCheckboxes(s) {
-      const container = document.getElementById('paymentStationeryCheckboxes');
-      if(!s.stationery || s.stationery.length === 0) {
-        container.innerHTML = `<small style="color:#888;">કોઈ સ્ટેશનરી ઉપલબ્ધ નથી.</small>`;
-        return;
-      }
-      let html = "";
-      s.stationery.forEach(st => {
-        html += `<label class="checkbox-item"><input type="checkbox" class="st-pay-check" value="${st.id}" data-name="${st.name}" data-price="${st.price}" onchange="calculateReceiptTotal()"><span><b>${st.name}</b> (₹${st.price})</span></label>`;
-      });
-      container.innerHTML = html;
-      calculateReceiptTotal();
-    }
-
-    function calculateReceiptTotal() {
-      let tFee = parseFloat(document.getElementById('fFeeAmount').value) || 0;
-      let selectedStTotal = 0;
-      document.querySelectorAll('.st-pay-check:checked').forEach(box => {
-        selectedStTotal += parseFloat(box.getAttribute('data-price')) || 0;
-      });
-      let grandTotalItem = tFee + selectedStTotal;
-      let paidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
-      let dueAmt = grandTotalItem - paidAmt;
-      if (dueAmt < 0) dueAmt = 0;
-
-      document.getElementById('lblCalcTotal').innerText = grandTotalItem;
-      document.getElementById('lblCalcPaid').innerText = paidAmt;
-      document.getElementById('lblCalcDue').innerText = dueAmt;
-    }
-
-    function toggleStudentStatus() {
-      const s = students.find(item => item.id === currentStudentId);
-      if (s) {
-        s.status = s.status === 'Active' ? 'Inactive' : 'Active';
-        saveDataLocally(); openStudentDetail(s.id); renderStudentList();
-      }
-    }
-
-    async function addNewPayment(event) {
-      event.preventDefault();
-      const s = students.find(item => item.id === currentStudentId);
-      if (!s) return;
-
-      const feeAmt = parseFloat(document.getElementById('fFeeAmount').value) || 0;
-      const inputPaidAmt = parseFloat(document.getElementById('fPaidAmount').value) || 0;
-      const discAmt = parseFloat(document.getElementById('fDiscountAmount').value) || 0;
-
-      let chosenStationery = [];
-      document.querySelectorAll('.st-pay-check:checked').forEach(box => {
-        chosenStationery.push({ name: box.getAttribute('data-name'), price: parseFloat(box.getAttribute('data-price')) || 0 });
-      });
-
-      const rNo = (s.payments.length + 1).toString();
-      let newPId = Date.now();
-      let payDate = document.getElementById('fDate').value;
-
-      let newPaymentObj = {
-        id: newPId,
-        receiptNo: rNo,
-        date: payDate,
-        paidBy: document.getElementById('fPaidBy').value,
-        mode: document.getElementById('fMode').value,
-        fromDate: document.getElementById('fFromDate').value,
-        toDate: document.getElementById('fToDate').value,
-        feeAmount: feeAmt,
-        selectedStationery: chosenStationery,
-        discountAmount: discAmt,
-        paidAmount: inputPaidAmt,
-        isPaid: inputPaidAmt > 0,
-        receiptImage: "",
-        receiptPDF: ""
       };
 
-      s.payments.push(newPaymentObj);
-      selectedPaymentId = newPId;
-
-      calculateAndRenderSystem(s);
-
-      setTimeout(async () => {
-        let el = document.getElementById('receiptImageCapture');
-        if(el && window.html2canvas) {
-          let canvas = await html2canvas(el, { scale: 2, useCORS: true });
-          let imgData = canvas.toDataURL('image/png');
-          newPaymentObj.receiptImage = imgData;
-
-          const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-          if (jsPdfObj) {
-            let pdf = new jsPdfObj('p', 'mm', 'a4');
-            let imgWidth = 190;
-            let imgHeight = (canvas.height * imgWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-            newPaymentObj.receiptPDF = pdf.output('datauristring');
-          }
-
-          saveDataLocally();
-          calculateAndRenderSystem(s);
-        }
-      }, 300);
-
-      alert("🧾 પહોંચ જનરેટ થઈ ગઈ છે!");
-      renderStudentList();
-    }
-
-    function markPaymentAsPaid(pId) {
-      const s = students.find(item => item.id === currentStudentId);
-      if (!s) return;
-      let p = s.payments.find(item => item.id === pId);
-      if (p) {
-        let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-        p.paidAmount = p.paidAmount > 0 ? p.paidAmount : totalBill;
-        p.isPaid = true;
-        saveDataLocally();
-        alert("🎉 ફી જમા થઈ ગઈ છે!");
-        calculateAndRenderSystem(s); renderStudentList();
+      try{
+        API().authenticateBiometricEx('teacherUnlock', JSON.stringify({
+          title:'Teacher Login',
+          subtitle:'NIRMLA STUDY ZON',
+          description:'Fingerprint / Face થી Teacher Dashboard ખોલો',
+          negativeButtonText:'Password Login',
+          allowDeviceCredential:false,
+          strong:false
+        }));
+      }catch(e){
+        alert('Biometric શરૂ થઈ શક્યું નથી. Password Login ચાલુ રહેશે.');
       }
-    }
+    });
+  }
 
-    function deletePayment(pId) {
-      if(confirm("આ ફી રેકોર્ડ ડિલીટ કરવો છે?")) {
-        const s = students.find(item => item.id === currentStudentId);
-        if(!s) return;
-        s.payments = s.payments.filter(p => p.id !== pId);
-        if (selectedPaymentId === pId) selectedPaymentId = null;
-        saveDataLocally(); calculateAndRenderSystem(s); renderStudentList();
-      }
-    }
+  window.nirmalaTeacherBiometricLogin=biometricLogin;
 
-    function viewSpecificReceipt(pId) {
-      selectedPaymentId = pId;
-      const s = students.find(item => item.id === currentStudentId);
-      if(s) {
-        calculateAndRenderSystem(s);
-        document.getElementById('receiptCardArea').scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+  function wire(){
+    var b=document.getElementById('nsl-teacher-bio');
+    if(b) b.onclick=biometricLogin;
 
-    function generateReceiptHTML(s, targetPaymentIndex) {
-      if(!s.payments || s.payments.length === 0) return `<p style="text-align:center; color:#999;">કોઈ પહોંચ નથી.</p>`;
+    // જૂનું Fingerprint/Face Setup button દૂર કરો — હવે setup કરવાની જરૂર નથી.
+    var old=document.getElementById('teacherBiometricSetup');
+    if(old) old.remove();
+  }
 
-      if (targetPaymentIndex === undefined || targetPaymentIndex === null || targetPaymentIndex < 0) {
-        targetPaymentIndex = s.payments.length - 1;
-      }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wire); else wire();
+})();
+</script>
+<script id="nirmala-login-fix-js">
+(function(){
+ function byId(x){return document.getElementById(x)}
+ function show(id){
+   var e=byId(id); if(!e)return;
+   e.classList.add('show'); e.setAttribute('aria-hidden','false');
+   setTimeout(function(){var i=e.querySelector('input');if(i)i.focus()},80);
+ }
+ function hide(id){
+   var e=byId(id);if(!e)return;
+   e.classList.remove('show');e.setAttribute('aria-hidden','true');
+ }
+ window.nirmalaOpenStudentLogin=function(){show('nsl-student-login')};
+ window.nirmalaOpenTeacherLogin=function(){show('nsl-teacher-login')};
 
-      let p = s.payments[targetPaymentIndex];
-      let calc = calculateExactFeeAndDuration(p.fromDate, p.toDate, s.courseFee || 0);
+ function teacherCreds(){
+   return {
+     id: localStorage.getItem('teacher_id') || 'teacher',
+     pass: localStorage.getItem('teacher_pass') || '1234'
+   };
+ }
+ function doTeacher(){
+   var id=(byId('nsl-teacher-id').value||'').trim();
+   var pass=byId('nsl-teacher-pass').value||'';
+   var c=teacherCreds();
+   if(id!==c.id || pass!==c.pass){alert('Teacher ID અથવા Password ખોટો છે.');return}
+   hide('nsl-teacher-login');
+   var sl=byId('studentLogin');if(sl)sl.classList.add('hidden');
+   var sh=byId('studentHome');if(sh){sh.classList.add('hidden');sh.style.display='none'}
+   var th=byId('teacherHome');
+   if(th){th.classList.remove('hidden');th.style.display='block'}
+   var hu=byId('headerUser');if(hu)hu.textContent='👨‍🏫 Teacher';
+   try{if(typeof teacherSection==='function')teacherSection('studentsSection')}catch(e){}
+   try{if(typeof renderTeacher==='function')renderTeacher()}catch(e){}
+ }
+ function doStudent(){
+   var name=(byId('nsl-student-name').value||'').trim().toLowerCase();
+   var pass=byId('nsl-student-pass').value||'';
+   var all=Object.values(window.students||{});
+   var s=all.find(function(x){
+     return String(x.name||'').trim().toLowerCase()===name && String(x.password||'')===pass;
+   });
+   if(!s){alert('વિદ્યાર્થીનું નામ અથવા Password ખોટો છે.');return}
+   if(String(s.source||'registration')!=='teacher' && s.approved!==true && s.approvalStatus!=='approved'){alert(s.approvalStatus==='rejected'?'❌ Teacherએ તમારી Registration Reject કરી છે.':'⏳ Registration થઈ ગઈ છે, પરંતુ Teacher Approval હજી બાકી છે.');return;}
+    window.currentStudent=s; if(!s.id){const found=Object.entries(students).find(([k,v])=>v===s);if(found)s.id=found[0];}
+   hide('nsl-student-login');
+   var th=byId('teacherHome');if(th){th.classList.add('hidden');th.style.display='none'}
+   var sh=byId('studentHome');
+   if(sh){sh.classList.remove('hidden');sh.style.display='block'}
+   var sl=byId('studentLogin');if(sl){sl.classList.add('hidden');sl.style.display='none'}
+   var hu=byId('headerUser');if(hu)hu.textContent='👨‍🎓 '+s.name;
+   try{enableStudentNotifications()}catch(e){}
+   try{pollStudentNotifications()}catch(e){}
+   try{if(typeof studentSection==='function')studentSection('noticesSection')}catch(e){}
+   try{if(typeof renderStudent==='function')renderStudent()}catch(e){}
+ }
 
-      let itemRows = [];
-      let itemIndex = 1;
+ function wire(){
+   var sb=byId('nsl-student-submit'),tb=byId('nsl-teacher-submit');
+   if(sb)sb.onclick=function(e){e.preventDefault();doStudent()};
+   if(tb)tb.onclick=function(e){e.preventDefault();doTeacher()};
+   var sc=byId('nsl-student-cancel'),tc=byId('nsl-teacher-cancel');
+   if(sc)sc.onclick=function(){hide('nsl-student-login')};
+   if(tc)tc.onclick=function(){hide('nsl-teacher-login')};
+   ['nsl-student-login','nsl-teacher-login'].forEach(function(id){
+     var e=byId(id);if(e)e.addEventListener('click',function(ev){if(ev.target===e)hide(id)});
+   });
+   document.addEventListener('keydown',function(e){
+     if(e.key==='Escape'){hide('nsl-student-login');hide('nsl-teacher-login')}
+     if(e.key==='Enter'){
+       if(byId('nsl-student-login').classList.contains('show'))doStudent();
+       if(byId('nsl-teacher-login').classList.contains('show'))doTeacher();
+     }
+   });
 
-      if (s.feeType === 'Monthly' && calc.monthListDetails && calc.monthListDetails.length > 0) {
-        calc.monthListDetails.forEach(m => itemRows.push({ sr: itemIndex++, name: m.name, amount: m.fee }));
-      } else {
-        itemRows.push({ sr: itemIndex++, name: `ટ્યુશન ફી`, amount: p.feeAmount || 0 });
-      }
+   // Wire ALL existing login buttons/icons by text or known IDs.
+   document.querySelectorAll('button,a,[role="button"]').forEach(function(b){
+     var t=(b.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+     var id=(b.id||'').toLowerCase();
+     if(id==='teacherbtn' || t.indexOf('teacher login')>=0 || t==='👨‍🏫'){
+       b.setAttribute('type','button');b.onclick=function(e){e.preventDefault();window.nirmalaOpenTeacherLogin()};
+     }else if(id==='studentloginbtn' || t.indexOf('student login')>=0 || t.indexOf('student login')>=0){
+       b.setAttribute('type','button');b.onclick=function(e){e.preventDefault();window.nirmalaOpenStudentLogin()};
+     }
+   });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+})();
+</script>
 
-      if (p.selectedStationery && p.selectedStationery.length > 0) {
-        p.selectedStationery.forEach(st => itemRows.push({ sr: itemIndex++, name: st.name, amount: st.price }));
-      }
 
-      let totalCost = itemRows.reduce((acc, row) => acc + row.amount, 0);
-      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : p.paidAmount;
-      let dueAmt = totalCost - paidAmt;
-      if(dueAmt < 0) dueAmt = 0;
 
-      let tableBodyHTML = "";
-      itemRows.forEach(row => {
-        tableBodyHTML += `<tr><td class="txt-center">${row.sr}</td><td class="txt-bold">${row.name}</td><td class="txt-center txt-bold">${row.amount}</td></tr>`;
-      });
+</div>
 
-      return `
-        <div id="receiptImageCapture" class="receipt-excel-box">
-          <table class="receipt-excel-table">
-            <tr><td colspan="3" class="receipt-title">નિર્મળા નવોદય ક્લાસિસ</td></tr>
-            <tr class="sub-header-row">
-              <td colspan="3" style="padding: 8px 10px;">
-                <div style="font-size:15px; margin-bottom: 4px;" class="txt-bold text-blue">
-                  👤 વિદ્યાર્થીનું નામ: ${s.name}
-                </div>
-                <div style="font-size:12px; color:#333;" class="txt-bold">
-                  ધોરણ: ${s.std} | કોર્સ: ${s.course} | 📅 જમા તારીખ: ${formatDateGuj(p.date)}
-                </div>
-              </td>
-            </tr>
-            <tr class="table-head-row">
-              <th style="width:15%;" class="txt-center">ક્રમ</th>
-              <th style="width:55%;" class="txt-center">મહિનાના નામ / વિગત</th>
-              <th style="width:30%;" class="txt-center">ફી (₹)</th>
-            </tr>
-            ${tableBodyHTML}
-            <tr><td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">ટોટલ</td><td class="txt-center txt-bold text-red" style="font-size:15px;">${totalCost}</td></tr>
-            <tr><td colspan="2" class="txt-right txt-bold text-green" style="font-size:15px;">જમા</td><td class="txt-center txt-bold text-green" style="font-size:15px;">${paidAmt}</td></tr>
-            <tr><td colspan="2" class="txt-right txt-bold text-red" style="font-size:15px;">બાકી</td><td class="txt-center txt-bold text-red" style="font-size:15px;">${dueAmt}</td></tr>
-            <tr class="sub-header-row">
-              <td colspan="3" class="txt-center txt-bold text-blue" style="padding: 8px; font-size:13px; background:#e8f0fe;">
-                🗓️ સમયગાળો: ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3" style="padding:12px 10px; background-color:#fafafa;">
-                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold; color:#444;">
-                  <span>💳 પેમેન્ટ મોડ: ${p.mode}</span>
-                  <span>✍️ ફી ભરનાર: ${p.paidBy}</span>
-                </div>
-                <div style="text-align:center; margin-top:15px; font-weight:bold; font-size:14px; color:#0d47a1; border-top:1px dashed #ccc; padding-top:8px;">
-                  વાઘેલા રવિ વિનોદભાઈ (9033197515)
-                </div>
-              </td>
-            </tr>
-          </table>
-        </div>
-      `;
-    }
 
-    function calculateAndRenderSystem(s) {
-      let stats = getStudentTotalStats(s);
 
-      document.getElementById('infoYearlyTotalFee').innerText = `₹${stats.grandTotalCost}`;
-      document.getElementById('infoTotalPaid').innerText = `₹${stats.totalPaid}`;
-      document.getElementById('infoTotalDue').innerText = `₹${stats.dueAmount}`;
-      document.getElementById('infoTotalDiscount').innerText = `${stats.totalDiscount}`;
-
-      let targetIndex = -1;
-      if (selectedPaymentId) targetIndex = s.payments.findIndex(p => p.id === selectedPaymentId);
-      if (targetIndex === -1 && s.payments.length > 0) {
-        targetIndex = s.payments.length - 1;
-        selectedPaymentId = s.payments[targetIndex].id;
-      }
-
-      document.getElementById('receiptPreviewArea').innerHTML = generateReceiptHTML(s, targetIndex);
-
-      const tbody = document.getElementById('paymentHistoryBody');
-      tbody.innerHTML = '';
-      if(!s.payments || s.payments.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">કોઈ ફી જમા થઈ નથી</td></tr>`;
-      } else {
-        s.payments.forEach((p) => {
-          let isSelected = p.id === selectedPaymentId;
-          let totalBill = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-          let badgeTxt = p.isPaid ? '<span style="color:green; font-weight:bold;">🟢 જમા</span>' : '<span style="color:red; font-weight:bold;">🔴 બાકી</span>';
-
-          tbody.innerHTML += `
-            <tr style="${isSelected ? 'background:#e8f0fe;' : ''}">
-              <td><b>${formatDateGuj(p.date)}</b></td>
-              <td><b>₹${totalBill}</b></td>
-              <td>${badgeTxt}</td>
-              <td style="white-space:nowrap;">
-                <button class="btn-view" onclick="viewSpecificReceipt(${p.id})">👁️ જુઓ</button>
-                ${p.receiptImage ? `<button class="btn-view" style="background:#009688;" onclick="viewSavedPhoto('${p.id}')">🖼️</button>` : ''}
-                ${p.receiptPDF ? `<button class="btn-view" style="background:#e74c3c;" onclick="downloadSavedPDF('${p.id}')">📄</button>` : ''}
-                ${!p.isPaid ? `<button class="btn-pay-action" onclick="markPaymentAsPaid(${p.id})">🟢 જમા</button>` : ''}
-                <button class="btn-danger" onclick="deletePayment(${p.id})">❌</button>
-              </td>
-            </tr>
-          `;
-        });
-      }
-    }
-
-    function viewSavedPhoto(pId) {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s) return;
-      let p = s.payments.find(item => item.id == pId);
-      if(p && p.receiptImage) {
-        openModalWithImage(p.receiptImage, `Receipt_${s.name}_${p.date}.png`);
-      }
-    }
-
-    function openModalWithImage(imgData, filename) {
-      document.getElementById('modalImg').src = imgData;
-      let dBtn = document.getElementById('modalDownloadBtn');
-      dBtn.href = imgData;
-      dBtn.download = filename || 'Receipt.png';
-      document.getElementById('imageModal').style.display = 'block';
-    }
-
-    function closeModal() {
-      document.getElementById('imageModal').style.display = 'none';
-    }
-
-    function downloadSavedPDF(pId) {
-      try {
-        const s = students.find(item => item.id === currentStudentId);
-        if(!s) return;
-        let p = s.payments.find(item => item.id == pId);
-        if(p && p.receiptPDF) {
-          let link = document.createElement('a');
-          link.href = p.receiptPDF;
-          link.download = `Receipt_${s.name}_${p.date}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      } catch(e) {
-        alert("PDF ડાઉનલોડ કરવામાં સમસ્યા આવી: " + e.message);
-      }
-    }
-
-    function getSelectedPaymentIndex(s) {
-      if (selectedPaymentId) {
-        let idx = s.payments.findIndex(p => p.id === selectedPaymentId);
-        if (idx !== -1) return idx;
-      }
-      return s.payments.length > 0 ? s.payments.length - 1 : 0;
-    }
-
-    function buildTextMessage(s) {
-      let idx = getSelectedPaymentIndex(s);
-      if(!s.payments || s.payments.length === 0) return "";
-      let p = s.payments[idx];
-      let totalCost = p.feeAmount + (p.selectedStationery ? p.selectedStationery.reduce((a,b)=>a+b.price,0) : 0) - p.discountAmount;
-      let paidAmt = p.isPaid ? (p.paidAmount > 0 ? p.paidAmount : totalCost) : p.paidAmount;
-      let dueFee = totalCost - paidAmt;
-      if (dueFee < 0) dueFee = 0;
-
-      return `🧾 *નિર્મળા નવોદય ક્લાસિસ*
-*ફી પહોંચ* (${p.isPaid ? "🟢 જમા" : "🔴 બાકી"})
-----------------------------------
-👤 *વિધાર્થી નું નામ:* ${s.name}
-🗓️ *જમા તારીખ:* ${formatDateGuj(p.date)}
-📚 *ધોરણ/કોર્સ:* ${s.std} - ${s.course}
-🗓️ *સમયગાળો:* ${formatDateGuj(p.fromDate)} થી ${formatDateGuj(p.toDate)}
-----------------------------------
-💰 *ટોટલ:* ₹${totalCost}
-✅ *જમા:* ₹${paidAmt}
-🔴 *બાકી:* ₹${dueFee}
-----------------------------------
-💳 *પેમેન્ટ મોડ:* ${p.mode}
-👤 *ફી ભરનાર:* ${p.paidBy}
-----------------------------------
-*વાઘેલા રવિ વિનોદભાઈ (9033197515)*`;
-    }
-
-    function copyReceiptText() {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s || s.payments.length === 0) return;
-      navigator.clipboard.writeText(buildTextMessage(s)).then(() => alert("લખાણ કોપી થઈ ગયું!"));
-    }
-
-    /* 100% Chrome Browser Direct Download Solution for Image */
-    async function downloadReceiptAsImage() {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s || !s.payments || s.payments.length === 0) {
-        alert("ડાઉનલોડ કરવા માટે કોઈ પહોંચ મળી નથી.");
-        return;
-      }
-      
-      const element = document.getElementById('receiptImageCapture');
-      if(!element) return;
-
-      try {
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        
-        canvas.toBlob(function(blob) {
-          let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.png`;
-          let link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(link.href);
-        }, 'image/png');
-
-      } catch (err) {
-        alert("ઈમેજ ડાઉનલોડ કરવામાં સમસ્યા આવી: " + err.message);
-      }
-    }
-
-    /* 100% Chrome Browser Direct Download Solution for PDF */
-    async function generateAndDownloadPDF() {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s || s.payments.length === 0) return;
-      const element = document.getElementById('receiptImageCapture');
-
-      if (!element) return;
-
-      try {
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-        const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-        if(!jsPdfObj) return alert("PDF લાઇબ્રેરી ઉપલબ્ધ નથી.");
-        
-        const pdf = new jsPdfObj('p', 'mm', 'a4');
-        const imgWidth = 190;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-
-        let fileName = `Receipt_${s.name}_${new Date().toISOString().split('T')[0]}.pdf`;
-
-        // Direct Chrome Download Trigger
-        const pdfBlob = pdf.output('blob');
-        let link = document.createElement('a');
-        link.href = URL.createObjectURL(pdfBlob);
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-
-      } catch (err) {
-        alert("PDF ડાઉનલોડ કરવામાં ભૂલ થઈ: " + err.message);
-      }
-    }
-
-    async function shareReceiptToWhatsApp(type) {
-      const s = students.find(item => item.id === currentStudentId);
-      if(!s || !s.payments || s.payments.length === 0) return;
-      
-      const element = document.getElementById('receiptImageCapture');
-      if(!element) return;
-
-      const msg = buildTextMessage(s);
-
-      try {
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-        
-        if (type === 'image') {
-          canvas.toBlob(async (blob) => {
-            if (!blob) return alert("ચિત્ર બનાવવામાં ભૂલ થઈ.");
-            const file = new File([blob], `Receipt_${s.name}.png`, { type: 'image/png' });
-
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
-              } catch (err) { console.log("Share canceled"); }
-            } else {
-              let a = document.createElement('a');
-              a.href = URL.createObjectURL(blob);
-              a.download = `Receipt_${s.name}.png`;
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-
-              alert("📸 પહોંચનો ફોટો ડાઉનલોડ થઈ ગયો છે. વ્હોટ્સએપ ઓપન થશે જેમાં ફોટો અટેચ કરીને મોકલો.");
-              window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
-            }
-          }, 'image/png');
-
-        } else if (type === 'pdf') {
-          const imgData = canvas.toDataURL('image/jpeg', 0.95);
-          const jsPdfObj = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
-          if (!jsPdfObj) return alert("PDF લાઇબ્રેરી લોડ થઈ નથી.");
-          
-          const pdf = new jsPdfObj('p', 'mm', 'a4');
-          const imgWidth = 190;
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-
-          const pdfBlob = pdf.output('blob');
-          const file = new File([pdfBlob], `Receipt_${s.name}.pdf`, { type: 'application/pdf' });
-
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({ title: 'ફી પહોંચ', text: msg, files: [file] });
-            } catch (err) { console.log("Share canceled"); }
-          } else {
-            pdf.save(`Receipt_${s.name}.pdf`);
-            alert("📄 પહોંચ PDF ડાઉનલોડ થઈ ગઈ છે. વ્હોટ્સએપ ઓપન થશે જેમાં PDF અટેચ કરીને મોકલો.");
-            window.open(`https://wa.me/91${s.mobile1}?text=${encodeURIComponent(msg)}`, '_blank');
-          }
-        }
-      } catch (err) {
-        alert("શેર કરવામાં ભૂલ આવી: " + err.message);
-      }
-    }
-  </script>
-</body>
-</html>
+<script id="teacher-reset-guard">
+(function(){
+ function hideTeacherReset(){
+   var f=document.getElementById('nsl-forgot');
+   var th=document.getElementById('teacherHome');
+   if(f && th && !th.classList.contains('hidden')) {
+     f.classList.remove('show');
+     f.style.display='none';
+   }
+ }
+ document.addEventListener('DOMContentLoaded',hideTeacherReset);
+ window.addEventListener('load',hideTeacherReset);
+})();
+</script>
+</body></html>
